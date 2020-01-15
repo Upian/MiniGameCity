@@ -28,7 +28,7 @@ namespace Util {
 
 		va_end(ap);
 
-		std::cout << "Log message: " << msgBuf << std::endl;
+		printf("Log message: %s", msgBuf);
 		if (true == fileName.empty()) return;
 
 		Util::LogManager* logger = Util::LogManager::GetSingleton();
