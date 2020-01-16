@@ -10,9 +10,10 @@ namespace Util {
 	}
 
 	LogManager::~LogManager() {
-		if (nullptr != m_writeFile)
+		if (nullptr != m_writeFile) {
 			delete m_writeFile;
-		m_writeFile = nullptr;
+			m_writeFile = nullptr;
+		}
 	}
 
 
