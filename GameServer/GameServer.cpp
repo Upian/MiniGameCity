@@ -1,3 +1,4 @@
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <iostream>
 #include <WinSock2.h>
 #include <stdlib.h>
@@ -19,7 +20,7 @@ void err_display(const char *msg);
 int main()
 {
 	std::vector<std::string> words, sentens;
-	int room_number, game_type, message_type;
+	//int room_number, game_type, message_type;
 	std::list<int> player_list;
 	int retval;
 
@@ -82,7 +83,7 @@ int main()
 		srand((unsigned int)time(0));
 
 		int choice_word = rand() % (words.size() - 1);
-		strcpy(buf, words[choice_word].c_str());
+		strcpy_s(buf, words[choice_word].size(), words[choice_word].c_str());
 
 		retval = send(client_sock, buf, sizeof(buf), 0);
 
