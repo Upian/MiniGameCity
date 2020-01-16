@@ -129,10 +129,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BasePacket.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Singleton.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="Log.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

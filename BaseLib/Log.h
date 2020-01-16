@@ -5,6 +5,10 @@
 #include <fstream>
 #include <string>
 
+/*
+*	First create singleton class
+*	use Logging function
+*/
 namespace Util {
 	class LogManager :public Singleton<LogManager> {
 	public:

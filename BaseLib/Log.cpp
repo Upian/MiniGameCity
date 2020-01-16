@@ -46,7 +46,7 @@ namespace Util {
 			currTimeFormat.tm_mon + 1, currTimeFormat.tm_mday,
 			currTimeFormat.tm_hour, currTimeFormat.tm_min, currTimeFormat.tm_sec);
 
-		printf("%s\tLog message: %s", timeToString, msgBuf); //display console log
+		printf("%s\tLog message: %s\n", timeToString, msgBuf); //display console log
 		if (true == fileName.empty()) return;
 
 		//make local log
