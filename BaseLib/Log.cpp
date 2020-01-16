@@ -1,5 +1,11 @@
 #include "Log.h"
 #include <cstdarg>
+#include <ctime>
+#include <string>
+#include <cstdio>
+#include <direct.h>
+#include <cerrno>
+
 namespace Util {
 	LogManager::LogManager() {
 		m_writeFile = new std::ofstream();
@@ -29,15 +35,36 @@ namespace Util {
 
 		va_end(ap);
 
-		printf("Log message: %s", msgBuf);
+		time_t currTime = 0;
+		struct tm currTimeFormat;
+		currTime = time(NULL);
+		localtime_s(&currTimeFormat, &currTime);
+
+		char timeToString[50];
+		sprintf_s(timeToString, sizeof(timeToString), "%4d/%2d/%2d %2d:%2d:%2d", 
+			currTimeFormat.tm_year+1900,
+			currTimeFormat.tm_mon + 1, currTimeFormat.tm_mday,
+			currTimeFormat.tm_hour, currTimeFormat.tm_min, currTimeFormat.tm_sec);
+
+		printf("%s\tLog message: %s", timeToString, msgBuf); //display console log
 		if (true == fileName.empty()) return;
 
+		//make local log
 		Util::LogManager* logger = Util::LogManager::GetSingleton();
 		std::ofstream* fout = logger->GetFileStream();
-		fout->open(logger->GetDirectory() + fileName, std::ios_base::out | std::ios_base::app);
-		*fout << msgBuf << std::endl;
-		fout->close();
 
+		char date[20];
+		sprintf_s(date, sizeof(date), "%d.%d.%d", 
+			currTimeFormat.tm_year + 1900,
+			currTimeFormat.tm_mon + 1, currTimeFormat.tm_mday );
+
+		int result = _mkdir((logger->GetDirectory() + date).c_str());
+		if (0 == result || EEXIST == errno) {
+			fout->open(logger->GetDirectory() + date + "/" + fileName, std::ios_base::out | std::ios_base::app);
+			*fout << timeToString << "\t" << msgBuf << std::endl;
+			fout->close();
+		}
+	
 		return;
 	}
 }
