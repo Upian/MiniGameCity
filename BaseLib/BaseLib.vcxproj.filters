@@ -11,6 +11,15 @@
     <Filter Include="Packet">
       <UniqueIdentifier>{e1a98091-5f75-4338-a028-54a453640685}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DesignData">
+      <UniqueIdentifier>{c4e374c5-9a67-4d31-9f59-82158e507a82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{19e8d09b-135e-4161-9cbe-c0249a6c6028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{8a454554-142b-4530-b63f-6dafb8412a1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Log.h">
@@ -25,6 +34,24 @@
     <ClInclude Include="Config.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="DesignData.h">
+      <Filter>DesignData</Filter>
+    </ClInclude>
+    <ClInclude Include="DesignDataManager.h">
+      <Filter>DesignData</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseServer.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerCommon.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerManager.h">
+      <Filter>Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Log.cpp">
@@ -32,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="Config.cpp">
       <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseServer.cpp">
+      <Filter>Server</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

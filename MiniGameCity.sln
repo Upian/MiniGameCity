@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServer", "GameServer\Ga
 		{3668C209-8D97-4A50-96B4-F5FF881FE4D7} = {3668C209-8D97-4A50-96B4-F5FF881FE4D7}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcxproj", "{ECB7776C-4D69-456D-A4CD-D1E435DBAF8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +36,14 @@ Global
 		{47D89196-97B4-4AFE-8B82-A66857161D57}.Release|x64.Build.0 = Release|x64
 		{47D89196-97B4-4AFE-8B82-A66857161D57}.Release|x86.ActiveCfg = Release|Win32
 		{47D89196-97B4-4AFE-8B82-A66857161D57}.Release|x86.Build.0 = Release|Win32
+		{ECB7776C-4D69-456D-A4CD-D1E435DBAF8A}.Debug|x64.ActiveCfg = Debug|x64
+		{ECB7776C-4D69-456D-A4CD-D1E435DBAF8A}.Debug|x64.Build.0 = Debug|x64
+		{ECB7776C-4D69-456D-A4CD-D1E435DBAF8A}.Debug|x86.ActiveCfg = Debug|Win32
+		{ECB7776C-4D69-456D-A4CD-D1E435DBAF8A}.Debug|x86.Build.0 = Debug|Win32
+		{ECB7776C-4D69-456D-A4CD-D1E435DBAF8A}.Release|x64.ActiveCfg = Release|x64
+		{ECB7776C-4D69-456D-A4CD-D1E435DBAF8A}.Release|x64.Build.0 = Release|x64
+		{ECB7776C-4D69-456D-A4CD-D1E435DBAF8A}.Release|x86.ActiveCfg = Release|Win32
+		{ECB7776C-4D69-456D-A4CD-D1E435DBAF8A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

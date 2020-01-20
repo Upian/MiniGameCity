@@ -4,7 +4,9 @@
 
 namespace Util{
 	ConfigManager::ConfigManager() {}
-	ConfigManager::ConfigManager(const char* directory) : m_directory(directory) {}
+	ConfigManager::ConfigManager(const char* directory) {
+		m_directory.append(directory);
+	}
 	ConfigManager::~ConfigManager() {}
 
 	int GetConfigToInt(const char* fileName, const char* section, const char* key, int defaultValue /* = 0 */) {
@@ -14,7 +16,8 @@ namespace Util{
 		}
 
 		ConfigManager* config = ConfigManager::GetSingleton();
-		if (nullptr == config) return 0;
+		if (nullptr == config)
+			config = ConfigManager::CreateSingleton();
 		
 		std::string directory = config->GetDirectory().append(fileName);
 
@@ -29,7 +32,8 @@ namespace Util{
 		}
 		
 		ConfigManager* config = ConfigManager::GetSingleton();
-		if (nullptr == config) return nullptr;
+		if (nullptr == config) 
+			config = ConfigManager::CreateSingleton();
 		
 		std::string directory = config->GetDirectory().append(fileName);
 
@@ -49,7 +53,8 @@ namespace Util{
 		}
 		
 		ConfigManager* config = ConfigManager::GetSingleton();
-		if (nullptr == config) return;
+		if (nullptr == config) 
+			config = ConfigManager::CreateSingleton();
 		
 		std::string directory = config->GetDirectory().append(fileName);
 
@@ -60,6 +65,24 @@ namespace Util{
 		buffer = returnBuffer;
 
 		return;
+	}
+
+	bool GetConfigToBoolean(const char * fileName, const char * section, const char * key, bool defaultValue /* = false */) {
+		if ("" == fileName) {
+			Logging("Config.log", "error - Config file not exist");
+			return false;
+		}
+
+		ConfigManager* config = ConfigManager::GetSingleton();
+		if (nullptr == config)
+			config = ConfigManager::CreateSingleton();
+
+		std::string directory = config->GetDirectory().append(fileName);
+
+		if (0 < GetPrivateProfileInt(section, key, defaultValue, directory.c_str()))
+			return true;
+		else return false;
+		
 	}
 
 

@@ -130,10 +130,17 @@
   <ItemGroup>
     <ClInclude Include="BasePacket.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="DesignData.h" />
+    <ClInclude Include="DesignDataManager.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerManager.h" />
+    <ClInclude Include="ServerCommon.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="BaseServer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseServer.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Log.cpp" />
   </ItemGroup>
