@@ -12,9 +12,12 @@ enum Game_Mode
 
 enum Start_Packet_Name
 {
-	Start_Mastrt,
+	Start_Master,
 	Start_User,
 	Start_Player_Location,
+	Start_Player_Ready,
+	Start_Server_Timer_Start,
+	Start_Server_Timer_End
 };
 enum Twenty_Packet_Name
 {
