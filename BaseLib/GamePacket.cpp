@@ -1,4 +1,5 @@
 #include "GamePacket.h"
+#include <iostream>
 
 struct startMaster {
 	int type;
