@@ -140,6 +140,7 @@
     <ClInclude Include="BaseServer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BasePacket.cpp" />
     <ClCompile Include="BaseServer.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Log.cpp" />
