@@ -63,8 +63,5 @@
     <ClCompile Include="BaseServer.cpp">
       <Filter>Server</Filter>
     </ClCompile>
-    <ClCompile Include="BasePacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
