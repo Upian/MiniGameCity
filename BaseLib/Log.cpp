@@ -49,7 +49,7 @@ namespace Util {
 			currTimeFormat.tm_mon + 1, currTimeFormat.tm_mday,
 			currTimeFormat.tm_hour, currTimeFormat.tm_min, currTimeFormat.tm_sec);
 
-		Util::LogManager* logger = Util::LogManager::GetSingleton();
+		Util::LogManager* logger = Util::LogManager::GetInstance();
 		if (nullptr == logger)
 			return;
 

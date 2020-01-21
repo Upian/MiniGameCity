@@ -38,4 +38,10 @@ struct BufferInfo {
 	size_t			sendBufferSize = 0; 
 };
 
+struct ServerInfo {
+	ServerInfo() {
+		serverAddress.sin_family = AF_INET;
+	}
+	SOCKADDR_IN serverAddress;
+};
 #endif //!__BASELIB_SERVER_COMMON_H__

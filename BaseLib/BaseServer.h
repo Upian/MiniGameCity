@@ -2,11 +2,12 @@
 #ifndef __BASELIB_BASE_SERVER_H__
 #define __BASELIB_BASE_SERVER_H__
 
+#include <thread>
+
 #include "ServerCommon.h"
 #include "PlayerManager.h"
 #include "Log.h"
 #include "Config.h"
-#include <thread>
 
 /*
 *	BaseServer must inherit as public
@@ -14,6 +15,7 @@
 *	--usage--
 	class Server: public BaseServer<Server>
 	Server::CreateServer();
+	Server::GetServer()->SetPortNum(port number)
 	Server::GetServer()->InitializeBaseServer();
 	Server::GetServer()->RunServer();
 */
@@ -25,10 +27,12 @@ public:
 	template<typename ...T_Args> static T_Server* CreateServer(const T_Args& ...args);
 	static void DestroyServer();
 	static T_Server* GetServer();
-
+	
+	void SetPortNum(int portNum) { m_portNum = portNum; }
 	void InitializeBaseServer();
 	void RunServer();
-		
+	virtual void HandleBasePacket(BufferInfo* bufInfo) = 0;
+
 protected:
 	BaseServer();
 	virtual ~BaseServer();
@@ -42,23 +46,24 @@ private:
 	int m_portNum = 0;
 	
 	WSADATA m_wsaData;
-	SOCKET m_serverSocket  = 0;
-
+	SOCKET m_serverSocket  = 0; //
+	
 	HANDLE m_iocpHandle = nullptr;
 	bool m_runningThread = true;
+
 	//다른 서버 리스트
 
 };
 
 #pragma region Singleton
 template <typename T_Server>
-typename T_Server* BaseServer<T_Server>::m_instance = nullptr;
+T_Server* BaseServer<T_Server>::m_instance = nullptr;
 
 /*
 *	Create server
 */
 template <typename T_Server>
-typename T_Server* BaseServer<T_Server>::CreateServer() {
+T_Server* BaseServer<T_Server>::CreateServer() {
 	if (nullptr == m_instance)
 		m_instance = new T_Server();
 
@@ -67,9 +72,9 @@ typename T_Server* BaseServer<T_Server>::CreateServer() {
 
 template <typename T_Server>
 template <typename ...T_Args>
-typename T_Server* BaseServer<T_Server>::CreateServer(const T_Args& ...args) {
+T_Server* BaseServer<T_Server>::CreateServer(const T_Args& ...args) {
 	if (nullptr == m_instance)
-		m_instance == new T_Server(args...);
+		m_instance = new T_Server(args...);
 
 	return m_instance;
 }
@@ -78,7 +83,7 @@ typename T_Server* BaseServer<T_Server>::CreateServer(const T_Args& ...args) {
 *	Get server
 */
 template <typename T_Server>
-typename T_Server* BaseServer<T_Server>::GetServer() {
+T_Server* BaseServer<T_Server>::GetServer() {
 	return m_instance;
 }
 
@@ -102,10 +107,12 @@ void BaseServer<T_Server>::DestroyServer() {
 template<typename T_Server>
 BaseServer<T_Server>::BaseServer() :
 	m_portNum(Util::GetConfigToInt("BaseServer.ini", "Network", "Port", 19998)) {
-	Util::LogManager::CreateSingleton(
+	Util::LogManager::CreateInstance(
 		Util::GetConfigToString("BaseServer.ini", "Definition", "LogDir", "../../../Logs/").c_str(),
 		Util::GetConfigToBoolean("BaseServer.ini", "Definition", "ActiveConsoleLog", true),
 		Util::GetConfigToBoolean("BaseServer.ini", "Definition", "ActiveLocalLog", true));
+
+	PlayerManager::CreateInstance();
 }
 
 template<typename T_Server>
@@ -135,6 +142,10 @@ void BaseServer<T_Server>::InitializeBaseServer() {
 	memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+	if (0 == m_portNum) {
+		Util::Logging("BaseServer.log", "Error port: 0");
+		return;
+	}
 	serverAddress.sin_port = htons(m_portNum);
 
 	if (SOCKET_ERROR == bind(m_serverSocket, (SOCKADDR*)&serverAddress, sizeof(serverAddress))) {
@@ -162,7 +173,7 @@ void BaseServer<T_Server>::InitializeBaseServer() {
 	}
 
 	this->CreateIOWorkerThread();
-#pragma endregion 
+#pragma endregion Create IOCP handle
 
 	Util::Logging("BaseServer.log", "---------------------------------------------------------------");
 	Util::Logging("BaseServer.log", "-------------------------Start server--------------------------");
@@ -231,7 +242,6 @@ void BaseServer<T_Server>::CreateIOWorkerThread() {
 template<typename T_Server>
 void BaseServer<T_Server>::IOWorkerThread() {
 	BufferInfo* bufferInfo = nullptr;
-	Util::Logging("BaseServer.log", "Start Thread");
 	while (true == m_runningThread) {
 		DWORD recvBytes = 0;
 		SOCKET clientSocket;
@@ -247,7 +257,7 @@ void BaseServer<T_Server>::IOWorkerThread() {
 		}
 
 		bufferInfo->dataBuf.len = recvBytes;
-
+		this->HandleBasePacket(bufferInfo); //Handle packet
 		//Comment out because of thread safe issues
 		//Util::Logging("ServerMessage.log", "socket[%d] recv message: [%d]%s", clientSocket, bufferInfo->dataBuf.len, bufferInfo->dataBuf.buf);
 		

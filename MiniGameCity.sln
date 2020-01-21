@@ -6,6 +6,19 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLib", "BaseLib\BaseLib.vcxproj", "{3668C209-8D97-4A50-96B4-F5FF881FE4D7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServer", "GameServer\GameServer.vcxproj", "{47D89196-97B4-4AFE-8B82-A66857161D57}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3668C209-8D97-4A50-96B4-F5FF881FE4D7} = {3668C209-8D97-4A50-96B4-F5FF881FE4D7}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Login", "Login\Login.vcxproj", "{18BC0693-BB4E-4BE0-9D0D-869A903081DE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3668C209-8D97-4A50-96B4-F5FF881FE4D7} = {3668C209-8D97-4A50-96B4-F5FF881FE4D7}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoginServer", "LoginServer\LoginServer.vcxproj", "{FB2012B2-7DFA-4241-8340-77F426B91F4A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{18BC0693-BB4E-4BE0-9D0D-869A903081DE} = {18BC0693-BB4E-4BE0-9D0D-869A903081DE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +44,22 @@ Global
 		{47D89196-97B4-4AFE-8B82-A66857161D57}.Release|x64.Build.0 = Release|x64
 		{47D89196-97B4-4AFE-8B82-A66857161D57}.Release|x86.ActiveCfg = Release|Win32
 		{47D89196-97B4-4AFE-8B82-A66857161D57}.Release|x86.Build.0 = Release|Win32
+		{18BC0693-BB4E-4BE0-9D0D-869A903081DE}.Debug|x64.ActiveCfg = Debug|x64
+		{18BC0693-BB4E-4BE0-9D0D-869A903081DE}.Debug|x64.Build.0 = Debug|x64
+		{18BC0693-BB4E-4BE0-9D0D-869A903081DE}.Debug|x86.ActiveCfg = Debug|Win32
+		{18BC0693-BB4E-4BE0-9D0D-869A903081DE}.Debug|x86.Build.0 = Debug|Win32
+		{18BC0693-BB4E-4BE0-9D0D-869A903081DE}.Release|x64.ActiveCfg = Release|x64
+		{18BC0693-BB4E-4BE0-9D0D-869A903081DE}.Release|x64.Build.0 = Release|x64
+		{18BC0693-BB4E-4BE0-9D0D-869A903081DE}.Release|x86.ActiveCfg = Release|Win32
+		{18BC0693-BB4E-4BE0-9D0D-869A903081DE}.Release|x86.Build.0 = Release|Win32
+		{FB2012B2-7DFA-4241-8340-77F426B91F4A}.Debug|x64.ActiveCfg = Debug|x64
+		{FB2012B2-7DFA-4241-8340-77F426B91F4A}.Debug|x64.Build.0 = Debug|x64
+		{FB2012B2-7DFA-4241-8340-77F426B91F4A}.Debug|x86.ActiveCfg = Debug|Win32
+		{FB2012B2-7DFA-4241-8340-77F426B91F4A}.Debug|x86.Build.0 = Debug|Win32
+		{FB2012B2-7DFA-4241-8340-77F426B91F4A}.Release|x64.ActiveCfg = Release|x64
+		{FB2012B2-7DFA-4241-8340-77F426B91F4A}.Release|x64.Build.0 = Release|x64
+		{FB2012B2-7DFA-4241-8340-77F426B91F4A}.Release|x86.ActiveCfg = Release|Win32
+		{FB2012B2-7DFA-4241-8340-77F426B91F4A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
