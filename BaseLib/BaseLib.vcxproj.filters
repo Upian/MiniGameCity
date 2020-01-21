@@ -52,6 +52,9 @@
     <ClInclude Include="PlayerManager.h">
       <Filter>Player</Filter>
     </ClInclude>
+    <ClInclude Include="GamePacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Log.cpp">
@@ -64,6 +67,9 @@
       <Filter>Server</Filter>
     </ClCompile>
     <ClCompile Include="BasePacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePacket.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
   </ItemGroup>

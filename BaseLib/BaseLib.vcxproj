@@ -138,12 +138,14 @@
     <ClInclude Include="ServerCommon.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="BaseServer.h" />
+    <ClInclude Include="GamePacket.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasePacket.cpp" />
     <ClCompile Include="BaseServer.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="GamePacket.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
