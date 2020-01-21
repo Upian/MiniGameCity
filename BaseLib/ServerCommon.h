@@ -7,13 +7,13 @@
 
 #define BUFFER_SIZE 512
 
-enum ServerType : int8_t{
+enum ServerType{
 	serverTypeNone = 0,
 
 	serverTypeLogin,
 	serverTypeLobby,
 	serverTypeGame,
-	serverTypeDatabaseManager,
+	serverTypeDBManager,
 	serverTypeSocial,
 
 	serverTypeCount,

@@ -4,12 +4,14 @@
 
 #include "ServerCommon.h"
 #include "PlayerManager.h"
+#include "Log.h"
+#include "Config.h"
 #include <thread>
 
 /*
 *	BaseServer must inherit as public
 *	This is Singleton class
-*	usage
+*	--usage--
 	class Server: public BaseServer<Server>
 	Server::CreateServer();
 	Server::GetServer()->InitializeBaseServer();
@@ -24,13 +26,9 @@ public:
 	static void DestroyServer();
 	static T_Server* GetServer();
 
-	void RunServer();
 	void InitializeBaseServer();
-	//send
-//	virtual void SendToPlayer();
-
-	
-	
+	void RunServer();
+		
 protected:
 	BaseServer();
 	virtual ~BaseServer();
@@ -38,7 +36,6 @@ protected:
 private:
 	static T_Server* m_instance;
 
-	
 	void CreateIOWorkerThread();
 	void IOWorkerThread();
 
@@ -222,10 +219,10 @@ void BaseServer<T_Server>::RunServer() {
 template<typename T_Server>
 void BaseServer<T_Server>::CreateIOWorkerThread() {
 	size_t cpuNum = std::thread::hardware_concurrency();
-	Util::Logging("BaseServer.log", "Create threads - cpu cores: %d", cpuNum);
+	Util::Logging("BaseServer.log", "Create threads - cpu cores: %d", 2*cpuNum);
 
-	for (int i = 0; i < cpuNum; ++i) {
-		std::thread* th = new std::thread([this]()->void {
+	for (int i = 0; i < 2*cpuNum; ++i) {
+		std::thread* th = new std::thread([this, i]()->void {
 			this->IOWorkerThread();
 		});
 	}
@@ -234,7 +231,7 @@ void BaseServer<T_Server>::CreateIOWorkerThread() {
 template<typename T_Server>
 void BaseServer<T_Server>::IOWorkerThread() {
 	BufferInfo* bufferInfo = nullptr;
-
+	Util::Logging("BaseServer.log", "Start Thread");
 	while (true == m_runningThread) {
 		DWORD recvBytes = 0;
 		SOCKET clientSocket;
@@ -248,13 +245,12 @@ void BaseServer<T_Server>::IOWorkerThread() {
 			}
 			continue;
 		}
-		
-//		GetQueuedCompletionStatus(hCompletionPort, &BytesTransferred, (LPDWORD)&PerHandleData, (LPOVERLAPPED*)&PerIoData, INFINITE);
 
 		bufferInfo->dataBuf.len = recvBytes;
 
-		Util::Logging("ServerMessage.log", "socket[%d] send message: [%d]%s", clientSocket, bufferInfo->dataBuf.len, bufferInfo->dataBuf.buf);
-
+		//Comment out because of thread safe issues
+		//Util::Logging("ServerMessage.log", "socket[%d] recv message: [%d]%s", clientSocket, bufferInfo->dataBuf.len, bufferInfo->dataBuf.buf);
+		
 		bufferInfo->Clear();
 		DWORD flag = 0;
 		if (SOCKET_ERROR == WSARecv(clientSocket,

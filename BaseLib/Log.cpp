@@ -51,7 +51,7 @@ namespace Util {
 
 		Util::LogManager* logger = Util::LogManager::GetSingleton();
 		if (nullptr == logger)
-			logger = Util::LogManager::CreateSingleton();
+			return;
 
 		//Console log
 		if (true == logger->GetActiveConsoleLog()) 
@@ -63,13 +63,15 @@ namespace Util {
 		if (false == logger->GetActiveLocalLog()) return;
 
 		std::ofstream* fout = logger->GetFileStream();
-
+		if (nullptr == fout) return;
+		
 		//Make directory
 		char date[20];
 		sprintf_s(date, sizeof(date), "%d.%d.%d", 
 			currTimeFormat.tm_year + 1900,
 			currTimeFormat.tm_mon + 1, currTimeFormat.tm_mday );
 		int result = 0;
+		
 		if (false == logger->GetIsFolderExist()) {
 			result = _mkdir(logger->GetDirectory().c_str());
 			if(0 == result || EEXIST == errno)
@@ -79,7 +81,7 @@ namespace Util {
 		}
 	
 		if (0 == result || EEXIST == errno) {
-			fout->open(logger->GetDirectory() + date + "/" + fileName, std::ios_base::out | std::ios_base::app);
+			fout->open(logger->GetDirectory() + date + "/" + fileName, std::ios::app/* std::ios_base::out | std::ios_base::app*/);
 			*fout << timeToString << "\t" << msgBuf << std::endl;
 			fout->close();
 		}

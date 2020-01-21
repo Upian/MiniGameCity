@@ -14,7 +14,7 @@ public:
 	void PlayerLogin();
 	void PlayerLogout();
 	void PlayerTransferServer();
-
+	Player* FindPlayer();
 
 private:
 	DECLARE_SINGLETON(PlayerManager)
