@@ -129,25 +129,32 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BasePacket.h" />
+    <ClInclude Include="Client.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DesignData.h" />
     <ClInclude Include="DesignDataManager.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerManager.h" />
+    <ClInclude Include="Server.h" />
     <ClInclude Include="ServerCommon.h" />
+    <ClInclude Include="ServerManager.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="BaseServer.h" />
     <ClInclude Include="GamePacket.h" />
+    <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasePacket.cpp" />
     <ClCompile Include="BaseServer.cpp" />
+    <ClCompile Include="Client.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="GamePacket.cpp" />
+    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="ServerManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

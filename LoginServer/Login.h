@@ -7,10 +7,12 @@
 
 class LoginServer : public BaseServer<LoginServer> {
 public:
-	virtual void HandleBasePacket(BufferInfo* buf);
+
+	bool CheckLoginInfo();
+	void HandleSignUp();
 
 private:
-
+	MAKE_SERVER(LoginServer)
 };
 
 

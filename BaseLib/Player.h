@@ -3,22 +3,19 @@
 #define __BASELIB_PLAYER_H__
 
 #include "ServerCommon.h"
+#include "Client.h"
 
 using GPID = unsigned __int64; //Unique ID for each player (Game Player ID)
 class BasePacket;
 
-class Player {
+class Player : public Client{
 public:
-	
-
 	Player() {}
-	Player(SOCKET socket) : m_socket(socket) {}
+	Player(SOCKET socket) : Client(socket) {}
 	~Player() {}
 
 	SOCKET GetSocket() const { return m_socket; }
 	GPID GetGPID() const { return m_gamePlayerId; }
-
-	void SendToClient(BasePacket& basePacket);
 
 private:
 	SOCKET m_socket = 0;

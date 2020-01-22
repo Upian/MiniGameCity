@@ -5,18 +5,19 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="LoginServer">
-      <UniqueIdentifier>{1e9ea736-93f0-4f85-8174-d2c12080e686}</UniqueIdentifier>
+    <Filter Include="ManagementServer">
+      <UniqueIdentifier>{1ccbdbf0-1adc-4297-91ff-b00833ce1a04}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Login.h">
-      <Filter>LoginServer</Filter>
-    </ClInclude>
+    <ClCompile Include="ManagementServerMain.cpp" />
+    <ClCompile Include="ManagementServer.cpp">
+      <Filter>ManagementServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Login.cpp">
-      <Filter>LoginServer</Filter>
-    </ClCompile>
+    <ClInclude Include="ManagementServer.h">
+      <Filter>ManagementServer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,19 +5,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="LoginServer">
-      <UniqueIdentifier>{48c751bd-bbea-4c5f-9f4e-d584f075d43c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LoginServerMain.cpp" />
-    <ClCompile Include="Login.cpp">
-      <Filter>LoginServer</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Login.h">
-      <Filter>LoginServer</Filter>
-    </ClInclude>
+    <ClCompile Include="SocialServerMain.cpp" />
   </ItemGroup>
 </Project>

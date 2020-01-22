@@ -17,8 +17,11 @@
     <Filter Include="Server">
       <UniqueIdentifier>{19e8d09b-135e-4161-9cbe-c0249a6c6028}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Player">
+    <Filter Include="Client">
       <UniqueIdentifier>{8a454554-142b-4530-b63f-6dafb8412a1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThreadPool">
+      <UniqueIdentifier>{d4bfcb9a-00b8-4d48-b89c-b4538f65997b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -44,16 +47,28 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="ServerCommon.h">
-      <Filter>Util</Filter>
+      <Filter>Client</Filter>
     </ClInclude>
     <ClInclude Include="PlayerManager.h">
-      <Filter>Player</Filter>
+      <Filter>Client</Filter>
     </ClInclude>
     <ClInclude Include="GamePacket.h">
       <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerManager.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerCommon.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>ThreadPool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -70,13 +85,22 @@
       <Filter>Packet</Filter>
     </ClCompile>
     <ClCompile Include="PlayerManager.cpp">
-      <Filter>Player</Filter>
+      <Filter>Client</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Player</Filter>
+      <Filter>Client</Filter>
     </ClCompile>
     <ClCompile Include="GamePacket.cpp">
       <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerManager.cpp">
+      <Filter>Client</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

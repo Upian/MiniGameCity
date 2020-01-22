@@ -7,7 +7,7 @@
 
 #define BUFFER_SIZE 512
 
-enum ServerType{
+enum ServerType : BYTE{
 	serverTypeNone = 0,
 
 	serverTypeLogin,
@@ -18,7 +18,6 @@ enum ServerType{
 
 	serverTypeCount,
 };
-
 
 struct BufferInfo {
 	void Clear() {
