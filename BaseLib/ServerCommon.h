@@ -7,7 +7,7 @@
 
 #define BUFFER_SIZE 512
 
-enum ServerType{
+enum ServerType : BYTE{
 	serverTypeNone = 0,
 
 	serverTypeLogin,
@@ -18,7 +18,6 @@ enum ServerType{
 
 	serverTypeCount,
 };
-
 
 struct BufferInfo {
 	void Clear() {
@@ -38,4 +37,10 @@ struct BufferInfo {
 	size_t			sendBufferSize = 0; 
 };
 
+struct ServerInfo {
+	ServerInfo() {
+		serverAddress.sin_family = AF_INET;
+	}
+	SOCKADDR_IN serverAddress;
+};
 #endif //!__BASELIB_SERVER_COMMON_H__

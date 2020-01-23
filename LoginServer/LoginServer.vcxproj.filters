@@ -5,25 +5,19 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="GameServer">
-      <UniqueIdentifier>{6537d023-8f66-4f73-ad3c-488ef634a046}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lobby">
-      <UniqueIdentifier>{9d4e5b4b-429a-44c0-bd20-c402cbab40de}</UniqueIdentifier>
+    <Filter Include="LoginServer">
+      <UniqueIdentifier>{48c751bd-bbea-4c5f-9f4e-d584f075d43c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameServerMain.cpp" />
-    <ClCompile Include="GameServer.cpp">
-      <Filter>GameServer</Filter>
+    <ClCompile Include="LoginServerMain.cpp" />
+    <ClCompile Include="Login.cpp">
+      <Filter>LoginServer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameServer.h">
-      <Filter>GameServer</Filter>
-    </ClInclude>
-    <ClInclude Include="Lobby.h">
-      <Filter>Lobby</Filter>
+    <ClInclude Include="Login.h">
+      <Filter>LoginServer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

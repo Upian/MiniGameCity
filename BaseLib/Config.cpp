@@ -15,9 +15,9 @@ namespace Util{
 			return 0;
 		}
 
-		ConfigManager* config = ConfigManager::GetSingleton();
+		ConfigManager* config = ConfigManager::GetInstance();
 		if (nullptr == config)
-			config = ConfigManager::CreateSingleton();
+			config = ConfigManager::CreateInstance();
 		
 		std::string directory = config->GetDirectory().append(fileName);
 
@@ -31,9 +31,9 @@ namespace Util{
 			return "";
 		}
 		
-		ConfigManager* config = ConfigManager::GetSingleton();
+		ConfigManager* config = ConfigManager::GetInstance();
 		if (nullptr == config) 
-			config = ConfigManager::CreateSingleton();
+			config = ConfigManager::CreateInstance();
 		
 		std::string directory = config->GetDirectory().append(fileName);
 
@@ -52,9 +52,9 @@ namespace Util{
 			return;
 		}
 		
-		ConfigManager* config = ConfigManager::GetSingleton();
+		ConfigManager* config = ConfigManager::GetInstance();
 		if (nullptr == config) 
-			config = ConfigManager::CreateSingleton();
+			config = ConfigManager::CreateInstance();
 		
 		std::string directory = config->GetDirectory().append(fileName);
 
@@ -73,9 +73,9 @@ namespace Util{
 			return false;
 		}
 
-		ConfigManager* config = ConfigManager::GetSingleton();
+		ConfigManager* config = ConfigManager::GetInstance();
 		if (nullptr == config)
-			config = ConfigManager::CreateSingleton();
+			config = ConfigManager::CreateInstance();
 
 		std::string directory = config->GetDirectory().append(fileName);
 
