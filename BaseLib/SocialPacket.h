@@ -27,11 +27,31 @@ class SocialPacket : public BasePacket {
 public:
 	SocialPacket() {}
 	~SocialPacket() {}
-	virtual void Serialize(SocialPacket* _packet, char* _buf);
-	virtual void Deserialize(char* _buf, SocialPacket* _packet);
+	void SetSocialPacketType(SocialPacketType _type) {
+		socialPacketType = _type;
+		//basePacketType = BasePacketType::basePacketTypeSocial;
+	}
+	SocialPacketType GetSocialPacketType() {
+		return socialPacketType;
+	}
 private:
-	int chatType = 0;
-	char data[BUFFER_SIZE] = "";
+	SocialPacketType socialPacketType = socialPacketTypeNone;
+};
+
+class ChatAllRequest : public SocialPacket {
+public:
+	ChatAllRequest() {}
+	~ChatAllRequest() {}
+	virtual void Serialize(char* _buf) override;
+	virtual void Deserialize(char* _buf) override;
+	char* GetChatAllRequest() {
+		return chatAllRequest;
+	}
+	void SetChatAllRequest(char* _buf) {
+		*chatAllRequest = *_buf;
+	}
+private:
+	char chatAllRequest[BUFFER_SIZE] = "";
 };
 
 #endif

@@ -1,6 +1,5 @@
 #ifndef BASEPACKET_H
 #define BASEPACKET_H
-#include <iostream>
 
 #define BUFFER_SIZE 1024
 
@@ -19,81 +18,95 @@ class BasePacket {
 public:
 	BasePacket() {}
 	virtual ~BasePacket() {}
-	//메모리 문제
-	//에러 처리
-	//통신이 갑자기 끊긴다면 4바이트 못보낼 수 있다.
-	//중간에 구별자로 할것인지 개수를 정할 것인지
-	//Int -> Byte, (값, 버퍼, 버퍼시작위치 + 크기)
-	inline void IntSerial(int _val, char* _buf, int _st) {
-		if (_buf != nullptr && (_buf + _st != nullptr)) {
-			_buf = _buf + _st - 1;
-			//sz확실하진 않음
-			while (_val) {
-				*_buf-- = (_val % 10) + '0';
-				_val /= 10;
-			}
-			_buf = _buf - _st;
-		}
+
+	//Type -> Byte, (버퍼, 값)
+	inline void TypeSerial(char*& _buf, char _type) {
+		if (_buf == nullptr) return;
+
+		*_buf = _type;
+		++_buf;
 	}
-	//String -> Byte, (값, 버퍼, 버퍼시작위치)
-	inline void StringSerial(char* _data, char* _buf, int _st) {
-		if (_data != nullptr && _buf != nullptr) {
-			_buf = _buf + _st;
-			while (*_data != '\n') {
-				*_buf++ = *_data++;
-			}
-			_buf = _buf - _st - 1;
-		}
-	}
-	//BasePacket -> Buffer
-	virtual void Serialize(BasePacket* _packet, char* _buf);
-	//Byte -> Int, (버퍼, 값, 크기)
-	inline void IntDeserial(char*& _buf, int& _val, int len) {
-		if (_buf != nullptr) {
-			char tmp[10] = ""; //sz 결정
-			int idx = 0;
-			while (*_buf <= '9' && *_buf >= '0' && idx < len) {
-				tmp[idx++] = *_buf++;
-			}
-			_val = std::atoi(tmp);
-		}
-	}
-	//Byte -> String (버퍼, 값, 크기)
-	inline void StringDeserial(char* _buf, char* _data, int len) {
-		if (_buf != nullptr) {
-			int idx = 0;
-			while (*_buf != '\n' && idx < len) {
-				*_data++ = *_buf++;
-			}
-		}
-	}
-	//buffer -> BasePacket
-	virtual void Deserialize(char* _buf, BasePacket* _packet);
-	int GetType() {
+	//Byte -> Type, (버퍼)
+	inline char TypeDeserial(char*& _buf) {
+		if (_buf == nullptr) return 0;
+
+		char type = *_buf;
+		++_buf;
 		return type;
 	}
-	void SetType(int _type) {
-		type = _type;
-	}
-	char* GetData() {
-		return data;
-	}
-	void SetData(char* _data) {
-		*data = *_data;
-	}
-private:
-	int type = 0;
-	char data[BUFFER_SIZE] = "";
-};
 
-class AllChatPacket : public SocialPacket {
-public:
-	AllChatPacket() {}
-	~AllChatPacket() {}
-	virtual void Serialize(AllChatPacket* _packet, char* _buf);
-	virtual void Deserialize(char* _buf, AllChatPacket* _packet);
-private:
-	char data[BUFFER_SIZE] = "";
+	//Int -> Byte, (버퍼, 값)
+	inline void IntSerial(char*& _buf, int _val) {
+		if (_buf == nullptr) return;
+
+		for (int i = 0; i < 4; ++i) {
+			*_buf = _val;
+			++_buf;
+			_val >>= 8;
+		}
+	}
+	//Byte -> Int, (버퍼)
+	inline int IntDeserial(char*& _buf) {
+		if (_buf == nullptr) return -1;
+
+		int val = 0;
+		for (int i = 0; i < 4; ++i) {
+			int tmp = (*_buf << 8 * i);
+			val |= tmp;
+			++_buf;
+		}
+		return val;
+	}
+	//Bool -> Byte, (버퍼, 불값)
+	void BoolSerial(char*& _buf, bool _flag) {
+		if (_buf == nullptr) return;
+
+		*_buf = _flag;
+		++_buf;
+	}
+	//Byte -> Bool, (버퍼)
+	bool BoolDeserial(char*& _buf) {
+		if (_buf == nullptr) return false;
+
+		return *_buf;
+	}
+	//String -> Byte, (버퍼, 데이터)
+	inline void StringSerial(char*& _buf, char* _data) {
+		if (_buf == nullptr) return;
+		if (_data == nullptr) return;
+
+		while (*_data != '\n') {
+			*_buf = *_data;
+			++_buf;
+			++_data;
+		}
+		*_buf = '\n';
+		++_buf;
+	}
+	//Byte -> String (버퍼, 데이터)
+	inline void StringDeserial(char*& _buf, char* _data) {
+		if (_buf == nullptr) return;
+
+		while (*_buf != '\n') {
+			*_data = *_buf;
+			++_buf;
+			++_data;
+		}
+		*_data = '\n';
+		++_buf;
+	}
+
+	virtual void Serialize(char* _buf) = 0;
+	virtual void Deserialize(char* _buf) = 0;
+
+	BasePacketType GetBasePacketType() {
+		return basePacketType;
+	}
+	void SetBasePacketType(BasePacketType _type) {
+		basePacketType = _type;
+	}
+protected:
+	BasePacketType basePacketType = basePacketTypeNone;
 };
 
 #endif
