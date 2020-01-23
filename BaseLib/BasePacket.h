@@ -1,35 +1,18 @@
-#pragma once
-#ifndef PACKET_H
-#define PACKET_H
+#ifndef BASEPACKET_H
+#define BASEPACKET_H
 #include <iostream>
 
-#define BUFSZ 1024
-#define RADIX 10
+#define BUFFER_SIZE 1024
 
-//Response:p
-//Request:q
-enum Type {
-	none = 0,
-	login = 10,
-	pLogin, //id, pw,  
-	qLogin,
-	pLogout,
-	qLogout,
-	pSignUp, //id, pw, pwck, email 
-	qSignUp,
-	chat = 20,
-	pChat,
-	allChat,
-	whisperChat,
-	guildChat,
-	friendAdd, //id, yes or no 
-	friendInvite, //id 
-	guildCreate, //name, src 
-	guildInvite,
-	gameStart,
-	room, //title, pw, mode, create, enter, exit 
-	shopBuy, //id, price 
-	ranking = 60 //id 
+enum BasePacketType {
+	basePacketTypeNone = 0,
+	basePacketTypeLogin,
+	basePacketTypeGame,
+	basePacketTypeRoom,
+	basePacketTypeShop,
+	basePacketTypeRanking,
+	basePacketTypeSocial,
+	basePacketTypeSize,
 };
 
 class BasePacket {
@@ -100,28 +83,17 @@ public:
 	}
 private:
 	int type = 0;
-	char data[BUFSZ] = "";
+	char data[BUFFER_SIZE] = "";
 };
 
-class BaseChatPacket : public BasePacket {
-public:
-	BaseChatPacket() {}
-	~BaseChatPacket() {}
-	virtual void Serialize(BaseChatPacket* _packet, char* _buf);
-	virtual void Deserialize(char* _buf, BaseChatPacket* _packet);
-private:
-	int chatType = 0;
-	char data[BUFSZ] = "";
-};
-
-class AllChatPacket : public BaseChatPacket {
+class AllChatPacket : public SocialPacket {
 public:
 	AllChatPacket() {}
 	~AllChatPacket() {}
 	virtual void Serialize(AllChatPacket* _packet, char* _buf);
 	virtual void Deserialize(char* _buf, AllChatPacket* _packet);
 private:
-	char data[BUFSZ] = "";
+	char data[BUFFER_SIZE] = "";
 };
 
 #endif

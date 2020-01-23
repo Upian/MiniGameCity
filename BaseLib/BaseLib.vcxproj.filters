@@ -64,6 +64,27 @@
     <ClInclude Include="ServerCommon.h">
       <Filter>Server</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>ThreadPool</Filter>
+    </ClInclude>
+    <ClInclude Include="SocialPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="RankingPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="ShopPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Log.cpp">
@@ -85,6 +106,24 @@
       <Filter>Client</Filter>
     </ClCompile>
     <ClCompile Include="GamePacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="SocialPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="RankingPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="ShopPacket.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
     <ClCompile Include="Client.cpp">
