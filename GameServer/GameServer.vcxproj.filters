@@ -8,7 +8,7 @@
     <Filter Include="GameServer">
       <UniqueIdentifier>{6537d023-8f66-4f73-ad3c-488ef634a046}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lobby">
+    <Filter Include="Game">
       <UniqueIdentifier>{9d4e5b4b-429a-44c0-bd20-c402cbab40de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -17,13 +17,22 @@
     <ClCompile Include="GameServer.cpp">
       <Filter>GameServer</Filter>
     </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameServer.h">
       <Filter>GameServer</Filter>
     </ClInclude>
-    <ClInclude Include="Lobby.h">
-      <Filter>Lobby</Filter>
+    <ClInclude Include="Room.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomManager.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

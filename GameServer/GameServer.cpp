@@ -1,6 +1,7 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "GameServer.h"
-
+#include "RoomManager.h"
+#include "PlayerManager.h"
 GameServer::GameServer() {}
 GameServer::~GameServer() {}
 
@@ -26,6 +27,9 @@ void GameServer::InitializeGameServer() {
 	this->ConnectToManagementServer();
 	this->ConnectToRankingServer();
 	this->ConnectToSocialServer();
+
+	m_roomManager = RoomManager::CreateInstance();
+	m_playerManager = PlayerManager::CreateInstance();
 }
 
 void GameServer::ConnectToManagementServer() {

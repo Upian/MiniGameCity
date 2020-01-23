@@ -142,7 +142,6 @@
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="BaseServer.h" />
     <ClInclude Include="GamePacket.h" />
-    <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasePacket.cpp" />

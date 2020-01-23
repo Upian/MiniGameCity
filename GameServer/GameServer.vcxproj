@@ -21,10 +21,13 @@
   <ItemGroup>
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="GameServerMain.cpp" />
+    <ClCompile Include="Room.cpp" />
+    <ClCompile Include="RoomManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameServer.h" />
-    <ClInclude Include="Lobby.h" />
+    <ClInclude Include="Room.h" />
+    <ClInclude Include="RoomManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

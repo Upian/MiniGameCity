@@ -20,9 +20,6 @@
     <Filter Include="Client">
       <UniqueIdentifier>{8a454554-142b-4530-b63f-6dafb8412a1f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ThreadPool">
-      <UniqueIdentifier>{d4bfcb9a-00b8-4d48-b89c-b4538f65997b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Log.h">
@@ -66,9 +63,6 @@
     </ClInclude>
     <ClInclude Include="ServerCommon.h">
       <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="ThreadPool.h">
-      <Filter>ThreadPool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
