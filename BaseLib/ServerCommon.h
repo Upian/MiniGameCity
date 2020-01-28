@@ -4,8 +4,8 @@
 
 #include <WinSock2.h>
 #pragma comment(lib, "ws2_32.lib")
+#include "BasePacket.h"
 
-#define BUFFER_SIZE 512
 
 enum ServerType : BYTE{
 	serverTypeNone = 0,

@@ -5,8 +5,20 @@
 #include "ServerCommon.h"
 #include "Client.h"
 
+enum PlayerState {
+	playerStateNone = 0,
+
+	playerStateIdle = 0,
+	playerStateLobby = 0,
+	playerStateGame = 0,
+
+	playerStateCount = 0,
+
+};
+
 using GPID = unsigned __int64; //Unique ID for each player (Game Player ID)
 class BasePacket;
+class Room;
 
 class Player : public Client{
 public:
@@ -18,9 +30,9 @@ public:
 	GPID GetGPID() const { return m_gamePlayerId; }
 
 private:
-	SOCKET m_socket = 0;
-
 	GPID m_gamePlayerId = 0; //
 	bool m_isFirstLoginPlayer = true;
+
+	Room* m_room = nullptr;
 };
 #endif // !__BASELIB_PLAYER_H__

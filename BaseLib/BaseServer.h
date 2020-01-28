@@ -3,6 +3,7 @@
 #define __BASELIB_BASE_SERVER_H__
 
 #include <thread>
+#include <list>
 
 #include "ServerCommon.h"
 #include "PlayerManager.h"
@@ -54,11 +55,11 @@ private:
 	std::string m_serverName = "BaseServer";
 
 	WSADATA m_wsaData;
-	SOCKET m_serverSocket  = 0; //
+	SOCKET m_serverSocket = 0; //
 	
 	HANDLE m_iocpHandle = nullptr;
 	bool m_runningThread = true;
-
+	std::list<std::thread*> m_iocpList;
 	//다른 서버 리스트
 	
 };
@@ -117,10 +118,7 @@ void BaseServer<T_Server>::DestroyServer() {
 template<typename T_Server>
 BaseServer<T_Server>::BaseServer() :
 	m_portNum(Util::GetConfigToInt("BaseServer.ini", "Network", "Port", 19998)) {
-	Util::LogManager::CreateInstance(
-		Util::GetConfigToString("BaseServer.ini", "Definition", "LogDir", "../../../Logs/").c_str(),
-		Util::GetConfigToBoolean("BaseServer.ini", "Definition", "ActiveConsoleLog", true),
-		Util::GetConfigToBoolean("BaseServer.ini", "Definition", "ActiveLocalLog", true));
+	Util::LogManager::CreateInstance();
 }
 
 template<typename T_Server>
@@ -133,66 +131,67 @@ template<typename T_Server>
 void BaseServer<T_Server>::InitializeBaseServer() {
 #pragma region Server socket
 	if (0 != WSAStartup(MAKEWORD(2, 2), &m_wsaData)) {
-		Util::Logging(m_serverName + ".log", "WSAStartup error!");
+		Util::LoggingError(m_serverName + ".log", "WSAStartup error!");
 		_exit(0);
 		return;
 	}
 
 	m_serverSocket = WSASocketW(PF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	if (INVALID_SOCKET == m_serverSocket) {
-		Util::Logging(m_serverName + ".log", "Make socket error! socket: %d", m_serverSocket);
+		Util::LoggingError(m_serverName + ".log", "Make socket error! socket: %d", m_serverSocket);
 		_exit(0);
 		return;
 	}
-	Util::Logging(m_serverName + ".log", "Make socket success! socket: %d", m_serverSocket);
+	Util::LoggingInfo(m_serverName + ".log", "Make socket success! socket: %d", m_serverSocket);
 
 	SOCKADDR_IN serverAddress;
 	memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
 	if (0 == m_portNum) {
-		Util::Logging(m_serverName + ".log", "Error port number: 0");
+		Util::LoggingError(m_serverName + ".log", "Error port number: 0");
 		return;
 	}
 	serverAddress.sin_port = htons(m_portNum);
 
 	if (SOCKET_ERROR == bind(m_serverSocket, (SOCKADDR*)&serverAddress, sizeof(serverAddress))) {
-		Util::Logging(m_serverName + ".log", "Bind socket error!");
+		Util::LoggingError(m_serverName + ".log", "Bind socket error!");
 		closesocket(m_serverSocket);
 		WSACleanup();
 		_exit(0);
 		return;
 	}
-	Util::Logging(m_serverName + ".log", "Bind socket success!");
+	Util::LoggingInfo(m_serverName + ".log", "Bind socket success!");
 	if (SOCKET_ERROR == listen(m_serverSocket, 5)) {
-		Util::Logging(m_serverName + ".log", "Listen error!");
+		Util::LoggingError(m_serverName + ".log", "Listen error!");
 		closesocket(m_serverSocket);
 		WSACleanup();
 		_exit(0);
 	}
-	Util::Logging(m_serverName + ".log", "Listen success!");
+	Util::LoggingInfo(m_serverName + ".log", "Listen success!");
 #pragma endregion make socket and bind
 
 #pragma region IOCP
 	m_iocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 	if (nullptr == m_iocpHandle) {
-		Util::Logging(m_serverName + ".log", "IOCP Handle error!");
+		Util::LoggingError(m_serverName + ".log", "IOCP Handle error!");
 		_exit(0);
 	}
 
 	this->CreateIOWorkerThread();
 #pragma endregion Create IOCP handle
 
-	Util::Logging(m_serverName + ".log", "---------------------------------------------------------------");
-	Util::Logging(m_serverName + ".log", "--------------------- %s Start -----------------------", m_serverName.c_str());
-	Util::Logging(m_serverName + ".log", "---------------------------------------------------------------");
+	Util::LoggingInfo(m_serverName + ".log", "---------------------------------------------------------------");
+	Util::LoggingInfo(m_serverName + ".log", "--------------------- %s Start -----------------------", m_serverName.c_str());
+	Util::LoggingInfo(m_serverName + ".log", "---------------------------------------------------------------");
+
 	return;
 }
 
 template<typename T_Server>
 void BaseServer<T_Server>::RunServer() {
 	//player 객체
-
+	
 	SOCKET			clientSocket = 0;
 	SOCKADDR_IN		clientAddress;
 	int				AddressSize = sizeof(SOCKADDR_IN);
@@ -202,7 +201,7 @@ void BaseServer<T_Server>::RunServer() {
 	while (true) {
 		clientSocket = WSAAccept(m_serverSocket, (SOCKADDR*)&clientAddress, &AddressSize, NULL, NULL);
 		if (INVALID_SOCKET == clientSocket) {
-			Util::Logging(m_serverName + ".log", "Accept client error!");
+			Util::LoggingError(m_serverName + ".log", "Accept client error!");
 			continue;
 		}
 
@@ -212,7 +211,7 @@ void BaseServer<T_Server>::RunServer() {
 
 		tempBuffer = new BufferInfo;
 		if (nullptr == tempBuffer) {
-			Util::Logging(m_serverName + ".log", "Can not create BufferInfo");
+			Util::LoggingError(m_serverName + ".log", "Can not create BufferInfo");
 			continue;
 		}
 		ZeroMemory(&tempBuffer->overlapped, sizeof(tempBuffer->overlapped));
@@ -229,36 +228,41 @@ void BaseServer<T_Server>::RunServer() {
 									&tempBuffer->overlapped,
 									NULL)
 			&& WSA_IO_PENDING != WSAGetLastError()) {
-			Util::Logging(m_serverName + ".log", "IO pendding error! code: %d", WSAGetLastError());
+			Util::LoggingError(m_serverName + ".log", "IO pendding error! code: %d", WSAGetLastError());
 			continue;
 		}
 	
-		Util::Logging(m_serverName + ".log", "Connect client socket[%d]", tempBuffer->socket);
+		Util::LoggingInfo(m_serverName + ".log", "Connect client socket[%d]", tempBuffer->socket);
 	}
 }
 
 template<typename T_Server>
 void BaseServer<T_Server>::CreateIOWorkerThread() {
 	size_t cpuNum = std::thread::hardware_concurrency();
-	Util::Logging(m_serverName + ".log", "Create threads - cpu cores: %d", 2*cpuNum);
+
+	Util::LoggingInfo(m_serverName + ".log", "Create threads - cpu cores: %d", 2*cpuNum);
 
 	for (int i = 0; i < 2*cpuNum; ++i) {
 		std::thread* th = new std::thread([this, i]()->void {
 			this->IOWorkerThread();
 		});
+
+		m_iocpList.push_back(th);
 	}
 }
 
 template<typename T_Server>
 void BaseServer<T_Server>::IOWorkerThread() {
 	BufferInfo* bufferInfo = nullptr;
+
+	Util::LoggingInfo("0_test.log", "thread safe test");
 	while (true == m_runningThread) {
 		DWORD recvBytes = 0;
 		SOCKET clientSocket;
 		
 		if (false == GetQueuedCompletionStatus(m_iocpHandle, &recvBytes, (PULONG_PTR)&clientSocket, (LPOVERLAPPED*)&bufferInfo, INFINITE)) {
 			if(0 == recvBytes) {
-				Util::Logging(m_serverName + ".log", "socket[%d] is disconnected", clientSocket);
+				Util::LoggingInfo(m_serverName + ".log", "socket[%d] is disconnected", clientSocket);
 				delete bufferInfo;
 				bufferInfo = nullptr;
 				closesocket(clientSocket);
@@ -269,7 +273,7 @@ void BaseServer<T_Server>::IOWorkerThread() {
 		bufferInfo->dataBuf.len = recvBytes;
 		this->HandleBasePacket(bufferInfo); //Handle packet
 		//Comment out because of thread safe issues
-		//Util::Logging("ServerMessage.log", "socket[%d] recv message: [%d]%s", clientSocket, bufferInfo->dataBuf.len, bufferInfo->dataBuf.buf);
+		//Util::LoggingInfo("ServerMessage.log", "socket[%d] recv message: [%d]%s", clientSocket, bufferInfo->dataBuf.len, bufferInfo->dataBuf.buf);
 		
 		bufferInfo->Clear();
 		DWORD flag = 0;
@@ -281,7 +285,7 @@ void BaseServer<T_Server>::IOWorkerThread() {
 									&(bufferInfo->overlapped),
 									NULL)
 			&& WSA_IO_PENDING != WSAGetLastError()) {
-			Util::Logging(m_serverName + ".log", "IO pendding error! code: %d", WSAGetLastError());
+			Util::LoggingError(m_serverName + ".log", "IO pendding error! code: %d", WSAGetLastError());
 		}		
 	}
 }

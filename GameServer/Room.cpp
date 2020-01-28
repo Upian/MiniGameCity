@@ -1,38 +1,49 @@
+#include "RoomManager.h"
 #include "Room.h"
 #include "Player.h"
 
 Room::Room(size_t maxPlayer, Player* master) : 
 	m_maxPlayer(maxPlayer),
 	m_roomMaster(master) {
-	this->EnterRoom(master);
+	this->PlayerEnterRoom(master);
 	m_roomManager = RoomManager::GetInstance();
+	m_roomState = RoomState::roomStateLobby;
+
+}
+
+Room::~Room() {
+
 }
 
 void Room::StartGame(std::function<void(void)> game) {
+	if (RoomState::roomStateLobby != m_roomState)
+		return;
+	if (nullptr != m_inGame)
+		return;
 
+	m_inGame = new std::thread(game);
 
 }
 
-bool Room::EnterRoom(Player* player) {
+bool Room::PlayerEnterRoom(Player* player) {
 	if (nullptr == player) 
 		return false;
 
-	if (m_maxPlayer == m_playerList.size())
+	if (m_maxPlayer == m_playerManager.GetPlayerCount())
 		return false;
 	
-	m_playerList.push_back(player);
+	m_playerManager.InsertPlayer(player);
 	return true;
 }
 
-void Room::LeaveRoom(Player* player) {
+void Room::PlayerLeaveRoom(Player* player) {
 	if (nullptr == player)
 		return;
 	
-	m_playerList.remove(player); //remove player
+	m_playerManager.RemovePlayer(player);//remove player
 	
-	
-	if (m_roomMaster != player)
-		return;
+	if (m_roomMaster == player) //If the player is room master
+		m_roomMaster = m_playerManager.GetPlayerList().front(); //
 
-	m_roomMaster = player;
+	return;
 }

@@ -11,7 +11,7 @@ namespace Util{
 
 	int GetConfigToInt(const char* fileName, const char* section, const char* key, int defaultValue /* = 0 */) {
 		if ("" == fileName) {
-			Logging("Config.log", "error - Config file not exist");
+		LoggingError("Config.log", "error - Config file not exist");
 			return 0;
 		}
 
@@ -27,7 +27,7 @@ namespace Util{
 	//값 반환
 	std::string GetConfigToString(const char* fileName, const char* section, const char* key, const char* defaultValue /* = "" */) {
 		if ("" == fileName) {
-			Logging("Config.log", "error - Config file not exist");
+			LoggingError("Config.log", "error - Config file not exist");
 			return "";
 		}
 		
@@ -46,7 +46,7 @@ namespace Util{
 	//buffer를 통해 반환
 	void GetConfigToString(const char* fileName, const char* section, const char* key, std::string& buffer, const char* defaultValue /* = "" */) {
 		if ("" == fileName) {
-			Logging("Config.log", "error - Config file not exist");
+			LoggingError("Config.log", "error - Config file not exist");
 			buffer.clear();
 			buffer = defaultValue;
 			return;
@@ -69,7 +69,7 @@ namespace Util{
 
 	bool GetConfigToBoolean(const char * fileName, const char * section, const char * key, bool defaultValue /* = false */) {
 		if ("" == fileName) {
-			Logging("Config.log", "error - Config file not exist");
+			LoggingError("Config.log", "error - Config file not exist");
 			return false;
 		}
 

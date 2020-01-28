@@ -16,7 +16,7 @@ public:
 	
 	//Get manager
 	RoomManager* GetRoomManager() const { return m_roomManager; }
-	PlayerManager* GetPlayerManager() const { return m_playerManager; }
+//	PlayerManager* GetPlayerManager() const { return m_playerManager; }
 
 private:
 	MAKE_SERVER(GameServer)
@@ -30,7 +30,7 @@ private:
 
 	//manager
 	RoomManager* m_roomManager = nullptr;
-	PlayerManager* m_playerManager = nullptr;
+//	PlayerManager m_playerManager;
 };
 
 

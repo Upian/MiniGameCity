@@ -2,6 +2,7 @@
 #include "GameServer.h"
 #include "RoomManager.h"
 #include "PlayerManager.h"
+#include "BasePacket.h"
 GameServer::GameServer() {}
 GameServer::~GameServer() {}
 
@@ -13,10 +14,11 @@ GameServer::~GameServer() {}
 void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 	//DeSerialize bufInfo->dataBuf.buf
 
+
+
+
 	//switch(packet type) ...
-
 	printf("Game server -- recv packet\n");
-
 }
 
 void GameServer::HandleAcceptClient(SOCKET clientSocket) {
@@ -29,13 +31,12 @@ void GameServer::InitializeGameServer() {
 	this->ConnectToSocialServer();
 
 	m_roomManager = RoomManager::CreateInstance();
-	m_playerManager = PlayerManager::CreateInstance();
 }
 
 void GameServer::ConnectToManagementServer() {
 	m_managementServer = WSASocketW(PF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	if (INVALID_SOCKET == m_managementServer) {
-		//LOGGING
+		Util::LoggingError("GameServer.log", "ERROR - Can not create socket");
 		return;
 	}
 
@@ -46,12 +47,14 @@ void GameServer::ConnectToManagementServer() {
 	address.sin_port = htons(Util::GetConfigToInt("GameServer.ini", "Network", "ManagementServerPort", 19999));
 
 	if (SOCKET_ERROR == connect(m_managementServer, (SOCKADDR*)&address, sizeof(address))) {
-		//LOGGING
+		Util::LoggingFatal("GameServer.log", "ERROR - Can not Connect to management server");
 		_exit(0);
 	}
 
-	Util::Logging("GameServer.log", "Success to connect ManagementServer");
+	Util::LoggingInfo("GameServer.log", "Success - connect to management server");
+	
 	//send packet whitch this server is GameServer
+	
 	std::string testStr = "connect GameServer!!!!!!!!!!!!";
 	send(m_managementServer, testStr.c_str(), testStr.length(), 0);
 }

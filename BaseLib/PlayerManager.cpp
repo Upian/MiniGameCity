@@ -3,21 +3,15 @@
 #include "Log.h"
 #include <memory>
 
-PlayerManager::PlayerManager() {
 
-}
-PlayerManager::~PlayerManager() {
+void PlayerManager::RemovePlayer(GPID key) {
+	Player* pPlayer = this->FindPlayer(key);
 
-}
-
-void PlayerManager::PlayerLogin(SOCKET socket) {
-	m_playerList.emplace_back(new Player(socket));
-}
-
-void PlayerManager::PlayerLogout(GPID key) {
-	auto pPlayer = this->FindPlayer(key);
-	
 	m_playerList.remove(pPlayer);
+}
+
+void PlayerManager::RemovePlayer(Player* player) {
+	m_playerList.remove(player);
 }
 
 void PlayerManager::PlayerDisconnect(SOCKET key) {

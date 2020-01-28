@@ -16,7 +16,7 @@ public:
 	void SetSocket(SOCKET socket) { m_socket = socket; }
 	SOCKET GetSocket() const { return m_socket; }
 
-private:
+protected:
 	SOCKET m_socket = 0;
 	SOCKADDR_IN m_address;
 };
