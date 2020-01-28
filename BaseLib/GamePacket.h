@@ -4,36 +4,33 @@
 
 enum Game_Mode
 {
-	Twenty,
-	Relay,
-	Ban,
-	Catch
-};
-
-enum Start_Packet_Name
-{
-	Start_Master,
-	Start_User,
-	Start_Player_Location,
-	Start_Player_Ready,
-	Start_Server_Timer_Start,
-	Start_Server_Timer_End
+	Twenty_Question,
+	Relay_Novels_Writing,
+	Ban_Word_Game,
+	Catch_Mind
 };
 enum Twenty_Packet_Name
 {
-	Twenty_Quiz_Answer_Response,
-	Twenty_Is_Questioner_Response,
-	Twenty_Question_Request,
-	Twenty_Question_Response,
-	Twenty_Question_OX_Request,
-	Twenty_Question_OX_Response,
-	Twenty_Answer_Request,
-	Twenty_Answer_O_Response,
-	Twenty_Answer_X_Response,
-	Twenty_Timer
+	Twenty_Player_Location_Setting,
+	Twenty_Player_Ready_Complete,
+	Twenty_First_Timer_Start,
+	Twenty_First_Timer_End,
+	Twenty_Question_Provide,
+	Twenty_Remain_Time_Check,
+	Twenty_Ask_Time_Over,
+	Twenty_Asker_Question,
+	Twenty_Asker_Question_Broadcast,
+	Twenty_Provider_Reply,
+	Twenty_Provider_Reply_Broadcast,
+	Twenty_Asker_Answer,
+	Twenty_Asker_Answer_Correct,
+	Twenty_Asker_Answer_Wrong,
+	Twenty_Question_Chance_Over,
+	Twenty_Provider_Reply_Time_Over
 };
 enum Relay_Packet_Name
 {
+	//제작중
 	Relay_Start_Response,
 	Relay_Sentens_Request,
 	Relay_Sentens_Response,
@@ -43,6 +40,7 @@ enum Relay_Packet_Name
 };
 enum Ban_Packet_Name
 {
+	//제작중
 	Ban_Start_Response,
 	Ban_Set_Request,
 	Ban_Round_Start_Response,
@@ -53,6 +51,7 @@ enum Ban_Packet_Name
 };
 enum Catch_Pakcet_Name
 {
+	//제작중
 	Catch_Start_Response,
 	Catch_Quiz_Answer_Response,
 	Catch_Paint_Response,
@@ -61,5 +60,7 @@ enum Catch_Pakcet_Name
 	Catch_Chat_Request,
 	Catch_Timer
 };
-
+struct simpleTypePacket; //다른 정보 없는 패킷
+struct intTypePacket; // int 변수 추가 패킷
+struct charTypePacket; // char 배열 추가 패킷
 #endif
