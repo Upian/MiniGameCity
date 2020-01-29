@@ -11,6 +11,9 @@
     <Filter Include="Game">
       <UniqueIdentifier>{9d4e5b4b-429a-44c0-bd20-c402cbab40de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Packet">
+      <UniqueIdentifier>{6c4a77e8-829e-4e60-81c1-3023005c145f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServerMain.cpp" />
@@ -39,6 +42,9 @@
     </ClInclude>
     <ClInclude Include="InGame.h">
       <Filter>GameServer</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomPacket.h">
+      <Filter>Packet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

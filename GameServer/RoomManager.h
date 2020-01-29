@@ -2,27 +2,36 @@
 #ifndef __GAMESERVER_ROOM_MANAGER_H__
 #define __GAMESERVER_ROOM_MANAGER_H__
 #include <list>
+#include <stack>
 
-#include "Singleton.h"
+#include "Room.h"
+#include "RoomPacket.h"
 
-
-class Room;
 class Player;
 
-class RoomManager : public Util::Singleton<RoomManager> {
+class RoomManager{
 public:
-	void MakeRoom(size_t maxPlayer, Player* master);
-	void DestroyRoom();
+	~RoomManager();
 
-//	Room* FindRoom();
+	void MakeRoom(size_t maxPlayer, Player* master);
+
+	void Initialize();
+	Room& FindRoom(Player* pplayer);
 
 	size_t GetRoomCount() const { m_roomList.size(); }
 
+	//Packet Handling
+	
 private:
-	DECLARE_SINGLETON(RoomManager)
+	void ClearDeactivatedRoom();
+	std::thread* m_roomWatcher = nullptr;
+
 	std::list<Room> m_roomList;
 	
-	size_t m_minPlayer = 1 ;	//#DesignData
+	std::stack<int> m_roomNumberList;
+	int m_maxRoomNumber = 100; //#DesignData
+
+	size_t m_minPlayer = 1;	//#DesignData
 	size_t m_maxPlayer = 6;	//#DesignData
 };
 

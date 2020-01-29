@@ -22,14 +22,6 @@ namespace Util {
 	{
 	}
 
-//	LogManager::LogManager(const char* directory, int logLevel, bool isActiveConsoleLog /* = true */, bool isActiveLocalLog /* = true*/) :
-//		m_directory(directory),
-//		m_logLevel(logLevel),
-//		m_isActiveConsoleLog(isActiveConsoleLog),
-//		m_isActiveLocalLog(isActiveLocalLog){
-//		m_writeFile = new std::ofstream();
-//	}
-
 	LogManager::~LogManager() {
 		if (nullptr != m_writeFile) {
 			delete m_writeFile;
@@ -48,7 +40,6 @@ namespace Util {
 
 		if (logger->GetLogLevel() < logLevel)
 			return;
-
 
 		int len = 0;
 		char msgBuf[1024] = { 0, };

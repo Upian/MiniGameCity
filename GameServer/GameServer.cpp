@@ -1,8 +1,9 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "GameServer.h"
-#include "RoomManager.h"
 #include "PlayerManager.h"
-#include "BasePacket.h"
+#include "RoomManager.h"
+#include "RoomPacket.h"
+
 GameServer::GameServer() {}
 GameServer::~GameServer() {}
 
@@ -13,24 +14,71 @@ GameServer::~GameServer() {}
 */
 void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 	//DeSerialize bufInfo->dataBuf.buf
+//	Player* pPlayer = new Player();
+//	m_roomManager.MakeRoom(10, pPlayer);
+//	m_roomManager.FindRoom(pPlayer).StartGame(nullptr);
+	
 
+	BasePacketType type = (BasePacketType)TypeDeserial(bufInfo->dataBuf.buf);
+	
+	switch (type) {
+	case basePacketTypeRoom: {
+		this->HandlePacketRoom(bufInfo->dataBuf.buf); 
+		break;
+	}
+		
+	default:
+		Util::LoggingInfo("GameServer.log", "Recv wrong base packet ID: %d", type);
+	}
+	
 
-
-
-	//switch(packet type) ...
-	printf("Game server -- recv packet\n");
 }
+#pragma region Handle packet
+/*
+*	Login server -> Game server
+*	플레이어의 정보를 우선적으로 전달
+*	유저가 이 과정을 하지 않고 접근할 경우 차단
+*/
+void GameServer::HandlePacketPrepareTransfer() {
+
+}
+
+/*
+*	Game client -> Game server
+*	방 관련 패킷 처리
+*/ 
+void GameServer::HandlePacketRoom(const char* buff) {
+	PacketTypeRoom type = (PacketTypeRoom)TypeDeserial((char*&)buff);
+
+	switch (type) {
+	case PacketTypeRoom::packetTypeRoomMakeRoomRequest: {
+		//m_roomManager.MakeRoom(nullptr);
+	}
+	case PacketTypeRoom::packetTypeRoomRoomListRequest: {
+
+	}
+	case PacketTypeRoom::packetTypeRoomEnterRoomRequest: {
+
+	}
+	default:
+		Util::LoggingInfo("GameServer.log", "Recv wrong room packet ID: %d", type);
+	}
+}
+
+#pragma endregion Handle packet functions
+
 
 void GameServer::HandleAcceptClient(SOCKET clientSocket) {
 
 }
+
 
 void GameServer::InitializeGameServer() {
 	this->ConnectToManagementServer();
 	this->ConnectToRankingServer();
 	this->ConnectToSocialServer();
 
-	m_roomManager = RoomManager::CreateInstance();
+	m_roomManager.Initialize();
 }
 
 void GameServer::ConnectToManagementServer() {

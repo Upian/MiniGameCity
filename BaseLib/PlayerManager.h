@@ -22,7 +22,8 @@ public:
 
 	std::list<Player*>& GetPlayerList() { return m_playerList; }
 	size_t GetPlayerCount() const { return m_playerList.size(); }
-	
+	bool IsPlayerEmpty() const { return m_playerList.empty(); }
+
 	Player* FindPlayer(GPID playerId);
 	Player* FindPlayerBySocket(SOCKET socket);
 

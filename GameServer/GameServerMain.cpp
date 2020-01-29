@@ -10,6 +10,7 @@ int main(void) {
 	pServer->InitializeGameServer();
 
 	pServer->RunServer();
+
 	//getchar();
 	return 0;
 }
