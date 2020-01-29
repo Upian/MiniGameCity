@@ -2,74 +2,10 @@
 #ifndef _IN_GAME_MAIN_H_
 #define _IN_GAME_MAIN_H_
 
-#include <WinSock2.h>
 #include <vector>
-#include <time.h>
-
-#include "Player.h"
 
 class InGame;
 
-enum Game_Mode
-{
-	Game_Mode_None,
-	Twenty_Question,
-	Relay_Novels_Writing,
-	Ban_Word_Game,
-	Catch_Mind
-};
-enum Twenty_Packet_Name
-{
-	//수정중
-	Twenty_Player_Location_Setting,
-	Twenty_Player_Ready_Complete,
-	Twenty_First_Timer_Start,
-	Twenty_First_Timer_End,
-	Twenty_Question_Provide,
-	Twenty_Remain_Time_Check,
-	Twenty_Ask_Time_Over,
-	Twenty_Asker_Question,
-	Twenty_Asker_Question_Broadcast,
-	Twenty_Provider_Reply,
-	Twenty_Provider_Reply_Broadcast,
-	Twenty_Asker_Answer,
-	Twenty_Asker_Answer_Correct,
-	Twenty_Asker_Answer_Wrong,
-	Twenty_Question_Chance_Over,
-	Twenty_Provider_Reply_Time_Over
-};
-enum Relay_Packet_Name
-{
-	//제작중
-	Relay_Start_Response,
-	Relay_Sentens_Request,
-	Relay_Sentens_Response,
-	Relay_Score_Request,
-	Relay_Next_Response,
-	Relay_Timer
-};
-enum Ban_Packet_Name
-{
-	//제작중
-	Ban_Start_Response,
-	Ban_Set_Request,
-	Ban_Round_Start_Response,
-	Ban_Chat_Request,
-	Ban_Banner_Set_Responce,
-	Ban_End_Game_Responce,
-	Ban_Timer
-};
-enum Catch_Pakcet_Name
-{
-	//제작중
-	Catch_Start_Response,
-	Catch_Quiz_Answer_Response,
-	Catch_Paint_Response,
-	Catch_Paint_Request,
-	Catch_Chat_Response,
-	Catch_Chat_Request,
-	Catch_Timer
-};
 struct simpleTypePacket; //다른 정보 없는 패킷
 struct intTypePacket; // int 변수 추가 패킷
 struct charTypePacket; // char 배열 추가 패킷
@@ -77,23 +13,38 @@ struct boolTypePacket; //bool 변수 추가 패킷
 
 class InGame {
 
+	//사용할 변수
+	int		Game_Round;			//게임 라운드
+	int		Question_Count;		//질문 횟수 남은 것
+	int		player_count;		//인게임 플레이어 수
+	int		Asker_Timer;		//질문자 질문 타이머
+	int		Provider_Timer;		//출제자 답변 타이머
+	time_t	Doing_Time;			//타이머 동작하는 시간
+
+	//플레이어 정보를 담을 벡터
+	std::vector<Player> Ingame_Player;
+	std::vector<Player> Asker;
+
+	//출제자와 질문자를 가리킬 iterator
+	std::vector<Player>::iterator Quiz_Provider;
+	std::vector<Player>::iterator Questioner;
+
 	//기본 함수
 	InGame();
 	~InGame();
 
-	//게임에 관련된 함수
-	void Game_Start(LPVOID arg);	//게임에 참여하는 플레이어 정보와 게임타입을 매개변수로 받으면 됨
+	//게임시작 함수
 	void Twenty_Question_Game();	//스무고개
 	void Relay_Novel_Game();		//릴레이소설
 	void Ban_Keyword_Game();		//금칙어 게임
 	void Catch_Mind_Game();			//캐치마인드
 
 	//스무고개 함수
-
+	void Next_Asker();				//다음 질문자를 가리킴
 
 	//기타 함수
 	void Read_File();				//파일 읽는 함수
 	void Random_Int();				//무작위 숫자 리턴
-	void Score_Set();				//
+	void Score_Set();				//점수계산 및 출력
 };
 #endif
