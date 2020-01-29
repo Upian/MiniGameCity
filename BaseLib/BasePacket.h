@@ -7,6 +7,21 @@
 
 typedef __int32 int32;
 
+/*
+	
+	대분류 -> BasePacketType basePacketType = (BasePacketType)TypeDeserial((char*&)buf);
+	중분류 -> SocialPacketType socialPacketType = (SocialPacketType)TypeDeserial((char*&)buf);
+	
+	=== Deserialize ===
+	ChatAllRequest chat{};
+	chat.Deserialize(buf);
+
+	=== Serialize ===
+	char* buf = chat.Serialize();
+
+*/
+
+
 enum BasePacketType : char {
 	basePacketTypeNone = 0,
 	basePacketTypeLogin,
@@ -60,6 +75,37 @@ public:
 		memcpy(_buf, _data, len * sizeof(char));
 		_buf += len * sizeof(char);
 	}
+	//Byte -> Bool, (버퍼)
+	inline bool BoolDeserial(char*& _buf) {
+		if (_buf == nullptr) return false;
+
+		return *_buf;
+	}
+
+	//Byte -> int32, (버퍼)
+	inline int32 IntDeserial(char*& _buf) {
+		if (_buf == nullptr) return -1;
+
+		int32 val = 0;
+		for (int32 i = 0; i < sizeof(int32); ++i) {
+			int32 tmp = (*_buf << 8 * i);
+			val |= tmp;
+			++_buf;
+		}
+		return val;
+	}
+
+	//Byte -> String (버퍼)
+	inline char* StringDeserial(char*& _buf) {
+		if (_buf == nullptr) return nullptr;
+
+		int32 len = strlen(_buf) + 1;
+		char* data = new char[len];
+
+		memcpy(data, _buf, len * sizeof(char));
+		_buf += len * sizeof(char);
+		return data;
+	}
 
 	virtual char* Serialize() = 0;
 	virtual void Deserialize(char* _buf) = 0;
@@ -81,38 +127,6 @@ inline char TypeDeserial(char*& _buf) {
 	char type = *_buf;
 	++_buf;
 	return type;
-}
-
-//Byte -> Bool, (버퍼)
-inline bool BoolDeserial(char*& _buf) {
-	if (_buf == nullptr) return false;
-
-	return *_buf;
-}
-
-//Byte -> int32, (버퍼)
-inline int32 IntDeserial(char*& _buf) {
-	if (_buf == nullptr) return -1;
-
-	int32 val = 0;
-	for (int32 i = 0; i < sizeof(int32); ++i) {
-		int32 tmp = (*_buf << 8 * i);
-		val |= tmp;
-		++_buf;
-	}
-	return val;
-}
-
-//Byte -> String (버퍼)
-inline char* StringDeserial(char*& _buf) {
-	if (_buf == nullptr) return nullptr;
-
-	int32 len = strlen(_buf) + 1;
-	char* data = new char[len];
-
-	memcpy(data, _buf, len * sizeof(char));
-	_buf += len * sizeof(char);
-	return data;
 }
 
 #endif

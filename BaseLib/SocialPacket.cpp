@@ -1,42 +1,20 @@
 #include "SocialPacket.h"
 
-void ChatAllRequest::Serialize(char* _buf) {
-	if (_buf == nullptr) return;
-
-	char* buf = _buf;
-	TypeSerial(_buf, BasePacket::GetBasePacketType());
-	TypeSerial(_buf, SocialPacket::GetSocialPacketType());
-	StringSerial(_buf, ChatAllRequest::GetChatAllRequest());
-	_buf = buf;
+char* ChatAllRequest::Serialize() {
+	int basePacketTypeLength = sizeof(GetBasePacketType());
+	int socialPacketTypeLength = sizeof(GetSocialPacketType());
+	int chatAllPacketLength = sizeof(GetChatAllRequest()) + 1;
+	char* buf = new char[basePacketTypeLength + socialPacketTypeLength + chatAllPacketLength];
+	char* bufInit = buf;
+	TypeSerial(buf, GetBasePacketType());
+	TypeSerial(buf, GetSocialPacketType());
+	StringSerial(buf, GetChatAllRequest());
+	return bufInit;
 }
 
 void ChatAllRequest::Deserialize(char* _buf) {
 	if (_buf == nullptr) return;
 
-	SetBasePacketType((BasePacketType)TypeDeserial(_buf));
-	SetSocialPacketType((SocialPacketType)TypeDeserial(_buf));
-	StringDeserial(_buf, chatAllRequest);
-}
-
-int main() {
-	char tmp[50] = { BasePacketType::basePacketTypeSocial, SocialPacketType::socialPacketTypeChatAllRequest, 'h', 'i', '\n' };
-	char tmp2[50] = "";
-
-	BasePacket* basePacket = nullptr;
-	switch ((BasePacketType)tmp[0]) {
-	case BasePacketType::basePacketTypeSocial: {
-		switch ((SocialPacketType)tmp[1]) {
-		case SocialPacketType::socialPacketTypeChatAllRequest: {
-			basePacket = new ChatAllRequest;
-			basePacket->Deserialize(tmp);
-			delete basePacket;
-			basePacket = nullptr;
-			break;
-		}
-		}
-		break;
-	}
-	}
-
-	return 0;
+	char* buf = _buf;
+	SetChatAllRequest(buf);
 }

@@ -2,7 +2,7 @@
 #define	SOCIALPACKET_H
 #include "BasePacket.h"
 
-enum SocialPacketType {
+enum SocialPacketType : char {
 	socialPacketTypeNone = 0,
 	socialPacketTypeFriendAddResponse,  //(bool)yes or no
 	socialPacketTypeFriendAddRequest, //(string)from, (string)to
@@ -25,11 +25,12 @@ enum SocialPacketType {
 
 class SocialPacket : public BasePacket {
 public:
-	SocialPacket() {}
+	SocialPacket() {
+		SetBasePacketType(BasePacketType::basePacketTypeSocial);
+	}
 	~SocialPacket() {}
 	void SetSocialPacketType(SocialPacketType _type) {
 		socialPacketType = _type;
-		//basePacketType = BasePacketType::basePacketTypeSocial;
 	}
 	SocialPacketType GetSocialPacketType() {
 		return socialPacketType;
@@ -40,18 +41,21 @@ private:
 
 class ChatAllRequest : public SocialPacket {
 public:
-	ChatAllRequest() {}
+	ChatAllRequest() {
+		SetSocialPacketType(SocialPacketType::socialPacketTypeChatAllRequest);
+	}
 	~ChatAllRequest() {}
-	virtual void Serialize(char* _buf) override;
+	virtual char* Serialize() override;
 	virtual void Deserialize(char* _buf) override;
 	char* GetChatAllRequest() {
 		return chatAllRequest;
 	}
 	void SetChatAllRequest(char* _buf) {
-		*chatAllRequest = *_buf;
+		int len = strlen(_buf) + 1;
+		memcpy(chatAllRequest, _buf, len);
 	}
 private:
-	char chatAllRequest[BUFFER_SIZE] = "";
+	char chatAllRequest[BUFFER_SIZE]{};
 };
 
 #endif
