@@ -1,81 +1,55 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="PlayerManager.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Config.cpp">
-      <Filter>Config</Filter>
-    </ClCompile>
-    <ClCompile Include="Log.cpp">
-      <Filter>Log</Filter>
-    </ClCompile>
-    <ClCompile Include="GamePacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="LobbyPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="LoginPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="RankingPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="RoomPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="Server.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="ServerManager.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="ShopPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="SocialPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="BasePacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseServer.cpp">
-      <Filter>BaseServer</Filter>
-    </ClCompile>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{db2750bc-c49f-416b-971b-7bf9e27955ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Packet">
+      <UniqueIdentifier>{e1a98091-5f75-4338-a028-54a453640685}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DesignData">
+      <UniqueIdentifier>{c4e374c5-9a67-4d31-9f59-82158e507a82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{19e8d09b-135e-4161-9cbe-c0249a6c6028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client">
+      <UniqueIdentifier>{8a454554-142b-4530-b63f-6dafb8412a1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PlayerManager.h">
-      <Filter>Player</Filter>
+    <ClInclude Include="Log.h">
+      <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Player</Filter>
+    <ClInclude Include="Singleton.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="BasePacket.h">
+      <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
-      <Filter>Config</Filter>
+      <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>Log</Filter>
+    <ClInclude Include="DesignData.h">
+      <Filter>DesignData</Filter>
+    </ClInclude>
+    <ClInclude Include="DesignDataManager.h">
+      <Filter>DesignData</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseServer.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerManager.h">
+      <Filter>Client</Filter>
     </ClInclude>
     <ClInclude Include="GamePacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="LobbyPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="LoginPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="RankingPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="RoomPacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="Client.h">
@@ -87,55 +61,79 @@
     <ClInclude Include="ServerManager.h">
       <Filter>Client</Filter>
     </ClInclude>
-    <ClInclude Include="ShopPacket.h">
-      <Filter>Packet</Filter>
+    <ClInclude Include="ServerCommon.h">
+      <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="SocialPacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="BasePacket.h">
+    <ClInclude Include="LoginPacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="DesignDataManager.h">
-      <Filter>DesignData</Filter>
+    <ClInclude Include="RoomPacket.h">
+      <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="DesignData.h">
-      <Filter>DesignData</Filter>
+    <ClInclude Include="LobbyPacket.h">
+      <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="Singleton.h">
-      <Filter>Singleton</Filter>
+    <ClInclude Include="RankingPacket.h">
+      <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="BaseServer.h">
-      <Filter>BaseServer</Filter>
+    <ClInclude Include="ShopPacket.h">
+      <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="ServerCommon.h">
-      <Filter>BaseServer</Filter>
+    <ClInclude Include="UTF8.h">
+      <Filter>Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Player">
-      <UniqueIdentifier>{d9f776d9-2be2-4726-ab1a-d3b950f6e55e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Config">
-      <UniqueIdentifier>{6731c134-8f22-4a18-8f10-1e30e4e5d1d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Log">
-      <UniqueIdentifier>{320cdf9c-bb2c-47ea-9043-fbe4ecf526bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Packet">
-      <UniqueIdentifier>{c97f1f62-5178-4570-8654-fa3e191636b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Client">
-      <UniqueIdentifier>{d365fd25-1bff-4ed0-811c-32d56807918f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DesignData">
-      <UniqueIdentifier>{207e8731-ef2c-474d-8f64-136bd3831f79}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Singleton">
-      <UniqueIdentifier>{62ddf8c4-71a1-4cb8-84d5-b89e407f54f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="BaseServer">
-      <UniqueIdentifier>{6b92596e-4337-406a-85e7-543f85ceae2a}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="Log.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseServer.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="BasePacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerManager.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="SocialPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="RankingPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="ShopPacket.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerManager.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

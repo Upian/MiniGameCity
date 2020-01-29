@@ -1,9 +1,13 @@
 #ifndef BASEPACKET_H
 #define BASEPACKET_H
 
+#include <memory>
+
 #define BUFFER_SIZE 1024
 
-enum BasePacketType {
+typedef __int32 int32;
+
+enum BasePacketType : char {
 	basePacketTypeNone = 0,
 	basePacketTypeLogin,
 	basePacketTypeGame,
@@ -26,37 +30,18 @@ public:
 		*_buf = _type;
 		++_buf;
 	}
-	//Byte -> Type, (버퍼)
-	inline char TypeDeserial(char*& _buf) {
-		if (_buf == nullptr) return 0;
 
-		char type = *_buf;
-		++_buf;
-		return type;
-	}
-
-	//Int -> Byte, (버퍼, 값)
-	inline void IntSerial(char*& _buf, int _val) {
+	//int32 -> Byte, (버퍼, 값)
+	inline void IntSerial(char*& _buf, int32 _val) {
 		if (_buf == nullptr) return;
 
-		for (int i = 0; i < 4; ++i) {
+		for (int32 i = 0; i < sizeof(int32); ++i) {
 			*_buf = _val;
 			++_buf;
 			_val >>= 8;
 		}
 	}
-	//Byte -> Int, (버퍼)
-	inline int IntDeserial(char*& _buf) {
-		if (_buf == nullptr) return -1;
 
-		int val = 0;
-		for (int i = 0; i < 4; ++i) {
-			int tmp = (*_buf << 8 * i);
-			val |= tmp;
-			++_buf;
-		}
-		return val;
-	}
 	//Bool -> Byte, (버퍼, 불값)
 	void BoolSerial(char*& _buf, bool _flag) {
 		if (_buf == nullptr) return;
@@ -64,39 +49,19 @@ public:
 		*_buf = _flag;
 		++_buf;
 	}
-	//Byte -> Bool, (버퍼)
-	bool BoolDeserial(char*& _buf) {
-		if (_buf == nullptr) return false;
 
-		return *_buf;
-	}
 	//String -> Byte, (버퍼, 데이터)
 	inline void StringSerial(char*& _buf, char* _data) {
 		if (_buf == nullptr) return;
 		if (_data == nullptr) return;
 
-		while (*_data != '\n') {
-			*_buf = *_data;
-			++_buf;
-			++_data;
-		}
-		*_buf = '\n';
-		++_buf;
-	}
-	//Byte -> String (버퍼, 데이터)
-	inline void StringDeserial(char*& _buf, char* _data) {
-		if (_buf == nullptr) return;
+		int32 len = strlen(_data) + 1;
 
-		while (*_buf != '\n') {
-			*_data = *_buf;
-			++_buf;
-			++_data;
-		}
-		*_data = '\n';
-		++_buf;
+		memcpy(_buf, _data, len * sizeof(char));
+		_buf += len * sizeof(char);
 	}
 
-	virtual void Serialize(char* _buf) = 0;
+	virtual char* Serialize() = 0;
 	virtual void Deserialize(char* _buf) = 0;
 
 	BasePacketType GetBasePacketType() {
@@ -105,8 +70,49 @@ public:
 	void SetBasePacketType(BasePacketType _type) {
 		basePacketType = _type;
 	}
-protected:
+private:
 	BasePacketType basePacketType = basePacketTypeNone;
 };
+
+//Byte -> Type, (버퍼)
+inline char TypeDeserial(char*& _buf) {
+	if (_buf == nullptr) return 0;
+
+	char type = *_buf;
+	++_buf;
+	return type;
+}
+
+//Byte -> Bool, (버퍼)
+inline bool BoolDeserial(char*& _buf) {
+	if (_buf == nullptr) return false;
+
+	return *_buf;
+}
+
+//Byte -> int32, (버퍼)
+inline int32 IntDeserial(char*& _buf) {
+	if (_buf == nullptr) return -1;
+
+	int32 val = 0;
+	for (int32 i = 0; i < sizeof(int32); ++i) {
+		int32 tmp = (*_buf << 8 * i);
+		val |= tmp;
+		++_buf;
+	}
+	return val;
+}
+
+//Byte -> String (버퍼)
+inline char* StringDeserial(char*& _buf) {
+	if (_buf == nullptr) return nullptr;
+
+	int32 len = strlen(_buf) + 1;
+	char* data = new char[len];
+
+	memcpy(data, _buf, len * sizeof(char));
+	_buf += len * sizeof(char);
+	return data;
+}
 
 #endif
