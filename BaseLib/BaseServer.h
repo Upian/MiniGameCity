@@ -142,7 +142,7 @@ void BaseServer<T_Server>::InitializeBaseServer() {
 		_exit(0);
 		return;
 	}
-	Util::LoggingInfo(m_serverName + ".log", "Make socket success! socket: %d", m_serverSocket);
+	Util::LoggingInfo(m_serverName + ".log", "Make socket success! socket: %d, , Port: %d", m_serverSocket, m_portNum);
 
 	SOCKADDR_IN serverAddress;
 	memset(&serverAddress, 0, sizeof(serverAddress));
@@ -255,7 +255,6 @@ template<typename T_Server>
 void BaseServer<T_Server>::IOWorkerThread() {
 	BufferInfo* bufferInfo = nullptr;
 
-	Util::LoggingInfo("0_test.log", "thread safe test");
 	while (true == m_runningThread) {
 		DWORD recvBytes = 0;
 		SOCKET clientSocket;

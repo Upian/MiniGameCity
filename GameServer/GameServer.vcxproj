@@ -28,6 +28,7 @@
     <ClInclude Include="GameServer.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
+    <ClInclude Include="RoomPacket.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
