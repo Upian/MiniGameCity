@@ -98,21 +98,21 @@ public:
 	}
 
 	//Byte -> Bool, (버퍼)
-	inline bool BoolDeserial(char*& _buf) const {
+	inline bool BoolDeserial(char*& _buf) {
 		if (_buf == nullptr) return false;
 
 		return *_buf;
 	}
 
 	//Byte -> Char, (버퍼)
-	inline bool CharDeserial(char*& _buf) const {
+	inline bool CharDeserial(char*& _buf) {
 		if (_buf == nullptr) return false;
 
 		return *_buf;
 	}
 
 	//Byte -> int16, (버퍼)
-	inline int16 Int16Deserial(char*& _buf) const {
+	inline int16 Int16Deserial(char*& _buf) {
 		if (_buf == nullptr) return -1;
 
 		int16 val = 0;
@@ -125,7 +125,7 @@ public:
 	}
 
 	//Byte -> int32, (버퍼)
-	inline int32 Int32Deserial(char*& _buf) const {
+	inline int32 Int32Deserial(char*& _buf) {
 		if (_buf == nullptr) return -1;
 
 		int32 val = 0;
@@ -138,7 +138,7 @@ public:
 	}
 
 	//Byte -> int64, (버퍼)
-	inline int64 Int64Deserial(char*& _buf) const {
+	inline int64 Int64Deserial(char*& _buf) {
 		if (_buf == nullptr) return -1;
 
 		int64 val = 0;
@@ -151,7 +151,7 @@ public:
 	}
 
 	//Byte -> String, (버퍼)
-	inline char* StringDeserial(char*& _buf) const {
+	inline char* StringDeserial(char*& _buf) {
 		if (_buf == nullptr) return nullptr;
 
 		int len = 0;
@@ -179,11 +179,11 @@ public:
 	void SetBasePacketType(BasePacketType _type) {
 		basePacketType = _type;
 	}
-private:
-	BasePacketType basePacketType = basePacketTypeNone;
 protected:
 	char buf[BUFFER_SIZE]{};
 	int32 idx = 0;
+private:
+	BasePacketType basePacketType = basePacketTypeNone;
 };
 
 //Byte -> Type, (버퍼)
