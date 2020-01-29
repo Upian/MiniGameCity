@@ -51,7 +51,15 @@ void GameServer::HandlePacketRoom(const char* buff) {
 	PacketTypeRoom type = (PacketTypeRoom)TypeDeserial((char*&)buff);
 
 	switch (type) {
+	case PacketTypeRoom::packetTypeRoomMakeRoomRequest: {
+		//m_roomManager.MakeRoom(nullptr);
+	}
+	case PacketTypeRoom::packetTypeRoomRoomListRequest: {
 
+	}
+	case PacketTypeRoom::packetTypeRoomEnterRoomRequest: {
+
+	}
 	default:
 		Util::LoggingInfo("GameServer.log", "Recv wrong room packet ID: %d", type);
 	}

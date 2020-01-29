@@ -31,7 +31,8 @@ struct BaseRoomPacket : public BasePacket{
 
 	virtual char* Serialize() override {
 	}
-
+	virtual void Deserialize(char* _buf) override {
+	}
 	PacketTypeRoom m_packetTypeRoom = PacketTypeRoom::packetTypeRoomNone;
 };
 
