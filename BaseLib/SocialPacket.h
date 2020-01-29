@@ -55,7 +55,7 @@ public:
 		memcpy(chatAllRequest, _buf, len);
 	}
 private:
-	char chatAllRequest[BUFFER_SIZE]{};
+	char chatAllRequest[BUFFER_SIZE - 2 * sizeof(char)]{};
 };
 
 #endif

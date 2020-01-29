@@ -26,6 +26,9 @@
     <ClCompile Include="RoomManager.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="InGame.cpp">
+      <Filter>GameServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameServer.h">
@@ -36,6 +39,9 @@
     </ClInclude>
     <ClInclude Include="RoomManager.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="InGame.h">
+      <Filter>GameServer</Filter>
     </ClInclude>
     <ClInclude Include="RoomPacket.h">
       <Filter>Packet</Filter>

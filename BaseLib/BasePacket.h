@@ -8,19 +8,17 @@
 typedef __int32 int32;
 
 /*
-	
+	=== EXAMPLE ===
 	대분류 -> BasePacketType basePacketType = (BasePacketType)TypeDeserial((char*&)buf);
 	중분류 -> SocialPacketType socialPacketType = (SocialPacketType)TypeDeserial((char*&)buf);
-	
+
 	=== Deserialize ===
 	ChatAllRequest chat{};
 	chat.Deserialize(buf);
 
 	=== Serialize ===
 	char* buf = chat.Serialize();
-
 */
-
 
 enum BasePacketType : char {
 	basePacketTypeNone = 0,
@@ -36,45 +34,45 @@ enum BasePacketType : char {
 class BasePacket {
 public:
 	BasePacket() {}
+	BasePacket(BasePacketType _basePacketType) {
+		basePacketType = _basePacketType;
+	}
 	virtual ~BasePacket() {}
 
-	//Type -> Byte, (버퍼, 값)
-	inline void TypeSerial(char*& _buf, char _type) {
-		if (_buf == nullptr) return;
-
-		*_buf = _type;
-		++_buf;
+	//Type -> Byte, (값)
+	inline void TypeSerial(char _type) {
+		buf[idx] = _type;
+		++idx;
 	}
 
-	//int32 -> Byte, (버퍼, 값)
-	inline void IntSerial(char*& _buf, int32 _val) {
-		if (_buf == nullptr) return;
-
+	//int32 -> Byte, (값)
+	inline void IntSerial(int32 _val) {
 		for (int32 i = 0; i < sizeof(int32); ++i) {
-			*_buf = _val;
-			++_buf;
+			buf[idx] = _val;
+			++idx;
 			_val >>= 8;
 		}
 	}
 
-	//Bool -> Byte, (버퍼, 불값)
-	void BoolSerial(char*& _buf, bool _flag) {
-		if (_buf == nullptr) return;
-
-		*_buf = _flag;
-		++_buf;
+	//Bool -> Byte, (불값)
+	void BoolSerial(bool _flag) {
+		buf[idx] = _flag;
+		++idx;
 	}
 
-	//String -> Byte, (버퍼, 데이터)
-	inline void StringSerial(char*& _buf, char* _data) {
-		if (_buf == nullptr) return;
+	//String -> Byte, (데이터)
+	inline void StringSerial(char* _data) {
 		if (_data == nullptr) return;
 
-		int32 len = strlen(_data) + 1;
-
-		memcpy(_buf, _data, len * sizeof(char));
-		_buf += len * sizeof(char);
+		while (*_data != NULL) {
+			buf[idx] = *_data;
+			++idx;
+			++_data;
+		}
+		buf[idx] = '\n';
+		++idx;
 	}
+
 	//Byte -> Bool, (버퍼)
 	inline bool BoolDeserial(char*& _buf) {
 		if (_buf == nullptr) return false;
@@ -95,14 +93,22 @@ public:
 		return val;
 	}
 
-	//Byte -> String (버퍼)
+	//Byte -> String, (버퍼)
 	inline char* StringDeserial(char*& _buf) {
 		if (_buf == nullptr) return nullptr;
 
-		int32 len = strlen(_buf) + 1;
-		char* data = new char[len];
+		int len = 0;
+		while (*_buf != '\n') {
+			++_buf;
+			++len;
+		}
+		_buf -= len;
+		++len;
 
-		memcpy(data, _buf, len * sizeof(char));
+		char* data = new char[len];
+		memcpy(data, _buf, len * sizeof(char) - 1);
+		data[len - 1] = NULL;
+
 		_buf += len * sizeof(char);
 		return data;
 	}
@@ -116,8 +122,12 @@ public:
 	void SetBasePacketType(BasePacketType _type) {
 		basePacketType = _type;
 	}
+protected:
+	char buf[BUFFER_SIZE]{};
+	int32 idx = 0;
 private:
 	BasePacketType basePacketType = basePacketTypeNone;
+
 };
 
 //Byte -> Type, (버퍼)
