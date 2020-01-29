@@ -18,17 +18,17 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 //	m_roomManager.MakeRoom(10, pPlayer);
 //	m_roomManager.FindRoom(pPlayer).StartGame(nullptr);
 	
-
+	Util::LoggingInfo("GameServer.log", "Recv  socket: %d", bufInfo->socket);
 	BasePacketType type = (BasePacketType)TypeDeserial(bufInfo->dataBuf.buf);
-	
+
 	switch (type) {
 	case basePacketTypeRoom: {
-		this->HandlePacketRoom(bufInfo->dataBuf.buf); 
+		this->HandlePacketRoom(bufInfo); 
 		break;
 	}
 		
-	default:
-		Util::LoggingInfo("GameServer.log", "Recv wrong base packet ID: %d", type);
+	default: break;
+//		Util::LoggingInfo("GameServer.log", "Recv wrong base packet ID: %d", type);
 	}
 	
 
@@ -47,12 +47,16 @@ void GameServer::HandlePacketPrepareTransfer() {
 *	Game client -> Game server
 *	规 包访 菩哦 贸府
 */ 
-void GameServer::HandlePacketRoom(const char* buff) {
-	PacketTypeRoom type = (PacketTypeRoom)TypeDeserial((char*&)buff);
+void GameServer::HandlePacketRoom(BufferInfo* bufInfo) {
+	PacketTypeRoom type = (PacketTypeRoom)TypeDeserial(bufInfo->dataBuf.buf);
 
 	switch (type) {
 	case PacketTypeRoom::packetTypeRoomMakeRoomRequest: {
-		//m_roomManager.MakeRoom(nullptr);
+		RoomPacketMakeRoomRequest packet;
+		packet.Deserialize(bufInfo->dataBuf.buf);
+		Player* player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
+		m_roomManager.MakeRoom(packet.m_maxPlayer, player);
+		break;
 	}
 	case PacketTypeRoom::packetTypeRoomRoomListRequest: {
 
