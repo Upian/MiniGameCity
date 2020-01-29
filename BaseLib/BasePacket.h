@@ -85,7 +85,7 @@ public:
 	}
 
 	//String -> Byte, (ตฅภฬลอ)
-	inline void StringSerial(char* _data) {
+	inline void StringSerial(const char* _data) {
 		if (_data == nullptr) return;
 
 		while (*_data != NULL) {

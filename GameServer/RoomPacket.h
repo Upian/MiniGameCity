@@ -25,14 +25,8 @@ enum PacketTypeRoom : char {
 };
 
 struct BaseRoomPacket : public BasePacket{
-	BaseRoomPacket(PacketTypeRoom packetType) : m_packetTypeRoom(packetType){
-		this->SetBasePacketType(BasePacketType::basePacketTypeRoom);
-	}
+	BaseRoomPacket(PacketTypeRoom packetType) : BasePacket(BasePacketType::basePacketTypeRoom), m_packetTypeRoom(packetType){}
 
-	virtual char* Serialize() override {
-	}
-	virtual void Deserialize(char* _buf) override {
-	}
 	PacketTypeRoom m_packetTypeRoom = PacketTypeRoom::packetTypeRoomNone;
 };
 
@@ -40,16 +34,27 @@ struct BaseRoomPacket : public BasePacket{
 struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 	RoomPacketMakeRoomRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomMakeRoomRequest) {}
 
-	GPID m_gpid = 0;
 	std::string m_roomName;
 	int m_maxPlayer = 0;
-	int m_password = -1;
+	int m_password = 0;
 
 	virtual char* Serialize() override {
+		this->TypeSerial(this->GetBasePacketType());
+		this->TypeSerial(m_packetTypeRoom);
 
+		this->StringSerial(m_roomName.c_str());
+		this->IntSerial(m_maxPlayer);
+		this->IntSerial(m_password);
+
+		return buf;
 	}
 	virtual void Deserialize(char* _buf) override {
+		if (nullptr == _buf)
+			return;
 
+		m_roomName = this->StringDeserial(_buf);
+		m_maxPlayer = this->IntDeserial(_buf);
+		m_password = this->IntDeserial(_buf);
 	}
 };
 struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
@@ -59,10 +64,17 @@ struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 	int m_roomNumber;
 
 	virtual char* Serialize() override {
-
+		this->BoolSerial(m_success);
+		this->IntSerial(m_roomNumber);
+		
+		return buf;
 	}
 	virtual void Deserialize(char* _buf) override {
+		if (nullptr == buf)
+			return;
 
+		m_success = this->BoolDeserial(_buf);
+		m_roomNumber = this->IntDeserial(_buf);
 	}
 };
 

@@ -28,6 +28,7 @@
   <ItemGroup>
     <ClInclude Include="GameServer.h" />
     <ClInclude Include="InGame.h" />
+    <ClInclude Include="InGamePacket.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="RoomPacket.h" />

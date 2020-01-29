@@ -16,7 +16,7 @@ enum PlayerState {
 
 };
 
-using GPID = unsigned __int64; //Unique ID for each player (Game Player ID)
+using GPID = unsigned __int32; //Unique ID for each player (Game Player ID)
 class BasePacket;
 class Room;
 
