@@ -34,9 +34,7 @@ enum BasePacketType : char {
 class BasePacket {
 public:
 	BasePacket() {}
-	BasePacket(BasePacketType _basePacketType) {
-		basePacketType = _basePacketType;
-	}
+	BasePacket(BasePacketType _basePacketType) : basePacketType(_basePacketType){ }
 	virtual ~BasePacket() {}
 
 	//Type -> Byte, (°ª)
