@@ -4,9 +4,15 @@
 
 #include <WinSock2.h>
 #include <vector>
+#include <time.h>
+
+#include "Player.h"
+
+class InGame;
 
 enum Game_Mode
 {
+	Game_Mode_None,
 	Twenty_Question,
 	Relay_Novels_Writing,
 	Ban_Word_Game,
@@ -69,4 +75,25 @@ struct intTypePacket; // int 변수 추가 패킷
 struct charTypePacket; // char 배열 추가 패킷
 struct boolTypePacket; //bool 변수 추가 패킷
 
+class InGame {
+
+	//기본 함수
+	InGame();
+	~InGame();
+
+	//게임에 관련된 함수
+	void Game_Start(LPVOID arg);	//게임에 참여하는 플레이어 정보와 게임타입을 매개변수로 받으면 됨
+	void Twenty_Question_Game();	//스무고개
+	void Relay_Novel_Game();		//릴레이소설
+	void Ban_Keyword_Game();		//금칙어 게임
+	void Catch_Mind_Game();			//캐치마인드
+
+	//스무고개 함수
+
+
+	//기타 함수
+	void Read_File();				//파일 읽는 함수
+	void Random_Int();				//무작위 숫자 리턴
+	void Score_Set();				//
+};
 #endif
