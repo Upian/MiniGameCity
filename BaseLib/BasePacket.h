@@ -41,17 +41,26 @@ enum BasePacketType : char {
 
 class BasePacket {
 public:
-	BasePacket() {}
 	BasePacket(BasePacketType _basePacketType) : basePacketType(_basePacketType) {
-		this->TypeSerial(basePacketType);
+		this->PacketTypeSerial(basePacketType);
 	}
 	virtual ~BasePacket() {}
+
+	virtual char* Serialize() = 0;
+	virtual void Deserialize(char* _buf) = 0;
+
+	BasePacketType GetBasePacketType() const {
+		return basePacketType;
+	}
+	void SetBasePacketType(BasePacketType _type) {
+		basePacketType = _type;
+	}
 
 protected:
 #pragma region Serialize
 
 	//Type -> Byte, (Å¸ÀÔ)
-	inline void PacketTypeSerial(char& _type) {
+	inline void PacketTypeSerial(char _type) {
 		buf[idx] = _type;
 		++idx;
 	}
@@ -67,9 +76,40 @@ protected:
 	}
 
 	//Value -> Byte, (°ª)
-	template<typename T_Arg>
-	inline void TypeSerial(T_Arg& _val) {
-		for (int i = 0; i < sizeof(T_Arg); ++i) {
+	inline void TypeSerial(char _val) {
+		for (int i = 0; i < sizeof(char); ++i) {
+			buf[idx] = _val;
+			++idx;
+			_val >>= 8;
+		}
+	}
+
+	inline void TypeSerial(bool _val) {
+		for (int i = 0; i < sizeof(bool); ++i) {
+			buf[idx] = _val;
+			++idx;
+			_val >>= 8;
+		}
+	}
+
+	inline void TypeSerial(int16 _val) {
+		for (int i = 0; i < sizeof(int16); ++i) {
+			buf[idx] = _val;
+			++idx;
+			_val >>= 8;
+		}
+	}
+
+	inline void TypeSerial(int32 _val) {
+		for (int i = 0; i < sizeof(int32); ++i) {
+			buf[idx] = _val;
+			++idx;
+			_val >>= 8;
+		}
+	}
+
+	inline void TypeSerial(int64 _val) {
+		for (int i = 0; i < sizeof(int64); ++i) {
 			buf[idx] = _val;
 			++idx;
 			_val >>= 8;
@@ -105,16 +145,6 @@ protected:
 		_val = val;
 	}
 
-	virtual char* Serialize() = 0;
-	virtual void Deserialize(char* _buf) = 0;
-
-	BasePacketType GetBasePacketType() const {
-		return basePacketType;
-	}
-	void SetBasePacketType(BasePacketType _type) {
-		basePacketType = _type;
-	}
-
 protected:
 	char buf[BUFFER_SIZE]{};
 private:
@@ -123,7 +153,7 @@ private:
 
 //Byte -> Type, 
 inline char PacketTypeDeserial(char* _buf) {
-	if (nullptr == _buf) return;
+	if (nullptr == _buf) return NULL;
 
 	char type = _buf[idx];
 	++idx;

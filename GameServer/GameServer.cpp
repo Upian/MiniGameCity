@@ -17,7 +17,7 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 		return;
 	
 	Util::LoggingInfo("GameServer.log", "Recv  socket: %d", bufInfo->socket);
-	BasePacketType type = (BasePacketType)TypeDeserial(bufInfo->dataBuf.buf);
+	BasePacketType type = (BasePacketType)PacketTypeDeserial(bufInfo->dataBuf.buf);
 
 	switch (type) {
 	case basePacketTypeRoom: {
@@ -46,7 +46,7 @@ void GameServer::HandlePacketPrepareTransfer() {
 *	规 包访 菩哦 贸府
 */ 
 void GameServer::HandlePacketRoom(BufferInfo* bufInfo) {
-	PacketTypeRoom type = (PacketTypeRoom)TypeDeserial(bufInfo->dataBuf.buf);
+	PacketTypeRoom type = (PacketTypeRoom)PacketTypeDeserial(bufInfo->dataBuf.buf);
 
 	switch (type) {
 	case PacketTypeRoom::packetTypeRoomMakeRoomRequest: {
