@@ -1,16 +1,16 @@
 #include "GameServer.h"
-int count = 0;
-void* operator new(size_t size) {
-	++count;
-	printf("new - Size: %d, count: %d\n", size, count);
-
-	return malloc(size);
-}
-void operator delete(void* ptr, size_t size) {
-	--count;
-	printf("delete - Size: %d, count: %d\n", size, count);
-	free(ptr);
-}
+//int count = 0;
+//void* operator new(size_t size) {
+//	++count;
+//	printf("new - Size: %d, count: %d\n", size, count);
+//
+//	return malloc(size);
+//}
+//void operator delete(void* ptr, size_t size) {
+//	--count;
+//	printf("delete - Size: %d, count: %d\n", size, count);
+//	free(ptr);
+//}
 int main(int argc, char* argv[]) {
 	GameServer* pServer = GameServer::CreateServer();
 
