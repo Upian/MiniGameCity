@@ -39,6 +39,13 @@ public:
 	BasePacket(BasePacketType _basePacketType) : basePacketType(_basePacketType) {}
 	virtual ~BasePacket() {}
 
+	virtual char* Serialize() = 0;
+	virtual void Deserialize(char* _buf) = 0;
+
+	BasePacketType GetBasePacketType() const {
+		return basePacketType;
+	}
+protected:
 	//Type -> Byte, (°ª)
 	inline void TypeSerial(char _type) {
 		buf[idx] = _type;
@@ -170,12 +177,7 @@ public:
 		return data;
 	}
 
-	virtual char* Serialize() = 0;
-	virtual void Deserialize(char* _buf) = 0;
-
-	BasePacketType GetBasePacketType() const {
-		return basePacketType;
-	}
+	
 	void SetBasePacketType(BasePacketType _type) {
 		basePacketType = _type;
 	}

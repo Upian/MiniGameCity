@@ -26,7 +26,7 @@ enum PacketTypeRoom : char {
 
 struct BaseRoomPacket : public BasePacket{
 	BaseRoomPacket(PacketTypeRoom packetType) : BasePacket(BasePacketType::basePacketTypeRoom), m_packetTypeRoom(packetType){}
-
+protected:
 	PacketTypeRoom m_packetTypeRoom = PacketTypeRoom::packetTypeRoomNone;
 };
 

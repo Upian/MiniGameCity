@@ -21,7 +21,6 @@ Room::~Room() {
 	}
 		
 	m_inGameThread = nullptr;	
-
 	Util::LoggingInfo("0_Test.log", "Destroy Room");
 }
 
