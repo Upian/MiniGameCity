@@ -295,6 +295,18 @@ void BaseServer<T_Server>::IOWorkerThread() {
 
 template<typename T_Server>
 void BaseServer<T_Server>::SendPacket(SOCKET socket, BasePacket& packet) {
+	WSABUF dataBuf;
+	dataBuf.buf = packet.Serialize();
+	dataBuf.len = sizeof(dataBuf.buf);
 
+	WSAEVENT wsaEvent = WSACreateEvent();
+	
+	WSAOVERLAPPED overlapped;
+	ZeroMemory(&overlapped, sizeof(overlapped));
+	overlapped.hEvent = wsaEvent;
+
+	int sendBytes = 0;
+
+	WSASend(socket, &dataBuf, 1, &sendBytes, 0, &overlapped, NULL);
 }
 #endif // !__BASELIB_BASE_SERVER_H__

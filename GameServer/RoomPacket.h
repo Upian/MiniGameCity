@@ -35,16 +35,16 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 	RoomPacketMakeRoomRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomMakeRoomRequest) {}
 
 	std::string m_roomName;
-	int m_maxPlayer = 0;
-	int m_password = 0;
+	int16 m_maxPlayer = 0;
+	int16 m_password = 0;
 
 	virtual char* Serialize() override {
 		this->TypeSerial(this->GetBasePacketType());
 		this->TypeSerial(m_packetTypeRoom);
 
 		this->StringSerial(m_roomName.c_str());
-		this->Int32Serial(m_maxPlayer);
-		this->Int32Serial(m_password);
+		this->IntSerial(m_maxPlayer);
+		this->IntSerial(m_password);
 
 		return buf;
 	}
@@ -52,20 +52,20 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 		if (nullptr == _buf)
 			return;
 
-		m_roomName = this->StringDeserial(_buf);
-		m_maxPlayer = this->Int32Deserial(_buf);
-		m_password = this->Int32Deserial(_buf);
+		this->StringDeserial(_buf, m_roomName);
+		this->IntDeserial(_buf, m_maxPlayer);
+		this->IntDeserial(_buf, m_password);
 	}
 };
 struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 	RoomPacketMakeRoomResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomMakeRoomResponse) {}
 
 	bool m_success;
-	int m_roomNumber;
+	int32 m_roomNumber;
 
 	virtual char* Serialize() override {
 		this->BoolSerial(m_success);
-		this->Int32Serial(m_roomNumber);
+		this->IntSerial(m_roomNumber);
 		
 		return buf;
 	}
@@ -73,8 +73,8 @@ struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 		if (nullptr == buf)
 			return;
 
-		m_success = this->BoolDeserial(_buf);
-		m_roomNumber = this->Int32Deserial(_buf);
+		this->BoolDeserial(_buf, m_success);
+		this->IntDeserial(_buf, m_roomNumber);
 	}
 };
 

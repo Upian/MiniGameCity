@@ -40,6 +40,7 @@ public:
 	BasePacket(BasePacketType _basePacketType) : basePacketType(_basePacketType) {}
 	virtual ~BasePacket() {}
 
+protected:
 	//Type -> Byte, (타입)
 	inline void TypeSerial(char _type) {
 		buf[idx] = _type;
@@ -59,7 +60,7 @@ public:
 	}
 
 	//int16 -> Byte, (값)
-	inline void Int16Serial(int16 _val) {
+	inline void IntSerial(int16 _val) {
 		for (int32 i = 0; i < sizeof(int16); ++i) {
 			buf[idx] = _val;
 			++idx;
@@ -68,7 +69,7 @@ public:
 	}
 
 	//int32 -> Byte, (값)
-	inline void Int32Serial(int32 _val) {
+	inline void IntSerial(int32 _val) {
 		for (int32 i = 0; i < sizeof(int32); ++i) {
 			buf[idx] = _val;
 			++idx;
@@ -77,7 +78,7 @@ public:
 	}
 
 	//int64 -> Byte, (값)
-	inline void Int64Serial(int64 _val) {
+	inline void IntSerial(int64 _val) {
 		for (int32 i = 0; i < sizeof(int64); ++i) {
 			buf[idx] = _val;
 			++idx;
@@ -112,7 +113,7 @@ public:
 	}
 
 	//Byte -> int16, (버퍼, 값)
-	inline void Int16Deserial(char*& _buf, int16& _val) {
+	inline void IntDeserial(char*& _buf, int16& _val) {
 		if (_buf == nullptr) return;
 
 		int16 val = 0;
@@ -125,7 +126,7 @@ public:
 	}
 
 	//Byte -> int32, (버퍼, 값)
-	inline void Int32Deserial(char*& _buf, int32& _val) {
+	inline void IntDeserial(char*& _buf, int32& _val) {
 		if (_buf == nullptr) return;
 
 		int32 val = 0;
@@ -138,7 +139,7 @@ public:
 	}
 
 	//Byte -> int64, (버퍼, 값)
-	inline void Int64Deserial(char*& _buf, int64& _val) {
+	inline void IntDeserial(char*& _buf, int64& _val) {
 		if (_buf == nullptr) return;
 
 		int64 val = 0;
@@ -149,7 +150,6 @@ public:
 		}
 		_val = val;
 	}
-
 	//Byte -> String, (버퍼, 데이터)
 	inline void StringDeserial(char*& _buf, std::string& _data) {
 		if (_buf == nullptr) return;
@@ -159,9 +159,14 @@ public:
 			data += *_buf;
 			++_buf;
 		}
+		++_buf;
 		_data = data;
 	}
 
+	char buf[BUFFER_SIZE]{};
+	int32 idx = 0;
+
+public:
 	virtual char* Serialize() = 0;
 	virtual void Deserialize(char* _buf) = 0;
 
@@ -171,9 +176,7 @@ public:
 	void SetBasePacketType(BasePacketType _type) {
 		basePacketType = _type;
 	}
-protected:
-	char buf[BUFFER_SIZE]{};
-	int32 idx = 0;
+
 private:
 	BasePacketType basePacketType = basePacketTypeNone;
 };

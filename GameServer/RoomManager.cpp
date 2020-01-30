@@ -39,9 +39,18 @@ void RoomManager::MakeRoom(size_t limitedNumberPlayer, Player* master) {
 	if (nullptr == master)
 		return;
 
-	m_roomList.emplace_back(this, limitedNumberPlayer, master, m_roomNumberList.top());
+	int roomNumber = m_roomNumberList.top();
 	m_roomNumberList.pop();
+
+	m_roomList.emplace_back(this, limitedNumberPlayer, master, roomNumber);
+	
+	Util::LoggingInfo("", "Make Room number: %d", roomNumber);
 	//send packet to room master
+	RoomPacketMakeRoomResponse packet;
+	packet.m_success = true;
+	packet.m_roomNumber = roomNumber;
+	
+	master->SendPacket(packet);
 }
 
 
