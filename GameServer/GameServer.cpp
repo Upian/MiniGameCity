@@ -24,6 +24,7 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 	switch (type) {
 	case basePacketTypeRoom: {
 		this->HandlePacketRoom(bufInfo); 
+		Util::LoggingInfo("", "Handle room packet.");
 		break;
 	}
 		
@@ -52,6 +53,7 @@ void GameServer::HandlePacketRoom(BufferInfo* bufInfo) {
 
 	switch (type) {
 	case PacketTypeRoom::packetTypeRoomMakeRoomRequest: {
+		Util::LoggingInfo("", "Handle MakeRoom packet.");
 		RoomPacketMakeRoomRequest packet;
 		packet.Deserialize(bufInfo->dataBuf.buf);
 		Player* player = m_playerManager.FindPlayerBySocket(bufInfo->socket);

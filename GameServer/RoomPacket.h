@@ -43,8 +43,8 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 		this->TypeSerial(m_packetTypeRoom);
 
 		this->StringSerial(m_roomName.c_str());
-		this->IntSerial(m_maxPlayer);
-		this->IntSerial(m_password);
+		this->Int32Serial(m_maxPlayer);
+		this->Int32Serial(m_password);
 
 		return buf;
 	}
@@ -53,8 +53,8 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 			return;
 
 		m_roomName = this->StringDeserial(_buf);
-		m_maxPlayer = this->IntDeserial(_buf);
-		m_password = this->IntDeserial(_buf);
+		m_maxPlayer = this->Int32Deserial(_buf);
+		m_password = this->Int32Deserial(_buf);
 	}
 };
 struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
@@ -65,7 +65,7 @@ struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 
 	virtual char* Serialize() override {
 		this->BoolSerial(m_success);
-		this->IntSerial(m_roomNumber);
+		this->Int32Serial(m_roomNumber);
 		
 		return buf;
 	}
@@ -74,7 +74,7 @@ struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 			return;
 
 		m_success = this->BoolDeserial(_buf);
-		m_roomNumber = this->IntDeserial(_buf);
+		m_roomNumber = this->Int32Deserial(_buf);
 	}
 };
 

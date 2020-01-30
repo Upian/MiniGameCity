@@ -125,7 +125,7 @@ public:
 	}
 
 	//Byte -> int32, (버퍼)
-	inline int32 Deserial(char*& _buf) {
+	inline int32 Int32Deserial(char*& _buf) {
 		if (_buf == nullptr) return -1;
 
 		int32 val = 0;
@@ -151,7 +151,7 @@ public:
 	}
 
 	//Byte -> String, (버퍼)
-	inline char* Deserial(char*& _buf) {
+	inline char* StringDeserial(char*& _buf) {
 		if (_buf == nullptr) return nullptr;
 
 		int len = 0;
