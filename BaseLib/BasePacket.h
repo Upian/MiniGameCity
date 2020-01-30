@@ -2,6 +2,7 @@
 #define BASEPACKET_H
 
 #include <memory>
+#include <string>
 
 #define BUFFER_SIZE 1024
 
@@ -39,28 +40,21 @@ public:
 	BasePacket(BasePacketType _basePacketType) : basePacketType(_basePacketType) {}
 	virtual ~BasePacket() {}
 
-	virtual char* Serialize() = 0;
-	virtual void Deserialize(char* _buf) = 0;
-
-	BasePacketType GetBasePacketType() const {
-		return basePacketType;
-	}
-protected:
-	//Type -> Byte, (값)
+	//Type -> Byte, (타입)
 	inline void TypeSerial(char _type) {
 		buf[idx] = _type;
 		++idx;
 	}
 
 	//Bool -> Byte, (불값)
-	void BoolSerial(bool _flag) {
+	inline void BoolSerial(bool _flag) {
 		buf[idx] = _flag;
 		++idx;
 	}
 
-	//Char -> Byte, (값)
-	inline void CharSerial(char _type) {
-		buf[idx] = _type;
+	//Char -> Byte, (캐릭터)
+	inline void CharSerial(char _character) {
+		buf[idx] = _character;
 		++idx;
 	}
 
@@ -92,35 +86,34 @@ protected:
 	}
 
 	//String -> Byte, (데이터)
-	inline void StringSerial(const char* _data) {
-		if (_data == nullptr) return;
-
-		while (*_data != NULL) {
-			buf[idx] = *_data;
+	inline void StringSerial(std::string _data) {
+		for (int i = 0; i < _data.size(); ++i) {
+			buf[idx] = _data[i];
 			++idx;
-			++_data;
 		}
 		buf[idx] = '\n';
 		++idx;
 	}
 
-	//Byte -> Bool, (버퍼)
-	inline bool BoolDeserial(char*& _buf) {
-		if (_buf == nullptr) return false;
+	//Byte -> Bool, (버퍼, 불값)
+	inline void BoolDeserial(char*& _buf, bool& _flag) {
+		if (_buf == nullptr) return;
 
-		return *_buf;
+		bool flag = *_buf;
+		_flag = flag;
 	}
 
-	//Byte -> Char, (버퍼)
-	inline bool CharDeserial(char*& _buf) {
-		if (_buf == nullptr) return false;
+	//Byte -> Char, (버퍼, 캐릭터)
+	inline void CharDeserial(char*& _buf, char& _character) {
+		if (_buf == nullptr) return;
 
-		return *_buf;
+		char character = *_buf;
+		_character = character;
 	}
 
-	//Byte -> int16, (버퍼)
-	inline int16 Int16Deserial(char*& _buf) {
-		if (_buf == nullptr) return -1;
+	//Byte -> int16, (버퍼, 값)
+	inline void Int16Deserial(char*& _buf, int16& _val) {
+		if (_buf == nullptr) return;
 
 		int16 val = 0;
 		for (int32 i = 0; i < sizeof(int16); ++i) {
@@ -128,12 +121,12 @@ protected:
 			val |= tmp;
 			++_buf;
 		}
-		return val;
+		_val = val;
 	}
 
-	//Byte -> int32, (버퍼)
-	inline int32 Int32Deserial(char*& _buf) {
-		if (_buf == nullptr) return -1;
+	//Byte -> int32, (버퍼, 값)
+	inline void Int32Deserial(char*& _buf, int32& _val) {
+		if (_buf == nullptr) return;
 
 		int32 val = 0;
 		for (int32 i = 0; i < sizeof(int32); ++i) {
@@ -141,12 +134,12 @@ protected:
 			val |= tmp;
 			++_buf;
 		}
-		return val;
+		_val = val;
 	}
 
-	//Byte -> int64, (버퍼)
-	inline int64 Int64Deserial(char*& _buf) {
-		if (_buf == nullptr) return -1;
+	//Byte -> int64, (버퍼, 값)
+	inline void Int64Deserial(char*& _buf, int64& _val) {
+		if (_buf == nullptr) return;
 
 		int64 val = 0;
 		for (int32 i = 0; i < sizeof(int64); ++i) {
@@ -154,30 +147,27 @@ protected:
 			val |= tmp;
 			++_buf;
 		}
-		return val;
+		_val = val;
 	}
 
-	//Byte -> String, (버퍼)
-	inline char* StringDeserial(char*& _buf) {
-		if (_buf == nullptr) return nullptr;
+	//Byte -> String, (버퍼, 데이터)
+	inline void StringDeserial(char*& _buf, std::string& _data) {
+		if (_buf == nullptr) return;
 
-		int len = 0;
+		std::string data;
 		while (*_buf != '\n') {
+			data += *_buf;
 			++_buf;
-			++len;
 		}
-		_buf -= len;
-		++len;
-		
-		char* data = new char[len];
-		memcpy(data, _buf, len * sizeof(char) - 1);
-		data[len - 1] = NULL;
-
-		_buf += len * sizeof(char);
-		return data;
+		_data = data;
 	}
 
-	
+	virtual char* Serialize() = 0;
+	virtual void Deserialize(char* _buf) = 0;
+
+	BasePacketType GetBasePacketType() const {
+		return basePacketType;
+	}
 	void SetBasePacketType(BasePacketType _type) {
 		basePacketType = _type;
 	}
