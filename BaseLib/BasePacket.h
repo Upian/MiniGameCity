@@ -168,7 +168,7 @@ protected:
 		}
 		_buf -= len;
 		++len;
-
+		
 		char* data = new char[len];
 		memcpy(data, _buf, len * sizeof(char) - 1);
 		data[len - 1] = NULL;

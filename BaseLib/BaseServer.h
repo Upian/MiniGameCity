@@ -38,6 +38,7 @@ public:
 	void InitializeBaseServer();
 	void RunServer();
 	
+	void SendPacket(SOCKET socket, BasePacket& packet);
 protected:
 	BaseServer();
 	virtual ~BaseServer();
@@ -61,6 +62,7 @@ private:
 	bool m_runningThread = true;
 	std::list<std::thread*> m_iocpList;
 	//다른 서버 리스트
+	
 	
 };
 
@@ -150,6 +152,7 @@ void BaseServer<T_Server>::InitializeBaseServer() {
 	serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
 	if (0 == m_portNum) {
 		Util::LoggingError(m_serverName + ".log", "Error port number: 0");
+		_exit(0);
 		return;
 	}
 	serverAddress.sin_port = htons(m_portNum);
@@ -270,6 +273,7 @@ void BaseServer<T_Server>::IOWorkerThread() {
 		}
 
 		bufferInfo->dataBuf.len = recvBytes;
+	
 		this->HandleBasePacket(bufferInfo); //Handle packet
 		//Comment out because of thread safe issues
 		//Util::LoggingInfo("ServerMessage.log", "socket[%d] recv message: [%d]%s", clientSocket, bufferInfo->dataBuf.len, bufferInfo->dataBuf.buf);
@@ -289,5 +293,8 @@ void BaseServer<T_Server>::IOWorkerThread() {
 	}
 }
 
+template<typename T_Server>
+void BaseServer<T_Server>::SendPacket(SOCKET socket, BasePacket& packet) {
 
+}
 #endif // !__BASELIB_BASE_SERVER_H__

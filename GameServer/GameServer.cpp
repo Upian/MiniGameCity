@@ -28,7 +28,7 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 	}
 		
 	default: break;
-//		Util::LoggingInfo("GameServer.log", "Recv wrong base packet ID: %d", type);
+		Util::LoggingInfo("GameServer.log", "Recv wrong base packet ID: %d", type);
 	}
 	
 
@@ -55,8 +55,10 @@ void GameServer::HandlePacketRoom(BufferInfo* bufInfo) {
 		RoomPacketMakeRoomRequest packet;
 		packet.Deserialize(bufInfo->dataBuf.buf);
 		//Player* player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
-		Player* player = new Player(bufInfo->socket); //#Temp
-		m_roomManager.MakeRoom(packet.m_maxPlayer, player);
+//		Player* player = new Player(bufInfo->socket); //#Temp
+//		Util::LoggingInfo("", "Handle MakeRoom packet RoomName[%s], MaxPlayer[%d], Password[%d], Socket[%d]", 
+//			packet.m_roomName.c_str(), packet.m_maxPlayer, packet.m_password, player->GetSocket());
+//		m_roomManager.MakeRoom(packet.m_maxPlayer, player);
 		break;
 	}
 	case PacketTypeRoom::packetTypeRoomRoomListRequest: {

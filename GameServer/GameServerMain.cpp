@@ -1,9 +1,23 @@
 #include "GameServer.h"
+int count = 0;
+void* operator new(size_t size) {
+	++count;
+	printf("new - Size: %d, count: %d\n", size, count);
 
-int main(void) {
+	return malloc(size);
+}
+void operator delete(void* ptr, size_t size) {
+	--count;
+	printf("delete - Size: %d, count: %d\n", size, count);
+	free(ptr);
+}
+int main(int argc, char* argv[]) {
 	GameServer* pServer = GameServer::CreateServer();
-	
-	pServer->SetPortNum(Util::GetConfigToInt("GameServer.ini", "Network", "Port", 7979));
+
+	if (0 < argc) 
+		pServer->SetPortNum(atoi(argv[1]));
+	else
+		pServer->SetPortNum(Util::GetConfigToInt("GameServer.ini", "Network", "Port", 10000));
 	pServer->SetServerName("GameServer");
 
 	pServer->InitializeBaseServer();
@@ -11,6 +25,6 @@ int main(void) {
 
 	pServer->RunServer();
 
-	//getchar();
+	
 	return 0;
 }

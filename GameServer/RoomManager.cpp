@@ -1,6 +1,6 @@
 #include "RoomManager.h"
 #include "Log.h"
-
+#include "RoomPacket.h"
 
 RoomManager::~RoomManager() {
 	if (nullptr != m_roomWatcher)

@@ -12,8 +12,8 @@ public:
 	Client(SOCKET socket) : m_socket(socket) {}
 	~Client() {}
 
-	void SendToClient(BasePacket& packet);
-	void SetSocket(SOCKET socket) { m_socket = socket; }
+	void SendPacket(BasePacket& packet);
+
 	SOCKET GetSocket() const { return m_socket; }
 
 protected:

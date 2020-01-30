@@ -26,9 +26,12 @@ public:
 	Player(SOCKET socket) : Client(socket) {}
 	~Player() {}
 
+	void Initialize();
+
 	SOCKET GetSocket() const { return m_socket; }
 	GPID GetGPID() const { return m_gamePlayerId; }
 
+	
 	//operator
 	bool operator==(const Player& player) const { return m_gamePlayerId == player.GetGPID(); }
 private:
