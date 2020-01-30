@@ -37,7 +37,7 @@ enum BasePacketType : char {
 class BasePacket {
 public:
 	BasePacket(BasePacketType _basePacketType) : basePacketType(_basePacketType) {
-		this->TypeSerial(basePacketType);
+		this->PacketTypeSerial(basePacketType);
 	}
 	virtual ~BasePacket() {}
 
@@ -54,6 +54,11 @@ protected:
 		++idx;
 	}
 
+	//Char -> Byte, (캐릭터)
+	inline void PacketTypeSerial(char _character) {
+		buf[idx] = _character;
+		++idx;
+	}
 	//Char -> Byte, (캐릭터)
 	inline void TypeSerial(char _character) {
 		buf[idx] = _character;

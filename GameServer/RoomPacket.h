@@ -26,7 +26,7 @@ enum PacketTypeRoom : char {
 
 struct BaseRoomPacket : public BasePacket{
 	BaseRoomPacket(PacketTypeRoom packetType) : BasePacket(BasePacketType::basePacketTypeRoom), m_packetTypeRoom(packetType){
-		this->TypeSerial(m_packetTypeRoom);
+		this->PacketTypeSerial(m_packetTypeRoom);
 	}
 protected:
 	PacketTypeRoom m_packetTypeRoom = PacketTypeRoom::packetTypeRoomNone;
@@ -41,8 +41,6 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 	int16 m_password = 0;
 
 	virtual char* Serialize() override {
-		this->TypeSerial(this->GetBasePacketType());
-		this->TypeSerial(m_packetTypeRoom);
 
 		this->StringSerial(m_roomName.c_str());
 		this->TypeSerial(m_maxPlayer);
@@ -65,10 +63,7 @@ struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 	bool m_success;
 	int32 m_roomNumber;
 
-	virtual char* Serialize() override {
-		this->TypeSerial(this->GetBasePacketType());
-		this->TypeSerial(m_packetTypeRoom);
-		
+	virtual char* Serialize() override {		
 		this->TypeSerial(m_success);
 		this->TypeSerial(m_roomNumber);
 		
