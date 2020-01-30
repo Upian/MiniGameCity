@@ -25,7 +25,9 @@ enum PacketTypeRoom : char {
 };
 
 struct BaseRoomPacket : public BasePacket{
-	BaseRoomPacket(PacketTypeRoom packetType) : BasePacket(BasePacketType::basePacketTypeRoom), m_packetTypeRoom(packetType){}
+	BaseRoomPacket(PacketTypeRoom packetType) : BasePacket(BasePacketType::basePacketTypeRoom), m_packetTypeRoom(packetType){
+		this->TypeSerial(m_packetTypeRoom);
+	}
 protected:
 	PacketTypeRoom m_packetTypeRoom = PacketTypeRoom::packetTypeRoomNone;
 };
@@ -43,8 +45,8 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 		this->TypeSerial(m_packetTypeRoom);
 
 		this->StringSerial(m_roomName.c_str());
-		this->IntSerial(m_maxPlayer);
-		this->IntSerial(m_password);
+		this->TypeSerial(m_maxPlayer);
+		this->TypeSerial(m_password);
 
 		return buf;
 	}
@@ -53,8 +55,8 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 			return;
 
 		this->StringDeserial(_buf, m_roomName);
-		this->IntDeserial(_buf, m_maxPlayer);
-		this->IntDeserial(_buf, m_password);
+		this->TypeDeserial(_buf, m_maxPlayer);
+		this->TypeDeserial(_buf, m_password);
 	}
 };
 struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
@@ -64,17 +66,21 @@ struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 	int32 m_roomNumber;
 
 	virtual char* Serialize() override {
-		this->BoolSerial(m_success);
-		this->IntSerial(m_roomNumber);
+		this->TypeSerial(this->GetBasePacketType());
+		this->TypeSerial(m_packetTypeRoom);
+		
+		this->TypeSerial(m_success);
+		this->TypeSerial(m_roomNumber);
 		
 		return buf;
 	}
 	virtual void Deserialize(char* _buf) override {
 		if (nullptr == buf)
 			return;
+		
 
-		this->BoolDeserial(_buf, m_success);
-		this->IntDeserial(_buf, m_roomNumber);
+		this->TypeDeserial(_buf, m_success);
+		this->TypeDeserial(_buf, m_roomNumber);
 	}
 };
 

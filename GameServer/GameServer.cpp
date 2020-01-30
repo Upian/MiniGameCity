@@ -13,10 +13,8 @@ GameServer::~GameServer() {}
 	Please Deserialize packet and handle each type
 */
 void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
-	//DeSerialize bufInfo->dataBuf.buf
-//	Player* pPlayer = new Player();
-//	m_roomManager.MakeRoom(10, pPlayer);
-//	m_roomManager.FindRoom(pPlayer).StartGame(nullptr);
+	if (nullptr == bufInfo)
+		return;
 	
 	Util::LoggingInfo("GameServer.log", "Recv  socket: %d", bufInfo->socket);
 	BasePacketType type = (BasePacketType)TypeDeserial(bufInfo->dataBuf.buf);

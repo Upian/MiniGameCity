@@ -88,15 +88,15 @@ namespace Util {
 		}
 
 		//Write local txt file  #Thread_SAFE
-//		std::ofstream* fout = logger->GetFileStream();
-//		if (nullptr == fout) return;
+		std::ofstream* fout = logger->GetFileStream();
+		if (nullptr == fout) return;
 
-//		if (0 == result || EEXIST == errno) {
-//			fout->open(logger->GetDirectory() + date + "/" + fileName, std::ios::app/* std::ios_base::out | std::ios_base::app*/);
-//			*fout << timeToString << "\t" << msgBuf << std::endl;
-//			if (true == fout->is_open())
-//				fout->close();
-//		}
+		if (0 == result || EEXIST == errno) {
+			fout->open(logger->GetDirectory() + date + "/" + fileName, std::ios::app/* std::ios_base::out | std::ios_base::app*/);
+			*fout << timeToString << "\t" << msgBuf << std::endl;
+			if (true == fout->is_open())
+				fout->close();
+		}
 
 
 		return;
