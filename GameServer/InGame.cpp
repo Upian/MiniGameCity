@@ -51,8 +51,8 @@ void InGame::Twenty_Question_Game() {
 void InGame::Next_Asker()
 {
 	++Questioner;
-	if (Questioner->GetGPID() == Quiz_Provider->GetGPID())
+	if (Questioner == Asker.end())
 	{
-		++Questioner;
+		Questioner = Asker.begin();
 	}
 }

@@ -7,7 +7,16 @@
 #include "BasePacket.h"
 #include "Player.h"
 
-enum Twenty_Packet_Name
+enum InGamePacketType
+{
+	InGame_Packet_None,
+	Twenty_Question_Game,
+	Relay_Novels_Writing_Game,
+	Ban_Keyword_Game,
+	Catch_Mind_Game
+};
+
+enum Twenty_Packet_Type
 {
 	//수정중
 	Twenty_None,
@@ -28,7 +37,7 @@ enum Twenty_Packet_Name
 	Twenty_Question_Chance_Over,
 	Twenty_Provider_Reply_Time_Over
 };
-enum Relay_Packet_Name
+enum Relay_Packet_Type
 {
 	//제작중
 	Relay_None,
@@ -39,7 +48,7 @@ enum Relay_Packet_Name
 	Relay_Next_Response,
 	Relay_Timer
 };
-enum Ban_Packet_Name
+enum Ban_Packet_Type
 {
 	//제작중
 	Ban_None,
@@ -51,7 +60,7 @@ enum Ban_Packet_Name
 	Ban_End_Game_Responce,
 	Ban_Timer
 };
-enum Catch_Pakcet_Name
+enum Catch_Pakcet_Type
 {
 	//제작중
 	Catch_None,
@@ -64,16 +73,52 @@ enum Catch_Pakcet_Name
 	Catch_Timer
 };
 
+//Ingame Base Packet
 class InGamePacket : public BasePacket {
 public:
-	InGamePacket() {}
-	InGamePacket(BasePacketType _base_packet_type)
+	InGamePacket(InGamePacketType _ingame_packet_type) : BasePacket(BasePacketType::basePacketTypeGame), ingame_packet_type(_ingame_packet_type)
 	{
-		this->base_packet_type = _base_packet_type;
+		this->TypeSerial(ingame_packet_type);
 	}
-	virtual ~InGamePacket() {}
-private:
-	BasePacketType base_packet_type = basePacketTypeNone;
+	~InGamePacket() {}
+	InGamePacketType GetInGamePacketType() { return ingame_packet_type; }
+	void SetInGamePacketType(InGamePacketType _ingame_packet_type) { ingame_packet_type = _ingame_packet_type; }
+protected:
+	InGamePacketType ingame_packet_type = InGame_Packet_None;
 };
 
+//Twenty Base Packet
+class TwentyQuestionGamePacket : public InGamePacket {
+public:
+	TwentyQuestionGamePacket(Twenty_Packet_Type _twenty_packet) : InGamePacket(InGamePacketType::Twenty_Question_Game), twenty_packet(_twenty_packet)
+	{
+		this->TypeSerial(_twenty_packet);
+	}
+	~TwentyQuestionGamePacket();
+protected:
+	Twenty_Packet_Type twenty_packet = Twenty_None;
+};
+class TwentyPlayerLocationSettingPacket : public TwentyQuestionGamePacket {
+public:
+	TwentyPlayerLocationSettingPacket() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Player_Location_Setting)
+	{
+
+	}
+	~TwentyPlayerLocationSettingPacket();
+private:
+
+};
+class RelayNovelWritingGamePacket : public InGamePacket {
+
+};
+class BanKeywordGamePacket : public InGamePacket {
+
+};
+class CatchMianGamePacket : public InGamePacket {
+
+};
+struct Player_Location_Setting_Packet : public InGamePacket
+{
+	int packet_type = Twenty_Player_Location_Setting;
+};
 #endif
