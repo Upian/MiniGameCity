@@ -12,13 +12,15 @@ public:
 	Client(SOCKET socket) : m_socket(socket) {}
 	~Client() {}
 
-	void SendPacket(BasePacket& packet);
+	void Initialize();
+	bool SendPacket(BasePacket& packet);
 
 	SOCKET GetSocket() const { return m_socket; }
 
 protected:
+	BufferInfo m_clientBuffer;
 	SOCKET m_socket = 0;
-	SOCKADDR_IN m_address;
+	
 };
 
 #endif // !__BASELIB_CLIENT_H__

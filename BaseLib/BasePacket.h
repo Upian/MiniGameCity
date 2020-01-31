@@ -42,6 +42,7 @@ enum BasePacketType : char {
 class BasePacket {
 public:
 	BasePacket(BasePacketType _basePacketType) : basePacketType(_basePacketType) {
+		idx = 0;
 		this->PacketTypeSerial(basePacketType);
 	}
 	virtual ~BasePacket() {}
@@ -122,11 +123,11 @@ protected:
 		if (_buf == nullptr) return;
 
 		std::string data;
-		while (*_buf != '\n') {
+		while (_buf[idx] != '\n') {
 			data += _buf[idx];
-			++_buf;
+			++idx;
 		}
-		++_buf;
+		++idx;
 		_data = data;
 	}
 
@@ -138,7 +139,7 @@ protected:
 
 		T_Arg val = 0;
 		for (int i = 0; i < sizeof(T_Arg); ++i) {
-			T_Arg tmp = (_buf[idx] << 8 * 1);
+			T_Arg tmp = (_buf[idx] << 8 * i);
 			val |= tmp;
 			++idx;
 		}
@@ -154,7 +155,8 @@ private:
 //Byte -> Type, 
 inline char PacketTypeDeserial(char* _buf) {
 	if (nullptr == _buf) return NULL;
-
+	if (1 < idx)
+		idx = 0;
 	char type = _buf[idx];
 	++idx;
 	return type;

@@ -9,8 +9,6 @@ Room::Room(RoomManager* roomManager, int maxPlayer, Player* master, int roomNumb
 	m_roomNumber(roomNumber),
 	m_roomState(RoomState::roomStateLobby){
 	this->PlayerEnterRoom(master);
-
-	Util::LoggingInfo("0_Test.log", "Create Room");
 }
 
 Room::~Room() {
@@ -20,8 +18,7 @@ Room::~Room() {
 		delete m_inGameThread;
 	}
 		
-	m_inGameThread = nullptr;	
-	Util::LoggingInfo("0_Test.log", "Destroy Room");
+	m_inGameThread = nullptr;
 }
 
 void Room::StartGame(std::function<void(void)> game) {

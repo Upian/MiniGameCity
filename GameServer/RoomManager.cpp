@@ -21,10 +21,10 @@ void RoomManager::ClearDeactivatedRoom() {
 		if (true == m_roomList.empty())
 			continue;
 
-		m_roomList.remove_if([this](Room& room)-> bool{
-			if (RoomState::roomStateNone == room.GetRoomState()) {
-				Util::LoggingInfo("0_Test.log", "Remove!!! roomState: %d", room.GetRoomState());
-				m_roomNumberList.push(room.GetRoomNumber());
+		m_roomList.remove_if([this](std::shared_ptr<Room> room)-> bool{
+			if (RoomState::roomStateNone == room->GetRoomState()) {
+				Util::LoggingInfo("0_Test.log", "Remove!!! roomState: %d", room->GetRoomState());
+				m_roomNumberList.push(room->GetRoomNumber());
 				return true;
 			}				
 			return false;
@@ -33,30 +33,52 @@ void RoomManager::ClearDeactivatedRoom() {
 }
 
 void RoomManager::MakeRoom(size_t limitedNumberPlayer, Player* master) {
-	if (m_minPlayer > limitedNumberPlayer && //Check player number
-		m_maxPlayer < limitedNumberPlayer) 
-		return;
 	if (nullptr == master)
 		return;
 
-	int roomNumber = m_roomNumberList.top();
-	m_roomNumberList.pop();
-
-	m_roomList.emplace_back(this, limitedNumberPlayer, master, roomNumber);
+	std::shared_ptr<Room> tempRoom;
 	
-	Util::LoggingInfo("", "Make Room number: %d", roomNumber);
-	//send packet to room master
 	RoomPacketMakeRoomResponse packet;
-	packet.m_success = true;
-	packet.m_roomNumber = roomNumber;
+	//Check player number
+
+	if ((limitedNumberPlayer < m_minPlayer) ||
+		(limitedNumberPlayer > m_maxPlayer)) {
+		packet.m_success = false;
+
+		Util::LoggingInfo("", "Fail Make room");
+	}	
+	else {
+		int roomNumber = m_roomNumberList.top();
+		m_roomNumberList.pop();
+
+		tempRoom = std::make_shared<Room>(this, limitedNumberPlayer, master, roomNumber);
+		m_roomList.push_back(tempRoom);
+
+		packet.m_success = true;
+		packet.m_roomNumber = roomNumber;
+
+		Util::LoggingInfo("", "Success Make room - number[%d]", roomNumber);
+	}
 	
-	master->SendPacket(packet);
+	//send packet to room master
+	//If send fails, delete room
+	if (false == master->SendPacket(packet)) {
+		if (nullptr == tempRoom)
+			return;
+
+		this->RemoveRoom(tempRoom);
+	}
+
 }
 
+void RoomManager::RemoveRoom(std::shared_ptr<Room> room) {
+	m_roomNumberList.push(room->GetRoomNumber());
+	m_roomList.remove(room);
+}
 
-Room& RoomManager::FindRoom(Player* pplayer) {
-	for (Room& room : m_roomList) {
-		if (room.GetRoomMaster() == pplayer) {
+std::shared_ptr<Room> RoomManager::FindRoom(Player* pplayer) {
+	for (std::shared_ptr<Room> room : m_roomList) {
+		if (room->GetRoomMaster() == pplayer) {
 			return room;
 		}
 	}

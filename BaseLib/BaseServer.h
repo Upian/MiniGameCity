@@ -271,7 +271,7 @@ void BaseServer<T_Server>::IOWorkerThread() {
 			}
 			continue;
 		}
-
+		bufferInfo->socket = clientSocket;
 		bufferInfo->dataBuf.len = recvBytes;
 	
 		this->HandleBasePacket(bufferInfo); //Handle packet
