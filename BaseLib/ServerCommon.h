@@ -26,21 +26,14 @@ enum ServerType : BYTE{
 class Buffer {
 public:
 	Buffer() {}
-	Buffer(Buffer& rhs) { 
-		strcpy_s(m_buffer, rhs.Length(), rhs.m_buffer);
-		m_index = rhs.m_index;
-		m_length = rhs.m_length;
+	
+	Buffer(const char* rhs) { 
+		memcpy(m_buffer, rhs, sizeof(rhs)); 
+		m_length = sizeof(rhs);
 	}
-	Buffer(const char* rhs) { strcpy_s(m_buffer, rhs); }
-	Buffer(char* rhs) { strcpy_s(m_buffer, rhs); }
-	Buffer& operator=(const Buffer& rhs) {
-		if (this == &rhs)
-			return *this;
-
-		strcpy_s(m_buffer, rhs.Length(), rhs.m_buffer);
-		m_index = rhs.m_index;
-		m_length = rhs.m_length;
-		return *this;
+	Buffer(char* rhs) { 
+		memcpy(m_buffer, rhs, sizeof(rhs));
+		m_length = sizeof(rhs);
 	}
 	Buffer& operator=(const char* buffer) {
 		memcpy(m_buffer, buffer, sizeof(buffer));
@@ -52,6 +45,23 @@ public:
 		m_length = sizeof(buffer);
 		return *this;
 	}
+
+	Buffer(Buffer& rhs) {
+		strcpy_s(m_buffer, rhs.Length(), rhs.m_buffer);
+		m_index = rhs.m_index;
+		m_length = rhs.m_length;
+	}
+	Buffer& operator=(const Buffer& rhs) {
+		if (this == &rhs)
+			return *this;
+
+		strcpy_s(m_buffer, rhs.Length(), rhs.m_buffer);
+		m_index = rhs.m_index;
+		m_length = rhs.m_length;
+		return *this;
+	}
+	
+	
 	operator const char*() {
 		return this->m_buffer;
 	}
