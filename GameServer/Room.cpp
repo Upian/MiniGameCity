@@ -2,8 +2,8 @@
 #include "Room.h"
 #include "Player.h"
 #include "Log.h"
-Room::Room(RoomManager* roomManager, int maxPlayer, Player* master, int roomNumber) :
-	m_roomManager(roomManager),
+Room::Room(std::string roomName, int maxPlayer, std::shared_ptr<Player> master, int roomNumber) :
+	m_roomName(roomName),
 	m_maxPlayer(maxPlayer),
 	m_roomMaster(master),
 	m_roomNumber(roomNumber),
@@ -41,25 +41,30 @@ void Room::StartGame(std::function<void(void)> game) {
 	});
 }
 
-bool Room::PlayerEnterRoom(Player* player) {
+bool Room::PlayerEnterRoom(std::shared_ptr<Player> player) {
 	if (nullptr == player) 
 		return false;
 
-	if (m_maxPlayer == m_playerManager.GetPlayerCount())
+	if (m_maxPlayer == m_roomPlayerManager.GetPlayerCount())
 		return false;
 	
-	m_playerManager.InsertPlayer(player);
+	m_roomPlayerManager.InsertPlayer(player);
 	return true;
 }
 
-void Room::PlayerLeaveRoom(Player* player) {
+void Room::PlayerLeaveRoom(std::shared_ptr<Player> player) {
 	if (nullptr == player)
 		return;
 	
-	m_playerManager.RemovePlayer(player);//remove player
+	m_roomPlayerManager.RemovePlayer(player);//remove player
 	
+	if (true == m_roomPlayerManager.IsPlayerEmpty()) {
+		m_roomState = RoomState::roomStateNone;
+		return;
+	}
+		
 	if (m_roomMaster == player) //If the player is room master
-		m_roomMaster = m_playerManager.GetPlayerList().front(); //
+		m_roomMaster = m_roomPlayerManager.GetPlayerList().front(); //
 
 	return;
 }

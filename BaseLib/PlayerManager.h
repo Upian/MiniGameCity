@@ -11,24 +11,24 @@
 
 class PlayerManager {
 public:	
-	void InsertPlayer(Player* player) { m_playerList.push_back(player); }
-	void InsertPlayer(SOCKET socket) { m_playerList.push_back(new Player(socket)); }
+	void InsertPlayer(std::shared_ptr<Player> player) { m_playerList.push_back(player); }
+	void InsertPlayer(SOCKET socket);
 	
-	void RemovePlayer(Player* player);
+	void RemovePlayer(std::shared_ptr<Player> player);
 	void RemovePlayer(GPID key);
 	
 	void PlayerDisconnect(SOCKET key);
-	void SendToPlayers(BasePacket* packet);
+	void SendToPlayers(BasePacket& packet);
 
-	std::list<Player*>& GetPlayerList() { return m_playerList; }
+	std::list<std::shared_ptr<Player> >& GetPlayerList() { return m_playerList; }
 	size_t GetPlayerCount() const { return m_playerList.size(); }
 	bool IsPlayerEmpty() const { return m_playerList.empty(); }
 
-	Player* FindPlayer(GPID playerId);
-	Player* FindPlayerBySocket(SOCKET socket);
+	std::shared_ptr<Player> FindPlayer(GPID playerId);
+	std::shared_ptr<Player> FindPlayerBySocket(SOCKET socket);
 
 private:
-	std::list<Player*> m_playerList;
+	std::list<std::shared_ptr<Player> > m_playerList;
 
 };
 

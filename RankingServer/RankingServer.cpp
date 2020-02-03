@@ -4,6 +4,13 @@ RankingServer::RankingServer() {}
 RankingServer::~RankingServer() {}
 
 
+
+void RankingServer::HandleAcceptClient(SOCKET clientSocket) {
+
+}
+void RankingServer::HandleDisconnectClient(SOCKET clientSocket) {
+
+}
 /*
 *	If a packet arrived
 	It will come here
@@ -11,13 +18,9 @@ RankingServer::~RankingServer() {}
 */
 void RankingServer::HandleBasePacket(BufferInfo* bufInfo) {
 	//DeSerialize bufInfo->dataBuf.buf
-	
+
 	//switch(packet type) ...
 
-	printf("Ranking server -- recv packet\n");
-
-}
-
-void RankingServer::HandleAcceptClient(SOCKET clientSocket) {
+	printf("Login server -- recv packet\n");
 
 }

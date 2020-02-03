@@ -42,40 +42,44 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 
 	virtual char* Serialize() override {
 
-		this->StringSerial(m_roomName.c_str());
+		buf << m_roomName;
+		buf << m_maxPlayer;
+		buf << m_password;
+		/*this->StringSerial(m_roomName.c_str());
 		this->TypeSerial(m_maxPlayer);
-		this->TypeSerial(m_password);
+		this->TypeSerial(m_password);*/
 
 		return buf;
 	}
-	virtual void Deserialize(char* _buf) override {
-		if (nullptr == _buf)
-			return;
-
-		this->StringDeserial(_buf, m_roomName);
+	virtual void Deserialize(Buffer& _buf) override {
+//		DeserializeBuffer(_buf);
+		_buf >> m_roomName;
+		_buf >> m_maxPlayer;
+		_buf >> m_password;
+		/*this->StringDeserial(_buf, m_roomName);
 		this->TypeDeserial(_buf, m_maxPlayer);
-		this->TypeDeserial(_buf, m_password);
+		this->TypeDeserial(_buf, m_password);*/
 	}
 };
 struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 	RoomPacketMakeRoomResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomMakeRoomResponse) {}
 
-	bool m_success;
-	int32 m_roomNumber;
+	bool m_success = false;
+	int32 m_roomNumber = 0;
 
 	virtual char* Serialize() override {		
-		this->TypeSerial(m_success);
-		this->TypeSerial(m_roomNumber);
+		buf << m_success;
+		buf << m_roomNumber;
+		/*this->TypeSerial(m_success);
+		this->TypeSerial(m_roomNumber);*/
 		
 		return buf;
 	}
-	virtual void Deserialize(char* _buf) override {
-		if (nullptr == buf)
-			return;
-		
-
-		this->TypeDeserial(_buf, m_success);
-		this->TypeDeserial(_buf, m_roomNumber);
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> m_success;
+		_buf >> m_roomNumber;
+		/*this->TypeDeserial(_buf, m_success);
+		this->TypeDeserial(_buf, m_roomNumber);*/
 	}
 };
 
@@ -85,7 +89,7 @@ struct RoomPacketRoomListRequest : public BaseRoomPacket {
 
 	virtual char* Serialize() override {
 	}
-	virtual void Deserialize(char* _buf) override {
+	virtual void Deserialize(Buffer& _buf) override {
 	}
 };
 struct RoomPacketRoomListResponse : public BaseRoomPacket {
@@ -104,7 +108,7 @@ struct RoomPacketRoomListResponse : public BaseRoomPacket {
 	virtual char* Serialize() override {
 
 	}
-	virtual void Deserialize(char* _buf) override {
+	virtual void Deserialize(Buffer& _buf) override {
 
 	}
 };

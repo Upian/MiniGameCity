@@ -5,7 +5,8 @@
 #include <string>
 #include <type_traits>
 
-#define BUFFER_SIZE 1024
+#include "ServerCommon.h"
+
 
 typedef __int16 int16;
 typedef __int32 int32;
@@ -24,10 +25,6 @@ typedef __int64 int64;
 	char* buf = chat.Serialize();
 */
 
-namespace {
-	int32 idx = 0;
-}
-
 enum BasePacketType : char {
 	basePacketTypeNone = 0,
 	basePacketTypeLogin,
@@ -42,13 +39,12 @@ enum BasePacketType : char {
 class BasePacket {
 public:
 	BasePacket(BasePacketType _basePacketType) : basePacketType(_basePacketType) {
-		idx = 0;
 		this->PacketTypeSerial(basePacketType);
 	}
 	virtual ~BasePacket() {}
 
 	virtual char* Serialize() = 0;
-	virtual void Deserialize(char* _buf) = 0;
+	virtual void Deserialize(Buffer& buf) = 0;
 
 	BasePacketType GetBasePacketType() const {
 		return basePacketType;
@@ -62,97 +58,60 @@ protected:
 
 	//Type -> Byte, (타입)
 	inline void PacketTypeSerial(char _type) {
-		buf[idx] = _type;
-		++idx;
+		buf << _type;
 	}
 
 	//String -> Byte, (데이터)
 	inline void StringSerial(std::string _data) {
-		for (int i = 0; i < _data.size(); ++i) {
-			buf[idx] = _data[i];
-			++idx;
-		}
-		buf[idx] = '\n';
-		++idx;
+		buf << _data;
 	}
 
 	//Value -> Byte, (값)
 	inline void TypeSerial(char _val) {
-		for (int i = 0; i < sizeof(char); ++i) {
-			buf[idx] = _val;
-			++idx;
-			_val >>= 8;
-		}
+		buf << _val;
 	}
 
 	inline void TypeSerial(bool _val) {
-		for (int i = 0; i < sizeof(bool); ++i) {
-			buf[idx] = _val;
-			++idx;
-			_val >>= 8;
-		}
+		buf << _val;
 	}
 
 	inline void TypeSerial(int16 _val) {
-		for (int i = 0; i < sizeof(int16); ++i) {
-			buf[idx] = _val;
-			++idx;
-			_val >>= 8;
-		}
+		buf << _val;
 	}
 
 	inline void TypeSerial(int32 _val) {
-		for (int i = 0; i < sizeof(int32); ++i) {
-			buf[idx] = _val;
-			++idx;
-			_val >>= 8;
-		}
+		buf << _val;
 	}
 
 	inline void TypeSerial(int64 _val) {
-		for (int i = 0; i < sizeof(int64); ++i) {
-			buf[idx] = _val;
-			++idx;
-			_val >>= 8;
-		}
+		buf << _val;
 	}
 #pragma endregion
-
+#pragma region Deserialize
+	void DeserializeBuffer(Buffer& _buf) {
+		buf = _buf;
+	}
 	//Byte -> String, (버퍼, 데이터)
-	inline void StringDeserial(char* _buf, std::string& _data) {
-		if (_buf == nullptr) return;
-
-		std::string data;
-		while (_buf[idx] != '\n') {
-			data += _buf[idx];
-			++idx;
-		}
-		++idx;
-		_data = data;
+	inline void StringDeserial(Buffer& _buf, std::string& _data) {
+		_buf >> _data;
 	}
 
 	//Byte -> Value, (버퍼, 값)
 	template<typename T_Arg>
-	inline void TypeDeserial(char* _buf, T_Arg& _val) {
-		if (nullptr == _buf)
-			return;
-
-		T_Arg val = 0;
-		for (int i = 0; i < sizeof(T_Arg); ++i) {
-			T_Arg tmp = (_buf[idx] << 8 * i);
-			val |= tmp;
-			++idx;
-		}
-		_val = val;
+	inline void TypeDeserial(Buffer& _buf, T_Arg& _val) {
+		_buf >> _val;
 	}
-
+#pragma endregion
 protected:
-	char buf[BUFFER_SIZE]{};
+//	char buf[BUFFER_SIZE]{};
+	Buffer buf;
 private:
 	BasePacketType basePacketType = basePacketTypeNone;
 };
 
 //Byte -> Type, 
+
+/*
 inline char PacketTypeDeserial(char* _buf) {
 	if (nullptr == _buf) return NULL;
 	if (1 < idx)
@@ -160,6 +119,11 @@ inline char PacketTypeDeserial(char* _buf) {
 	char type = _buf[idx];
 	++idx;
 	return type;
-}
+}*/
 
+inline char PacketTypeDeserial(Buffer& _buf) {
+	char type;
+	_buf >> type;
+	return type;
+}
 #endif

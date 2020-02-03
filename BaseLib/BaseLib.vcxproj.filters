@@ -52,9 +52,6 @@
     <ClInclude Include="GamePacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>Client</Filter>
-    </ClInclude>
     <ClInclude Include="Server.h">
       <Filter>Client</Filter>
     </ClInclude>
@@ -70,9 +67,6 @@
     <ClInclude Include="LoginPacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="RoomPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
     <ClInclude Include="LobbyPacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
@@ -84,6 +78,9 @@
     </ClInclude>
     <ClInclude Include="UTF8.h">
       <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientBase.h">
+      <Filter>Client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -114,9 +111,6 @@
     <ClCompile Include="LoginPacket.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
-    <ClCompile Include="RoomPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
     <ClCompile Include="LobbyPacket.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
@@ -126,13 +120,13 @@
     <ClCompile Include="ShopPacket.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
     <ClCompile Include="Server.cpp">
       <Filter>Client</Filter>
     </ClCompile>
     <ClCompile Include="ServerManager.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientBase.cpp">
       <Filter>Client</Filter>
     </ClCompile>
   </ItemGroup>

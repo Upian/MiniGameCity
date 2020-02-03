@@ -4,6 +4,13 @@ LoginServer::LoginServer() {}
 LoginServer::~LoginServer() {}
 
 
+
+void LoginServer::HandleAcceptClient(SOCKET clientSocket) {
+
+}
+void LoginServer::HandleDisconnectClient(SOCKET clientSocket) {
+
+}
 /*
 *	If a packet arrived
 	It will come here
@@ -18,6 +25,3 @@ void LoginServer::HandleBasePacket(BufferInfo* bufInfo) {
 
 }
 
-void LoginServer::HandleAcceptClient(SOCKET clientSocket) {
-
-}

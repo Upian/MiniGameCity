@@ -2,8 +2,9 @@
 #ifndef __BASELIB_PLAYER_H__
 #define __BASELIB_PLAYER_H__
 
+
 #include "ServerCommon.h"
-#include "Client.h"
+#include "ClientBase.h"
 
 enum PlayerState {
 	playerStateNone = 0,
@@ -18,12 +19,11 @@ enum PlayerState {
 
 using GPID = unsigned __int32; //Unique ID for each player (Game Player ID)
 class BasePacket;
-class Room;
 
-class Player : public Client{
+class Player : public ClientBase{
 public:
-	Player() {}
-	Player(SOCKET socket) : Client(socket) {}
+	Player(const Player&) {}
+	Player(SOCKET socket) : ClientBase(socket) {}
 	~Player() {}
 
 	void Initialize();
@@ -31,13 +31,12 @@ public:
 	SOCKET GetSocket() const { return m_socket; }
 	GPID GetGPID() const { return m_gamePlayerId; }
 
-	
+	virtual void HandlePacket(BufferInfo* packet) override;
+
 	//operator
 	bool operator==(const Player& player) const { return m_gamePlayerId == player.GetGPID(); }
 private:
 	GPID m_gamePlayerId = 0; //
 	bool m_isFirstLoginPlayer = true;
-
-	Room* m_room = nullptr;
 };
 #endif // !__BASELIB_PLAYER_H__

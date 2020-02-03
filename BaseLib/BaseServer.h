@@ -45,6 +45,7 @@ protected:
 
 private:
 	virtual void HandleAcceptClient(SOCKET clientSocket) = 0;
+	virtual void HandleDisconnectClient(SOCKET clientSocket) = 0;
 	virtual void HandleBasePacket(BufferInfo* bufInfo) = 0;
 
 	static T_Server* m_instance;
@@ -110,8 +111,10 @@ void BaseServer<T_Server>::DestroyServer() {
 #ifndef MAKE_SERVER
 #define MAKE_SERVER( ClassName )\
 		friend class BaseServer<ClassName>; ClassName(); ~ClassName();\
-		virtual void HandleBasePacket(BufferInfo* bufInfo);\
-		virtual void HandleAcceptClient(SOCKET clientSocket);
+		virtual void HandleAcceptClient(SOCKET clientSocket) override;\
+		virtual void HandleDisconnectClient(SOCKET clientSocket) override;\
+		virtual void HandleBasePacket(BufferInfo* bufInfo) override;
+		
 
 #endif // !MAKE_SERVER
 
@@ -201,6 +204,7 @@ void BaseServer<T_Server>::RunServer() {
 	DWORD			recvBytes;
 	DWORD			flag;
 	BufferInfo* tempBuffer = nullptr;
+//	std::shared_ptr<BufferInfo> tempBuffer;
 	while (true) {
 		clientSocket = WSAAccept(m_serverSocket, (SOCKADDR*)&clientAddress, &AddressSize, NULL, NULL);
 		if (INVALID_SOCKET == clientSocket) {
@@ -208,11 +212,10 @@ void BaseServer<T_Server>::RunServer() {
 			continue;
 		}
 
-		this->HandleAcceptClient(clientSocket);
-
 		m_iocpHandle = CreateIoCompletionPort((HANDLE)clientSocket, m_iocpHandle, clientSocket, 0);
 
 		tempBuffer = new BufferInfo;
+//		tempBuffer = std::make_shared<BufferInfo>();
 		if (nullptr == tempBuffer) {
 			Util::LoggingError(m_serverName + ".log", "Can not create BufferInfo");
 			continue;
@@ -221,7 +224,8 @@ void BaseServer<T_Server>::RunServer() {
 		tempBuffer->socket = clientSocket;
 		tempBuffer->dataBuf.len = BUFFER_SIZE;
 		tempBuffer->dataBuf.buf = tempBuffer->buffer;
-		
+
+		this->HandleAcceptClient(clientSocket);
 		flag = 0;
 		if (SOCKET_ERROR == WSARecv(tempBuffer->socket,
 									&tempBuffer->dataBuf,
@@ -257,27 +261,31 @@ void BaseServer<T_Server>::CreateIOWorkerThread() {
 template<typename T_Server>
 void BaseServer<T_Server>::IOWorkerThread() {
 	BufferInfo* bufferInfo = nullptr;
-
+//	std::shared_ptr<BufferInfo> bufferInfo;
 	while (true == m_runningThread) {
 		DWORD recvBytes = 0;
 		SOCKET clientSocket;
 		
-		if (false == GetQueuedCompletionStatus(m_iocpHandle, &recvBytes, (PULONG_PTR)&clientSocket, (LPOVERLAPPED*)&bufferInfo, INFINITE)) {
-			if(0 == recvBytes) {
-				Util::LoggingInfo(m_serverName + ".log", "socket[%d] is disconnected", clientSocket);
+		if (false == GetQueuedCompletionStatus(m_iocpHandle, &recvBytes, (PULONG_PTR)&clientSocket, (LPOVERLAPPED*)&bufferInfo, INFINITE) ||
+			0 == recvBytes) {
+			this->HandleDisconnectClient(clientSocket);
+
+			Util::LoggingInfo(m_serverName + ".log", "socket[%d] is disconnected, count:", clientSocket/*, bufferInfo.use_count()*/);
+			if (nullptr != bufferInfo) {
 				delete bufferInfo;
 				bufferInfo = nullptr;
-				closesocket(clientSocket);
 			}
-			continue;
+			closesocket(clientSocket);
+			continue;	
 		}
+
 		bufferInfo->socket = clientSocket;
 		bufferInfo->dataBuf.len = recvBytes;
-	
+
 		this->HandleBasePacket(bufferInfo); //Handle packet
 		//Comment out because of thread safe issues
 		//Util::LoggingInfo("ServerMessage.log", "socket[%d] recv message: [%d]%s", clientSocket, bufferInfo->dataBuf.len, bufferInfo->dataBuf.buf);
-		
+
 		bufferInfo->Clear();
 		DWORD flag = 0;
 		if (SOCKET_ERROR == WSARecv(clientSocket,
@@ -293,20 +301,4 @@ void BaseServer<T_Server>::IOWorkerThread() {
 	}
 }
 
-template<typename T_Server>
-void BaseServer<T_Server>::SendPacket(SOCKET socket, BasePacket& packet) {
-	WSABUF dataBuf;
-	dataBuf.buf = packet.Serialize();
-	dataBuf.len = sizeof(dataBuf.buf);
-
-	WSAEVENT wsaEvent = WSACreateEvent();
-	
-	WSAOVERLAPPED overlapped;
-	ZeroMemory(&overlapped, sizeof(overlapped));
-	overlapped.hEvent = wsaEvent;
-
-	int sendBytes = 0;
-
-	WSASend(socket, &dataBuf, 1, &sendBytes, 0, &overlapped, NULL);
-}
 #endif // !__BASELIB_BASE_SERVER_H__

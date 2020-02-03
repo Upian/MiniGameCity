@@ -3,6 +3,16 @@
 ManagementServer::ManagementServer() {}
 ManagementServer::~ManagementServer() {}
 
+
+
+void ManagementServer::HandleAcceptClient(SOCKET clientSocket) {
+
+
+}
+void ManagementServer::HandleDisconnectClient(SOCKET clientSocket) {
+
+}
+
 /*
 *	If a packet arrived
 	It will come here
@@ -14,10 +24,5 @@ void ManagementServer::HandleBasePacket(BufferInfo* bufInfo) {
 	//switch(packet type) ...
 
 	printf("Management server -- recv packet: %s\n", bufInfo->dataBuf.buf);
-
-}
-
-void ManagementServer::HandleAcceptClient(SOCKET clientSocket) {
-	
 
 }

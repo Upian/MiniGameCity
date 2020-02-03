@@ -129,11 +129,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BasePacket.h" />
-    <ClInclude Include="Client.h" />
+    <ClInclude Include="ClientBase.h" />
     <ClInclude Include="LobbyPacket.h" />
     <ClInclude Include="LoginPacket.h" />
     <ClInclude Include="RankingPacket.h" />
-    <ClInclude Include="RoomPacket.h" />
     <ClInclude Include="ShopPacket.h" />
     <ClInclude Include="SocialPacket.h" />
     <ClInclude Include="Config.h" />
@@ -156,10 +155,9 @@
     <ClCompile Include="LobbyPacket.cpp" />
     <ClCompile Include="LoginPacket.cpp" />
     <ClCompile Include="RankingPacket.cpp" />
-    <ClCompile Include="RoomPacket.cpp" />
     <ClCompile Include="ShopPacket.cpp" />
     <ClCompile Include="SocialPacket.cpp" />
-    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ClientBase.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Player.cpp" />

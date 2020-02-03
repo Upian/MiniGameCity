@@ -14,6 +14,9 @@
     <Filter Include="Packet">
       <UniqueIdentifier>{6c4a77e8-829e-4e60-81c1-3023005c145f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{c217afdd-3be8-4904-8a6f-9d729342daef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServerMain.cpp" />

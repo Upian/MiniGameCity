@@ -1,18 +1,18 @@
 #pragma once
-#ifndef __BASELIB_CLIENT_H__
-#define __BASELIB_CLIENT_H__
+#ifndef __BASELIB_CLIENT_BASE_H__
+#define __BASELIB_CLIENT_BASE_H__
 
 #include "ServerCommon.h"
 
 class BasePacket;
 
-class Client {
+class ClientBase {
 public:
-	Client() {}
-	Client(SOCKET socket) : m_socket(socket) {}
-	~Client() {}
+	ClientBase() {}
+	ClientBase(SOCKET socket) : m_socket(socket) {}
+	~ClientBase() {}
 
-	void Initialize();
+	virtual void HandlePacket(BufferInfo* packet) = 0;
 	bool SendPacket(BasePacket& packet);
 
 	SOCKET GetSocket() const { return m_socket; }

@@ -14,10 +14,10 @@ class RoomManager{
 public:
 	~RoomManager();
 
-	void MakeRoom(size_t maxPlayer, Player* master);
+	void HandleMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_ptr<Player> master);
 
 	void Initialize();
-	std::shared_ptr<Room> FindRoom(Player* pplayer);
+	std::shared_ptr<Room> FindRoomByPlayer(std::shared_ptr<Player> pplayer);
 	void RemoveRoom(std::shared_ptr<Room> room);
 
 	size_t GetRoomCount() const { m_roomList.size(); }

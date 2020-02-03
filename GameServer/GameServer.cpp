@@ -7,6 +7,31 @@
 GameServer::GameServer() {}
 GameServer::~GameServer() {}
 
+#pragma region Client connection
+void GameServer::HandleAcceptClient(SOCKET clientSocket) {
+	if (clientSocket < 1)
+		return;
+	m_playerManager.InsertPlayer(clientSocket); //#temp
+	printf("Connect client[%d] Total players[%d]\n", clientSocket, m_playerManager.GetPlayerList().size());
+}
+
+void GameServer::HandleDisconnectClient(SOCKET clientSocket) {
+	if (clientSocket < 1)
+		return;
+	auto player = m_playerManager.FindPlayerBySocket(clientSocket);
+	if (nullptr == player)
+		return;
+
+	auto room = m_roomManager.FindRoomByPlayer(player);
+	if(nullptr != room)
+		room->PlayerLeaveRoom(player);
+
+	m_playerManager.PlayerDisconnect(clientSocket);
+	printf("Disconnect client[%d] Total players[%d]\n", clientSocket, m_playerManager.GetPlayerList().size());
+
+
+}
+#pragma endregion
 /*
 *	If a packet arrived
 	It will come here
@@ -16,7 +41,8 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 	if (nullptr == bufInfo)
 		return;
 
-	BasePacketType type = (BasePacketType)PacketTypeDeserial(bufInfo->dataBuf.buf);
+	BasePacketType type = (BasePacketType)PacketTypeDeserial(bufInfo->buffer);
+
 
 	switch (type) {
 	case basePacketTypeRoom: {
@@ -45,15 +71,14 @@ void GameServer::HandlePacketPrepareTransfer() {
 *	规 包访 菩哦 贸府
 */ 
 void GameServer::HandlePacketRoom(BufferInfo* bufInfo) {
-	PacketTypeRoom type = (PacketTypeRoom)PacketTypeDeserial(bufInfo->dataBuf.buf);
+	PacketTypeRoom type = (PacketTypeRoom)PacketTypeDeserial(bufInfo->buffer);
 
 	switch (type) {
 	case PacketTypeRoom::packetTypeRoomMakeRoomRequest: {
 		RoomPacketMakeRoomRequest packet;
-		packet.Deserialize(bufInfo->dataBuf.buf);
-		//Player* player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
-		Player* player = new Player(bufInfo->socket); //#Temp
-		m_roomManager.MakeRoom(packet.m_maxPlayer, player);
+		packet.Deserialize(bufInfo->buffer);
+		auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
+		m_roomManager.HandleMakeRoom(packet, player);
 		break;
 	}
 	case PacketTypeRoom::packetTypeRoomRoomListRequest: {
@@ -68,12 +93,6 @@ void GameServer::HandlePacketRoom(BufferInfo* bufInfo) {
 }
 
 #pragma endregion Handle packet functions
-
-
-void GameServer::HandleAcceptClient(SOCKET clientSocket) {
-
-}
-
 
 void GameServer::InitializeGameServer() {
 	this->ConnectToManagementServer();

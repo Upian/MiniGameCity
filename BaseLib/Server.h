@@ -2,12 +2,12 @@
 #ifndef __BASELIB_SERVER_H__
 #define __BASELIB_SERVER_H__
 
-#include "Client.h"
+#include "ClientBase.h"
 
-class Server : public Client {
+class Server : public ClientBase {
 public:
 	Server() {}
-	Server(SOCKET socket) : Client(socket) {}
+	Server(SOCKET socket) : ClientBase(socket) {}
 	~Server() {}
 
 	void SetServerType(ServerType type) { m_serverType = type; }

@@ -9,7 +9,7 @@
 //const char* serverName = "GameServer";
 //const char* logFile = "GameServer.log";
 
-class BaseRoomPacket;
+struct BaseRoomPacket;
 
 class GameServer : public BaseServer<GameServer> {
 public:

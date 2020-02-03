@@ -23,36 +23,35 @@ enum RoomState {
 
 class Room {
 public:
-	Room(RoomManager* roomManager, int maxPlayer, Player* master, int roomNumber);
+	Room(std::string roomName, int maxPlayer, std::shared_ptr<Player> master, int roomNumber);
 	~Room();
 
 	void StartGame(std::function<void(void)> game);
 
-	bool PlayerEnterRoom(Player* player);
-	void PlayerLeaveRoom(Player* player);
+	bool PlayerEnterRoom(std::shared_ptr<Player> player);
+	void PlayerLeaveRoom(std::shared_ptr<Player> player);
 
-	PlayerManager& GetPlayerManager() { return m_playerManager; }
-	int GetPlayerCount() const { return m_playerManager.GetPlayerCount(); }
+	PlayerManager& GetPlayerManager() { return m_roomPlayerManager; }
+	int GetPlayerCount() const { return m_roomPlayerManager.GetPlayerCount(); }
 
 	RoomState GetRoomState() const { return m_roomState; }
 	int GetRoomNumber() const { return m_roomNumber; }
 
-	Player* GetRoomMaster() const { return m_roomMaster; }
+	std::shared_ptr<Player> GetRoomMaster() const { return m_roomMaster; }
 	//operator
 	bool operator==(const Room& other) const { return m_roomNumber == other.GetRoomNumber(); }
 private:
-	RoomManager* m_roomManager = nullptr;
-
-	PlayerManager m_playerManager;
-	Player* m_roomMaster = nullptr;
-	int m_maxPlayer = 0;
-	RoomState m_roomState = RoomState::roomStateNone;
-	int m_roomNumber = 0;
-
-	std::thread* m_inGameThread = nullptr;
-
-	bool m_usePassword = false;
-	char m_password[4];
+	PlayerManager						m_roomPlayerManager;
+	std::shared_ptr<Player>				m_roomMaster = nullptr;
+	
+	RoomState							m_roomState = RoomState::roomStateNone;
+	std::thread*						m_inGameThread = nullptr;
+	
+	std::string							m_roomName;
+	int									m_maxPlayer = 0;
+	int									m_roomNumber = 0;
+	bool								m_usePassword = false;
+	char								m_password[4];
 
 };
 #endif // !__GAMESERVER_LOBBY_H__
