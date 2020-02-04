@@ -91,7 +91,12 @@ void GameServer::HandlePacketRoom(BufferInfo* bufInfo) {
 		break;
 	}
 	case PacketTypeRoom::packetTypeRoomEnterRoomRequest: {
+		RoomPacketEnterRoomRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
 
+		m_roomManager.HandlePacketEnterRoom(packet, player);
+		break;
 	}
 	default:
 		Util::LoggingInfo("GameServer.log", "Recv wrong room packet ID: %d", type);

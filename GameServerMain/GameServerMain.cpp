@@ -17,7 +17,7 @@ void operator delete(void* ptr, size_t size) {
 int main(int argc, char* argv[]) {
 	GameServer* pServer = GameServer::CreateServer();
 
-	if (0 < argc) 
+	if (0 < argc)
 		pServer->SetPortNum(atoi(argv[1]));
 	else
 		pServer->SetPortNum(Util::GetConfigToInt("GameServer.ini", "Network", "Port", 10000));
@@ -28,6 +28,6 @@ int main(int argc, char* argv[]) {
 
 	pServer->RunServer();
 
-	
+
 	return 0;
 }

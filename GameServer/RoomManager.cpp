@@ -108,6 +108,9 @@ void RoomManager::HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::s
 	player->SendPacket(responsePacket);
 }
 
+void RoomManager::HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std::shared_ptr<Player> player) {
+	//if(nullptr)
+}
 
 void RoomManager::RemoveRoom(std::shared_ptr<Room> room) {
 	m_roomNumberList.push(room->GetRoomNumber());

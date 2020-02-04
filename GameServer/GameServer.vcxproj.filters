@@ -19,7 +19,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameServerMain.cpp" />
     <ClCompile Include="GameServer.cpp">
       <Filter>GameServer</Filter>
     </ClCompile>

@@ -19,7 +19,7 @@ enum PacketTypeRoom : char {
 
 	packetTypeRoomEnterRoomRequest, //Client -> GameServer
 
-	packetTypeRoomRoomInfo, //GameServer -> Client Broadcast
+	packetTypeRoomRoomInfo, //GameServer -> Client Broadcast (also used EnterRoomResponse)
 
 	packetTypeRoomCount,
 };
@@ -77,7 +77,7 @@ struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 struct RoomPacketRoomListRequest : public BaseRoomPacket {
 	RoomPacketRoomListRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomListRequest) {}
 
-	int m_page = 0;
+	__int16 m_page = 0;
 	virtual Buffer& Serialize() override {
 		buffer << m_page;
 		return buffer;
@@ -148,4 +148,22 @@ public:
 	}
 };
 
+//Enter room
+struct RoomPacketEnterRoomRequest : public BaseRoomPacket {
+	RoomPacketEnterRoomRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomEnterRoomRequest) {}
+
+	__int32 m_roomNumber = 0;
+	__int16 m_password = 0;
+	virtual Buffer& Serialize() override{
+		buffer << m_roomNumber;
+		buffer << m_password;
+		
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> m_roomNumber;
+		_buf >> m_password;
+	}
+
+};
 #endif // !__GAMESERVER_ROOM_PACKET_H__
