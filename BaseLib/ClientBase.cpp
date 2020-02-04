@@ -8,8 +8,8 @@
 
 bool ClientBase::SendPacket(BasePacket& packet) {
 	m_clientBuffer.Clear();
+
 	m_clientBuffer.buffer = packet.Serialize();
-//	strcpy_s(m_clientBuffer.buffer, packet.Serialize());
 	m_clientBuffer.dataBuf.len = m_clientBuffer.buffer.Length();
 	m_clientBuffer.overlapped.hEvent = WSACreateEvent();
 	DWORD sendBytes = 0;
@@ -24,5 +24,6 @@ bool ClientBase::SendPacket(BasePacket& packet) {
 		Util::LoggingError("Network.log", "Send error[%d]", WSAGetLastError());
 		return false;
 	}
+	printf("Send: %d\n", sendBytes);
 	return true;
 }

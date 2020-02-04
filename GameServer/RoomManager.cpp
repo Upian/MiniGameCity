@@ -23,7 +23,7 @@ void RoomManager::ClearDeactivatedRoom() {
 
 		m_roomList.remove_if([this](std::shared_ptr<Room> room)-> bool{
 			if (RoomState::roomStateNone == room->GetRoomState()) {
-				Util::LoggingInfo("0_Test.log", "Remove!!! roomState: %d", room->GetRoomState());
+				Util::LoggingInfo("0_Test.log", "Destroy room[%d] roomState: %d", room->GetRoomNumber(), room->GetRoomState());
 				m_roomNumberList.push(room->GetRoomNumber());
 				return true;
 			}				
@@ -31,8 +31,8 @@ void RoomManager::ClearDeactivatedRoom() {
 		});
 	}
 }
-
-void RoomManager::HandleMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_ptr<Player> master) {
+/*Handle packet*/
+void RoomManager::HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_ptr<Player> master) {
 	if (nullptr == master)
 		return;
 
@@ -67,7 +67,7 @@ void RoomManager::HandleMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_
 	
 	//send packet to room master
 	//If send fails, delete room
-	printf("Room [%s] number: %d, max: %d\n", responsePacket.m_success ? "Success" : "Fail", responsePacket.m_roomNumber, packet.m_maxPlayer);
+	Util::LoggingInfo("", "Room [%s] number: %d, max: %d\n", responsePacket.m_success ? "Success" : "Fail", responsePacket.m_roomNumber, packet.m_maxPlayer);
 	if (false == master->SendPacket(responsePacket)) {
 		if (nullptr == tempRoom)
 			return;
@@ -76,6 +76,38 @@ void RoomManager::HandleMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_
 	}
 
 }
+
+void RoomManager::HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::shared_ptr<Player> player) {
+	if (nullptr == player)
+		return;
+	
+	RoomPacketRoomListResponse responsePacket;
+	if (true == m_roomList.empty()) {
+		player->SendPacket(responsePacket);
+		return;
+	}
+
+	int page = packet.m_page;
+	int count = 0;
+	for (auto room : m_roomList) {
+		if (((page - 1)*m_maxRoomOnePage) > count) {
+			++count;
+			continue;
+		}
+			
+		if ((page * m_maxRoomOnePage) <= count)
+			break;
+
+		Util::LoggingInfo("", "%d \t Room[%s], %d/%d, %s",
+			room->GetRoomNumber(), room->GetRoomName().c_str(), room->GetPlayerCount(), room->GetMaxPlayerCount(), 
+			room->GetIsUsePassword() ? "Yes" : "No");
+		responsePacket.m_roomList.emplace_back(room->GetRoomNumber(), room->GetPlayerCount(), room->GetMaxPlayerCount(), room->GetIsUsePassword(), room->GetRoomName());
+		++count;
+	}
+	
+	player->SendPacket(responsePacket);
+}
+
 
 void RoomManager::RemoveRoom(std::shared_ptr<Room> room) {
 	m_roomNumberList.push(room->GetRoomNumber());

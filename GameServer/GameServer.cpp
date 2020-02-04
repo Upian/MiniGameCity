@@ -78,11 +78,17 @@ void GameServer::HandlePacketRoom(BufferInfo* bufInfo) {
 		RoomPacketMakeRoomRequest packet;
 		packet.Deserialize(bufInfo->buffer);
 		auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
-		m_roomManager.HandleMakeRoom(packet, player);
+		
+		m_roomManager.HandlePacketMakeRoom(packet, player);
 		break;
 	}
 	case PacketTypeRoom::packetTypeRoomRoomListRequest: {
-
+		RoomPacketRoomListRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
+		
+		m_roomManager.HandlePacketRoomList(packet, player);
+		break;
 	}
 	case PacketTypeRoom::packetTypeRoomEnterRoomRequest: {
 

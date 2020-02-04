@@ -34,8 +34,15 @@ public:
 	PlayerManager& GetPlayerManager() { return m_roomPlayerManager; }
 	int GetPlayerCount() const { return m_roomPlayerManager.GetPlayerCount(); }
 
+	int GetMaxPlayerCount() const { return m_maxPlayer; }
+
 	RoomState GetRoomState() const { return m_roomState; }
 	int GetRoomNumber() const { return m_roomNumber; }
+
+	void SetIsUsePassword(bool isUse) { m_isUsePassword = isUse; }
+	bool GetIsUsePassword() const { return m_isUsePassword; }
+
+	std::string& GetRoomName() { return m_roomName; }
 
 	std::shared_ptr<Player> GetRoomMaster() const { return m_roomMaster; }
 	//operator
@@ -50,7 +57,7 @@ private:
 	std::string							m_roomName;
 	int									m_maxPlayer = 0;
 	int									m_roomNumber = 0;
-	bool								m_usePassword = false;
+	bool								m_isUsePassword = false;
 	char								m_password[4];
 
 };

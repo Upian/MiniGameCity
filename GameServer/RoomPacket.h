@@ -36,50 +36,40 @@ protected:
 struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 	RoomPacketMakeRoomRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomMakeRoomRequest) {}
 
-	std::string m_roomName;
-	int16 m_maxPlayer = 0;
-	int16 m_password = 0;
+	std::string		m_roomName;
+	int16			m_maxPlayer = 0;
+	int16			m_password = 0;
 
-	virtual char* Serialize() override {
+	virtual Buffer& Serialize() override {
 
-		buf << m_roomName;
-		buf << m_maxPlayer;
-		buf << m_password;
-		/*this->StringSerial(m_roomName.c_str());
-		this->TypeSerial(m_maxPlayer);
-		this->TypeSerial(m_password);*/
+		buffer << m_roomName;
+		buffer << m_maxPlayer;
+		buffer << m_password;
 
-		return buf;
+		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
 //		DeserializeBuffer(_buf);
 		_buf >> m_roomName;
 		_buf >> m_maxPlayer;
 		_buf >> m_password;
-		/*this->StringDeserial(_buf, m_roomName);
-		this->TypeDeserial(_buf, m_maxPlayer);
-		this->TypeDeserial(_buf, m_password);*/
 	}
 };
 struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 	RoomPacketMakeRoomResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomMakeRoomResponse) {}
 
-	bool m_success = false;
-	int32 m_roomNumber = 0;
+	bool		m_success = false;
+	int32		m_roomNumber = 0;
 
-	virtual char* Serialize() override {		
-		buf << m_success;
-		buf << m_roomNumber;
-		/*this->TypeSerial(m_success);
-		this->TypeSerial(m_roomNumber);*/
+	virtual Buffer& Serialize() override {
+		buffer << m_success;
+		buffer << m_roomNumber;
 		
-		return buf;
+		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> m_success;
 		_buf >> m_roomNumber;
-		/*this->TypeDeserial(_buf, m_success);
-		this->TypeDeserial(_buf, m_roomNumber);*/
 	}
 };
 
@@ -87,29 +77,74 @@ struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 struct RoomPacketRoomListRequest : public BaseRoomPacket {
 	RoomPacketRoomListRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomListRequest) {}
 
-	virtual char* Serialize() override {
+	int m_page = 0;
+	virtual Buffer& Serialize() override {
+		buffer << m_page;
+		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> m_page;
 	}
 };
 struct RoomPacketRoomListResponse : public BaseRoomPacket {
 	RoomPacketRoomListResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomListResponse) {}
-
+private:
 	struct RoomInfo {
-		int number = 0;
-		int playerCount = 0;
-		int maxPlayerCount = 0;
-		bool password = false;
-		std::string name;
-
+		RoomInfo(int num, int plycnt, int maxcount, bool pass, std::string& str) :
+		number(num),
+		playerCount(plycnt),
+		maxPlayerCount(maxcount),
+		password(pass),
+		roomName(str)
+		{}
+		__int16			number = 0;
+		__int16			playerCount = 0;
+		__int16			maxPlayerCount = 0;
+		bool			password = false;
+		std::string		roomName;
 	};
 
+public:
 	std::list<RoomInfo> m_roomList;
-	virtual char* Serialize() override {
+	__int16				m_listCount = 0;
+	virtual Buffer& Serialize() override {
+		m_listCount = static_cast<__int16>(m_roomList.size());
 
+		buffer << m_listCount;
+
+		for (RoomInfo info : m_roomList) {
+			buffer << info.number;
+			buffer << info.playerCount;
+			buffer << info.maxPlayerCount;
+			buffer << info.password;
+			buffer << info.roomName;
+		}
+
+		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
+		__int16			tempNumber = 0;
+		__int16			tempPlayerCount = 0;
+		__int16			tempMaxPlayerCount = 0;
+		bool			tempPassword = false;
+		std::string		tempStr;
 
+		_buf >> m_listCount;
+
+		for(int i = 0; i < m_listCount; ++i) {  
+			_buf >> tempNumber;
+			_buf >> tempPlayerCount;
+			_buf >> tempMaxPlayerCount;
+			_buf >> tempPassword;
+			_buf >> tempStr;
+			m_roomList.emplace_back(
+				tempNumber,
+				tempPlayerCount,
+				tempMaxPlayerCount,
+				tempPassword,
+				tempStr
+			);
+		}
 	}
 };
 

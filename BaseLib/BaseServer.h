@@ -38,7 +38,6 @@ public:
 	void InitializeBaseServer();
 	void RunServer();
 	
-	void SendPacket(SOCKET socket, BasePacket& packet);
 protected:
 	BaseServer();
 	virtual ~BaseServer();
@@ -270,7 +269,7 @@ void BaseServer<T_Server>::IOWorkerThread() {
 			0 == recvBytes) {
 			this->HandleDisconnectClient(clientSocket);
 
-			Util::LoggingInfo(m_serverName + ".log", "socket[%d] is disconnected, count:", clientSocket/*, bufferInfo.use_count()*/);
+			Util::LoggingInfo(m_serverName + ".log", "socket[%d] is disconnected", clientSocket);
 			if (nullptr != bufferInfo) {
 				delete bufferInfo;
 				bufferInfo = nullptr;
@@ -281,6 +280,7 @@ void BaseServer<T_Server>::IOWorkerThread() {
 
 		bufferInfo->socket = clientSocket;
 		bufferInfo->dataBuf.len = recvBytes;
+		bufferInfo->buffer.SetLength(recvBytes);
 
 		this->HandleBasePacket(bufferInfo); //Handle packet
 		//Comment out because of thread safe issues

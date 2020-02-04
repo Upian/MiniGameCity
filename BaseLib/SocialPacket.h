@@ -45,7 +45,7 @@ public:
 		SetSocialPacketType(SocialPacketType::socialPacketTypeChatAllRequest);
 	}
 	~ChatAllRequest() {}
-	virtual char* Serialize() override;
+	virtual Buffer& Serialize() override;
 	virtual void Deserialize(char* _buf) override;
 	char* GetChatAllRequest() {
 		return chatAllRequest;

@@ -31,31 +31,31 @@ public:
 		memcpy(m_buffer, rhs, sizeof(rhs)); 
 		m_length = sizeof(rhs);
 	}
-	Buffer(char* rhs) { 
-		memcpy(m_buffer, rhs, sizeof(rhs));
-		m_length = sizeof(rhs);
+	Buffer(char* rhs, size_t sz) { 
+		memcpy(m_buffer, rhs, sz);
+		m_length = sz;
 	}
+	Buffer(Buffer& rhs) {
+		memcpy(m_buffer, rhs.m_buffer, rhs.m_length);
+		m_index = rhs.m_index;
+		m_length = rhs.m_length;
+	}
+
 	Buffer& operator=(const char* buffer) {
 		memcpy(m_buffer, buffer, sizeof(buffer));
 		m_length = sizeof(buffer);
 		return *this;
 	}
-	Buffer& operator=(char* buffer) {
-		memcpy(m_buffer, buffer, sizeof(buffer));
-		m_length = sizeof(buffer);
-		return *this;
-	}
-
-	Buffer(Buffer& rhs) {
-		strcpy_s(m_buffer, rhs.Length(), rhs.m_buffer);
-		m_index = rhs.m_index;
-		m_length = rhs.m_length;
-	}
+//	Buffer& operator=(char* buffer) {
+//		memcpy(m_buffer, buffer, sizeof(buffer));
+//		m_length = sizeof(buffer);
+//		return *this;
+//	}
 	Buffer& operator=(const Buffer& rhs) {
 		if (this == &rhs)
 			return *this;
 
-		strcpy_s(m_buffer, rhs.Length(), rhs.m_buffer);
+		memcpy(m_buffer, rhs.m_buffer, rhs.m_length);
 		m_index = rhs.m_index;
 		m_length = rhs.m_length;
 		return *this;
@@ -69,7 +69,7 @@ public:
 		return this->m_buffer;
 	}
 	char& operator[](int index) {
-		if (BUFFER_SIZE < index)
+		if (m_length < index)
 			return m_buffer[BUFFER_SIZE];
 
 		return m_buffer[index];
@@ -77,13 +77,14 @@ public:
 
 #pragma region operator <<
 	//1Byte
-	Buffer& operator<<(char& rhs) {
+	Buffer& operator<<(char rhs) {
 		m_buffer[m_index] = rhs;
 		++m_index;
 		++m_length;
 		return *this;
 	}
-	Buffer& operator<<(bool& rhs) {
+
+	Buffer& operator<<(bool rhs) {
 		m_buffer[m_index] = rhs;
 		++m_index;
 		++m_length;
@@ -117,7 +118,15 @@ public:
 		}
 		return *this;
 	}
-
+	Buffer& operator<<(size_t& rhs) {
+		for (int i = 0; i < sizeof(rhs); ++i) {
+			m_buffer[m_index] = static_cast<char>(rhs);
+			++m_index;
+			++m_length;
+			rhs >>= 8;
+		}
+		return *this;
+	}
 	//string
 	Buffer& operator<<(std::string& rhs) {
 		for (int i = 0; i < rhs.size(); ++i) {
@@ -126,6 +135,7 @@ public:
 			++m_length;
 		}
 		m_buffer[m_index] = '\n';
+		++m_length;
 		++m_index;
 		return *this;
 	}
@@ -136,21 +146,30 @@ public:
 			++m_length;
 		}
 		m_buffer[m_index] = '\n';
+		++m_length;
 		++m_index;
 		return *this;
 	}
 #pragma endregion
 #pragma region operator >>
+	Buffer & operator>>(bool& type) {
+		if (m_length <= m_index)
+			return *this;
+		type = m_buffer[m_index];
+		++m_index;
+		return *this;
+	}
 	Buffer& operator>>(char& type) {
-		if (BUFFER_SIZE < m_index)
+		if (m_length <= m_index)
 			return *this;
 		type = m_buffer[m_index];
 		++m_index;
 		return *this;
 	}
 	Buffer& operator>>(std::string& str) {
-		if (BUFFER_SIZE < m_index)
+		if (m_length <= m_index)
 			return *this;
+		str.clear();
 		while ('\n' != m_buffer[m_index]) {
 			str += m_buffer[m_index];
 			++m_index;
@@ -159,8 +178,9 @@ public:
 		return *this;
 	}
 	Buffer& operator>>(__int16& integer) {
-		if (BUFFER_SIZE < m_index)
+		if (m_length <= m_index)
 			return *this;
+		integer = 0;
 		for (int i = 0; i < sizeof(__int16); ++i) {
 			char temp = (m_buffer[m_index] << 8 * i);
 			integer |= temp;
@@ -169,9 +189,9 @@ public:
 		return *this;
 	}
 	Buffer& operator>>(__int32& integer) {
-		if (BUFFER_SIZE < m_index)
+		if (m_length <= m_index)
 			return *this;
-
+		integer = 0;
 		for (int i = 0; i < sizeof(__int32); ++i) {
 			char temp = (m_buffer[m_index] << 8 * i);
 			integer |= temp;
@@ -180,9 +200,9 @@ public:
 		return *this;
 	}
 	Buffer& operator>>(__int64& integer) {
-		if (BUFFER_SIZE < m_index)
+		if (m_length <= m_index)
 			return *this;
-
+		integer = 0;
 		for (int i = 0; i < sizeof(__int64); ++i) {
 			char temp = (m_buffer[m_index] << 8 * i);
 			integer |= temp;
@@ -190,9 +210,10 @@ public:
 		}
 		return *this;
 	}
+/*
 	template<typename T_Arg>
 	Buffer& operator>>(T_Arg& integer) {
-		if (BUFFER_SIZE < m_index)
+		if (m_length <= m_index)
 			return *this;
 
 		for (int i = 0; i < sizeof(T_Arg); ++i) {
@@ -201,13 +222,15 @@ public:
 			++m_index;
 		}
 		return *this;
-	}
+	}*/
 #pragma endregion
 
 	size_t Length() const { return m_length; }
+	void SetLength(size_t sz) { m_length = sz; }
 	void Reset() {
 		std::fill_n(m_buffer, BUFFER_SIZE, '\0');
 		m_index = 0;
+		m_length = 0;
 	}
 private:
 	char		m_buffer[BUFFER_SIZE] = { '\0', };
