@@ -203,7 +203,7 @@ void BaseServer<T_Server>::RunServer() {
 	DWORD			recvBytes;
 	DWORD			flag;
 	BufferInfo* tempBuffer = nullptr;
-//	std::shared_ptr<BufferInfo> tempBuffer;
+
 	while (true) {
 		clientSocket = WSAAccept(m_serverSocket, (SOCKADDR*)&clientAddress, &AddressSize, NULL, NULL);
 		if (INVALID_SOCKET == clientSocket) {
@@ -214,7 +214,6 @@ void BaseServer<T_Server>::RunServer() {
 		m_iocpHandle = CreateIoCompletionPort((HANDLE)clientSocket, m_iocpHandle, clientSocket, 0);
 
 		tempBuffer = new BufferInfo;
-//		tempBuffer = std::make_shared<BufferInfo>();
 		if (nullptr == tempBuffer) {
 			Util::LoggingError(m_serverName + ".log", "Can not create BufferInfo");
 			continue;
@@ -260,7 +259,6 @@ void BaseServer<T_Server>::CreateIOWorkerThread() {
 template<typename T_Server>
 void BaseServer<T_Server>::IOWorkerThread() {
 	BufferInfo* bufferInfo = nullptr;
-//	std::shared_ptr<BufferInfo> bufferInfo;
 	while (true == m_runningThread) {
 		DWORD recvBytes = 0;
 		SOCKET clientSocket;

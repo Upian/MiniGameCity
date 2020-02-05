@@ -130,26 +130,33 @@ void RoomManager::HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std:
 
 	if (nullptr == tempRoom) { //not exist room
 		responsePacket.m_isSuccess = false;
+		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeNotExistRoom;
 		player->SendPacket(responsePacket);
 		return;
 	}
 	if (false == tempRoom->PlayerEnterRoom(player)) { //can not enter room
 		responsePacket.m_isSuccess = false;
+		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeMaxPlayer;
 		player->SendPacket(responsePacket);
 		return;
 	}
 	if (true == tempRoom->IsRoomStateGaming()) { //already start 
 		responsePacket.m_isSuccess = false;
+		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeGameStart;
 		player->SendPacket(responsePacket);
 		return;
 	}
 	if (false == tempRoom->CheckPassword(packet.m_password)) { //wrong password
-
+		responsePacket.m_isSuccess = false;
+		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeWrongPassword;
+		player->SendPacket(responsePacket);
 		return;
 	}
+
 	printf("room[%d][%s], players: %d",
 		tempRoom->GetRoomNumber(), tempRoom->GetRoomName().c_str(), tempRoom->GetPlayerCount());
 	responsePacket.m_isSuccess = true;
+	responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeNone;
 	player->SendPacket(responsePacket);
 	return;
 }

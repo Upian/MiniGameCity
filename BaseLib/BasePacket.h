@@ -27,9 +27,8 @@ typedef __int64 int64;
 
 
 
-enum BasePacketType : char {
+enum class BasePacketType : char {
 	basePacketTypeNone = 0,
-
 
 	basePacketTypeLogin,
 	basePacketTypeRoom,
@@ -38,6 +37,8 @@ enum BasePacketType : char {
 	basePacketTypeRanking,
 	basePacketTypeSocial,
 	basePacketTypeSize,
+
+	basPacketTypeCount
 };
 
 class BasePacket {
@@ -107,7 +108,7 @@ protected:
 protected:
 	Buffer buffer;
 private:
-	BasePacketType basePacketType = basePacketTypeNone;
+	BasePacketType basePacketType = BasePacketType::basePacketTypeNone;
 };
 
 inline char PacketTypeDeserial(Buffer& _buf) {

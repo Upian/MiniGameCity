@@ -45,7 +45,7 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 
 
 	switch (type) {
-	case basePacketTypeRoom: {
+	case BasePacketType::basePacketTypeRoom: {
 		this->HandlePacketRoom(bufInfo);
 		break;
 	}
