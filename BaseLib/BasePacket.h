@@ -50,17 +50,15 @@ public:
 	virtual Buffer& Serialize() = 0;
 	virtual void Deserialize(Buffer& buf) = 0;
 
-	BasePacketType GetBasePacketType() const {
-		return basePacketType;
-	}
-	void SetBasePacketType(BasePacketType _type) {
-		basePacketType = _type;
-	}
-
+	BasePacketType GetBasePacketType() const { return basePacketType; }
+	void SetBasePacketType(BasePacketType _type) { basePacketType = _type; }
+	size_t GetBufferSize() const { return buffer.Length(); }
 protected:
 #pragma region Serialize
 	//Type -> Byte, (е╦ют)
-	inline void PacketTypeSerial(char _type) {
+	template<typename T_Type,
+		std::enable_if_t<std::is_enum_v<T_Type> >* = nullptr >
+	inline void PacketTypeSerial(T_Type _type) {
 		buffer << _type;
 	}
 
@@ -105,6 +103,7 @@ protected:
 		_buf >> _val;
 	}
 #pragma endregion
+
 protected:
 	Buffer buffer;
 private:

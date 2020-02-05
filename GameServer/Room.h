@@ -15,7 +15,7 @@ enum RoomState {
 	roomStateNone = 0,
 
 	roomStateLobby,
-	roomStateGame,
+	roomStateGaming,
 
 	roomStateCount,
 };
@@ -23,7 +23,7 @@ enum RoomState {
 
 class Room {
 public:
-	Room(std::string roomName, int maxPlayer, std::shared_ptr<Player> master, int roomNumber);
+	Room(int roomNumber, std::string roomName, std::shared_ptr<Player> master, int maxPlayer);
 	~Room();
 
 	void StartGame(std::function<void(void)> game);
@@ -37,10 +37,16 @@ public:
 	int GetMaxPlayerCount() const { return m_maxPlayer; }
 
 	RoomState GetRoomState() const { return m_roomState; }
+	bool IsRoomStateLobby() const { return RoomState::roomStateLobby == m_roomState; }
+	bool IsRoomStateGaming() const { return RoomState::roomStateGaming == m_roomState; }
+
 	int GetRoomNumber() const { return m_roomNumber; }
 
+	void SetPassword(__int16 password);
+	__int16 GetPassword() const { return m_password; }
 	void SetIsUsePassword(bool isUse) { m_isUsePassword = isUse; }
 	bool GetIsUsePassword() const { return m_isUsePassword; }
+	bool CheckPassword(__int16 password);
 
 	std::string& GetRoomName() { return m_roomName; }
 
@@ -58,7 +64,7 @@ private:
 	int									m_maxPlayer = 0;
 	int									m_roomNumber = 0;
 	bool								m_isUsePassword = false;
-	char								m_password[4];
+	__int16								m_password;
 
 };
 #endif // !__GAMESERVER_LOBBY_H__

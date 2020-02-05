@@ -2,7 +2,7 @@
 #include "Room.h"
 #include "Player.h"
 #include "Log.h"
-Room::Room(std::string roomName, int maxPlayer, std::shared_ptr<Player> master, int roomNumber) :
+Room::Room(int roomNumber, std::string roomName, std::shared_ptr<Player> master, int maxPlayer) :
 	m_roomName(roomName),
 	m_maxPlayer(maxPlayer),
 	m_roomMaster(master),
@@ -30,7 +30,7 @@ void Room::StartGame(std::function<void(void)> game) {
 		return;
 	
 	m_inGameThread = new std::thread([this]()->void {
-		m_roomState = RoomState::roomStateGame;
+		m_roomState = RoomState::roomStateGaming;
 		for (int i = 0; i < 10; ++i) {
 			Sleep(500);
 			Util::LoggingInfo("0_Test.log", "RoomNumber: %d  -  %d", this->GetRoomNumber(), i);
@@ -69,6 +69,20 @@ void Room::PlayerLeaveRoom(std::shared_ptr<Player> player) {
 	return;
 }
 
+void Room::SetPassword(__int16 password) {
+	if (0 < password / 10000)
+		return;
+
+	m_password = password; 
+	m_isUsePassword = true; 
+}
+
+bool Room::CheckPassword(__int16 password) {
+	if(false == m_isUsePassword)
+		return true;
+
+	return password == m_password;
+}
 #pragma region operator
 
 #pragma endregion

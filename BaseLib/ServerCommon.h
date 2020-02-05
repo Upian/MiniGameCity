@@ -23,6 +23,34 @@ enum ServerType : BYTE{
 	serverTypeCount,
 };
 
+/*
+*	Enum type operator
+*/
+
+// |=
+template<typename T_Enum,
+	std::enable_if_t<std::is_enum_v<T_Enum> >* = nullptr >
+inline T_Enum operator|(T_Enum a, char b) {
+	return static_cast<T_Enum>(static_cast<int>(a) | b);
+}
+template<typename T_Enum,
+	std::enable_if_t<std::is_enum_v<T_Enum> >* = nullptr >
+inline T_Enum& operator|=(T_Enum& a, char b) {
+	return a = a | b;
+}
+
+// >>=
+template<typename T_Enum,
+	std::enable_if_t<std::is_enum_v<T_Enum> >* = nullptr >
+inline T_Enum operator>>(T_Enum a, int b) {
+	return static_cast<T_Enum>(static_cast<int>(a) >> b);
+}
+template<typename T_Enum,
+	std::enable_if_t<std::is_enum_v<T_Enum> >* = nullptr >
+inline T_Enum& operator>>=(T_Enum& a, int b) {
+	return a = a >> b;
+}
+
 class Buffer {
 public:
 	Buffer() {}
@@ -83,13 +111,24 @@ public:
 		++m_length;
 		return *this;
 	}
-
-	Buffer& operator<<(bool rhs) {
-		m_buffer[m_index] = rhs;
-		++m_index;
-		++m_length;
+	//Enum type
+	template<typename T_Arg,
+		std::enable_if_t<std::is_enum_v<T_Arg> >* = nullptr >
+	Buffer& operator<<(T_Arg rhs) {
+		for (int i = 0; i < sizeof(rhs); ++i) {
+			m_buffer[m_index] = static_cast<char>(rhs);
+			++m_index;
+			++m_length;
+			rhs >>= 8;
+		}
 		return *this;
 	}
+//	Buffer& operator<<(bool rhs) {
+//		m_buffer[m_index] = rhs;
+//		++m_index;
+//		++m_length;
+//		return *this;
+//	}
 	//int
 	Buffer& operator<<(__int16& rhs) {
 		for (int i = 0; i < sizeof(rhs); ++i) {
@@ -182,7 +221,7 @@ public:
 			return *this;
 		integer = 0;
 		for (int i = 0; i < sizeof(__int16); ++i) {
-			char temp = (m_buffer[m_index] << 8 * i);
+			__int16 temp = ((m_buffer[m_index] & 0xff) << 8 * i);
 			integer |= temp;
 			++m_index;
 		}
@@ -193,7 +232,7 @@ public:
 			return *this;
 		integer = 0;
 		for (int i = 0; i < sizeof(__int32); ++i) {
-			char temp = (m_buffer[m_index] << 8 * i);
+			__int32 temp = ((m_buffer[m_index] & 0xff) << 8 * i);
 			integer |= temp;
 			++m_index;
 		}
@@ -204,14 +243,16 @@ public:
 			return *this;
 		integer = 0;
 		for (int i = 0; i < sizeof(__int64); ++i) {
-			char temp = (m_buffer[m_index] << 8 * i);
+			__int64 temp = ((m_buffer[m_index] & 0xff) << 8 * i);
 			integer |= temp;
 			++m_index;
 		}
 		return *this;
 	}
-/*
-	template<typename T_Arg>
+
+	//Handle deserialize enum value
+	template<typename T_Arg, 
+		std::enable_if_t<std::is_enum_v<T_Arg> >* = nullptr >
 	Buffer& operator>>(T_Arg& integer) {
 		if (m_length <= m_index)
 			return *this;
@@ -222,11 +263,11 @@ public:
 			++m_index;
 		}
 		return *this;
-	}*/
+	}
 #pragma endregion
 
 	size_t Length() const { return m_length; }
-	void SetLength(size_t sz) { m_length = sz; }
+	void SetLength(size_t sz) { m_length = sz; } //only used when packet recv
 	void Reset() {
 		std::fill_n(m_buffer, BUFFER_SIZE, '\0');
 		m_index = 0;

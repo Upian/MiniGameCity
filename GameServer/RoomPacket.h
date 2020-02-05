@@ -8,7 +8,7 @@
 #include "Player.h"
 
 //1byte
-enum PacketTypeRoom : char {
+enum class PacketTypeRoom : char {
 	packetTypeRoomNone = 0,
 
 	packetTypeRoomMakeRoomRequest, //Client -> GameServer
@@ -18,11 +18,13 @@ enum PacketTypeRoom : char {
 	packetTypeRoomRoomListResponse, //GameServer -> Client
 
 	packetTypeRoomEnterRoomRequest, //Client -> GameServer
+	packetTypeRoomEnterRoomResponse, //GameServer -> Client
 
 	packetTypeRoomRoomInfo, //GameServer -> Client Broadcast (also used EnterRoomResponse)
 
 	packetTypeRoomCount,
 };
+
 
 struct BaseRoomPacket : public BasePacket{
 	BaseRoomPacket(PacketTypeRoom packetType) : BasePacket(BasePacketType::basePacketTypeRoom), m_packetTypeRoom(packetType){
@@ -149,6 +151,16 @@ public:
 };
 
 //Enter room
+enum class ErrorTypeEnterRoom : char {
+	errorTypeNone = 0,
+	
+	errorTypeMaxPlayer,
+	errorTypeGameStart,
+	errorTypeNotExistRoom,
+	errorTypeWrongPassword,
+
+	errorTypeCount,
+};
 struct RoomPacketEnterRoomRequest : public BaseRoomPacket {
 	RoomPacketEnterRoomRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomEnterRoomRequest) {}
 
@@ -166,4 +178,22 @@ struct RoomPacketEnterRoomRequest : public BaseRoomPacket {
 	}
 
 };
+struct RoomPacketEnterRoomResponse : public BaseRoomPacket {
+	RoomPacketEnterRoomResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomEnterRoomResponse) {}
+
+	bool m_isSuccess = false;
+	ErrorTypeEnterRoom m_errorType = ErrorTypeEnterRoom::errorTypeNone;
+
+	virtual Buffer& Serialize() override {
+		buffer << m_isSuccess;
+		buffer << m_errorType;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> m_isSuccess;
+		_buf >> m_errorType;
+	}
+};
+
 #endif // !__GAMESERVER_ROOM_PACKET_H__

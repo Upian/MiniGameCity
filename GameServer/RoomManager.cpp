@@ -39,18 +39,22 @@ void RoomManager::HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::s
 	std::shared_ptr<Room> tempRoom;
 	
 	RoomPacketMakeRoomResponse responsePacket;
+	
 	//Check player number
-
 	if ((packet.m_maxPlayer < m_minPlayer) ||
 		(packet.m_maxPlayer > m_maxPlayer)) {
 		responsePacket.m_success = false;
 		Util::LoggingInfo("", "Fail Make room");
 	}	
+	//Success Make ROom
 	else if (nullptr == this->FindRoomByPlayer(master)) {
 			int roomNumber = m_roomNumberList.top();
 			m_roomNumberList.pop();
 
-			tempRoom = std::make_shared<Room>(packet.m_roomName, packet.m_maxPlayer, master, roomNumber);
+			tempRoom = std::make_shared<Room>(roomNumber, packet.m_roomName, master, packet.m_maxPlayer);
+			if (0 < packet.m_password) 
+				tempRoom->SetPassword(packet.m_password);
+			
 			m_roomList.push_back(tempRoom);
 
 			responsePacket.m_success = true;
@@ -59,7 +63,8 @@ void RoomManager::HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::s
 			Util::LoggingInfo("", "Success Make room - number[%d]", roomNumber);
 		
 	}
-	else {
+	//Alreade have room
+	else{
 		responsePacket.m_success = false;
 		Util::LoggingInfo("", "Fail Already have room");
 	}
@@ -67,7 +72,9 @@ void RoomManager::HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::s
 	
 	//send packet to room master
 	//If send fails, delete room
-	Util::LoggingInfo("", "Room [%s] number: %d, max: %d\n", responsePacket.m_success ? "Success" : "Fail", responsePacket.m_roomNumber, packet.m_maxPlayer);
+	Util::LoggingInfo("", "Room [%s] number: %d, max: %d, password %s[%hd]\n",
+		responsePacket.m_success ? "Success" : "Fail", responsePacket.m_roomNumber, packet.m_maxPlayer,
+		tempRoom->GetIsUsePassword() ? "True" : "False", tempRoom->GetPassword());
 	if (false == master->SendPacket(responsePacket)) {
 		if (nullptr == tempRoom)
 			return;
@@ -109,7 +116,42 @@ void RoomManager::HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::s
 }
 
 void RoomManager::HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std::shared_ptr<Player> player) {
-	//if(nullptr)
+	if (nullptr == player)
+		return;
+
+	std::shared_ptr<Room> tempRoom = nullptr;
+	for (auto room : m_roomList) {
+		if (packet.m_roomNumber == room->GetRoomNumber()) {
+			tempRoom = room;
+			break;
+		}
+	}
+	RoomPacketEnterRoomResponse responsePacket;
+
+	if (nullptr == tempRoom) { //not exist room
+		responsePacket.m_isSuccess = false;
+		player->SendPacket(responsePacket);
+		return;
+	}
+	if (false == tempRoom->PlayerEnterRoom(player)) { //can not enter room
+		responsePacket.m_isSuccess = false;
+		player->SendPacket(responsePacket);
+		return;
+	}
+	if (true == tempRoom->IsRoomStateGaming()) { //already start 
+		responsePacket.m_isSuccess = false;
+		player->SendPacket(responsePacket);
+		return;
+	}
+	if (false == tempRoom->CheckPassword(packet.m_password)) { //wrong password
+
+		return;
+	}
+	printf("room[%d][%s], players: %d",
+		tempRoom->GetRoomNumber(), tempRoom->GetRoomName().c_str(), tempRoom->GetPlayerCount());
+	responsePacket.m_isSuccess = true;
+	player->SendPacket(responsePacket);
+	return;
 }
 
 void RoomManager::RemoveRoom(std::shared_ptr<Room> room) {
