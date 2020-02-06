@@ -41,6 +41,9 @@ void RoomManager::HandleRoomPacket(Buffer & buffer, std::shared_ptr<Player> play
 		this->HandlePacketRoomInfo(player);
 		break;
 	}
+	case PacketTypeRoom::packetTypeRoomToggleReadyRequest: {
+
+	}
 	default:
 		Util::LoggingInfo("GameServer.log", "Recv wrong room packet ID: %d", type);
 	}
@@ -85,7 +88,7 @@ void RoomManager::HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::s
 		Util::LoggingInfo("", "Fail Make room");
 	}	
 	//Success Make ROom
-	else if (nullptr == this->FindRoomByPlayer(master)) {
+	else if (nullptr == master->GetRoom()) {
 			int roomNumber = m_roomNumberList.top();
 			m_roomNumberList.pop();
 
@@ -143,7 +146,7 @@ void RoomManager::HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::s
 		if ((page * m_maximumRoomOnePage) <= count)
 			break;
 
-		Util::LoggingInfo("", "%d \t Room[%s], %d/%d, %s",
+		Util::LoggingInfo("", "room number[%d] \t Room[%s], %d/%d, %s",
 			room->GetRoomNumber(), room->GetRoomName().c_str(), room->GetPlayerCount(), room->GetMaxPlayerCount(), 
 			room->GetIsUsePassword() ? "Yes" : "No");
 		responsePacket.m_roomList.emplace_back(room->GetRoomNumber(), room->GetPlayerCount(), room->GetMaxPlayerCount(), room->GetIsUsePassword(), room->GetRoomName());
@@ -176,8 +179,11 @@ void RoomManager::HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std:
 	}
 
 	responsePacket.m_errorType = tempRoom->PlayerEnterRoom(player, packet.m_password);
-	if (ErrorTypeEnterRoom::errorTypeNone == responsePacket.m_errorType)
+	if (ErrorTypeEnterRoom::errorTypeNone == responsePacket.m_errorType) {
 		responsePacket.m_isSuccess = true;
+		responsePacket.m_positionIndex = player->GetPositionIndex();
+	}
+		
 
 	Util::LoggingInfo("0_Test.log", "Room status[%d]-[%s], players: %d\n",
 		tempRoom->GetRoomNumber(), tempRoom->GetRoomName().c_str(), tempRoom->GetPlayerCount()); //#Test
@@ -219,21 +225,29 @@ void RoomManager::HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std:
 }
 
 void RoomManager::HandlePacketLeaveRoom(std::shared_ptr<Player> player) {
-	auto room = this->FindRoomByPlayer(player);
+	auto room = player->GetRoom();
 	if (nullptr == room) {
-		Util::LoggingInfo("0_Test.log", "Not have room"); //#Test
 		return;
 	}
 
 	room->PlayerLeaveRoom(player);
-	Util::LoggingInfo("0_Test.log", "Leave room"); //#Test
 }
 
 void RoomManager::HandlePacketRoomInfo(std::shared_ptr<Player> player) {
-	auto room = this->FindRoomByPlayer(player);
+	auto room = player->GetRoom();
 	if (nullptr == room)
 		return;
+
 	room->UpdateRoomInfoToPlayer(player);
+}
+
+void RoomManager::HaldlePacketToggleReady(std::shared_ptr<Player> player) {
+	auto room = player->GetRoom();
+	if (nullptr == room)
+		return;
+
+	player->toggleReady();
+	room->UpdateRoomInfoToAllPlayers();
 }
 
 void RoomManager::RemoveRoom(std::shared_ptr<Room> room) {

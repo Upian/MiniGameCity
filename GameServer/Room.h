@@ -33,7 +33,7 @@ enum class RoomGameType : char {
 
 class InGame;
 
-class Room {
+class Room : public std::enable_shared_from_this<Room>{
 public:
 	Room(int roomNumber, std::string roomName, std::shared_ptr<Player> master, int maxPlayer);
 	~Room();

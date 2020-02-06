@@ -22,7 +22,7 @@ void GameServer::HandleDisconnectClient(SOCKET clientSocket) {
 	if (nullptr == player)
 		return;
 
-	auto room = m_roomManager.FindRoomByPlayer(player);
+	auto room = player->GetRoom();//m_roomManager.FindRoomByPlayer(player);
 	if(nullptr != room)
 		room->PlayerLeaveRoom(player);
 

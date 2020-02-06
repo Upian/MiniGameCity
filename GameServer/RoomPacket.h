@@ -26,6 +26,8 @@ enum class PacketTypeRoom : char {
 	packetTypeRoomRoomInfoRequest,
 	packetTypeRoomRoomInfoResponse, //GameServer -> Client Broadcast (It will be send when new player enter the room)
 
+	packetTypeRoomToggleReadyRequest, //Client -> GameServer
+
 	packetTypeRoomCount,
 };
 
@@ -187,16 +189,19 @@ struct RoomPacketEnterRoomResponse : public BaseRoomPacket {
 	RoomPacketEnterRoomResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomEnterRoomResponse) {}
 
 	bool m_isSuccess = true;
+	__int16 m_positionIndex = 0;
 	ErrorTypeEnterRoom m_errorType = ErrorTypeEnterRoom::errorTypeNone;
 
 	virtual Buffer& Serialize() override {
 		buffer << m_isSuccess;
+		buffer << m_positionIndex;
 		buffer << m_errorType;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> m_isSuccess;
+		_buf >> m_positionIndex;
 		_buf >> m_errorType;
 	}
 };
@@ -295,4 +300,18 @@ public:
 		}
 	}
 };
+
+//ready
+struct RoomPacketToggleReadyRequest : public BaseRoomPacket {
+	RoomPacketToggleReadyRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomToggleReadyRequest) {}
+
+	virtual Buffer& Serialize() override {
+		return buffer;
+	}
+	virtual void  Deserialize(Buffer& buf) override {
+
+	}
+};
+
+//
 #endif // !__GAMESERVER_ROOM_PACKET_H__

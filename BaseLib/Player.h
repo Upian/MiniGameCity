@@ -20,6 +20,7 @@ enum class PlayerState {
 
 using GPID = unsigned __int32; //Unique ID for each player (Game Player ID)
 class BasePacket;
+class Room;
 
 class Player : public ClientBase{
 public:
@@ -48,8 +49,12 @@ public:
 	void SetIsRoomMaster(bool master) { m_isRoomMaster = master; }
 	bool GetIsRoomMaster() const { return m_isRoomMaster; }
 
+	void toggleReady() { m_isReady = !m_isReady; }
 	void SetIsReady(bool ready) { m_isReady = ready; }
 	bool GetIsReady() const { return m_isReady; }
+
+	void SetRoom(std::shared_ptr<Room> room) { m_room = room; }
+	std::shared_ptr<Room> GetRoom() const { return m_room; }
 #pragma endregion for using game room
 
 
@@ -62,6 +67,7 @@ private:
 	std::string m_playerName;
 
 #pragma region Game
+	std::shared_ptr<Room> m_room = nullptr;
 	__int16 m_potionIndex = 0;
 	bool m_isRoomMaster = false;
 	__int32 m_imageIndex = 0;
