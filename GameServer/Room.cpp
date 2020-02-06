@@ -8,7 +8,6 @@ Room::Room(int roomNumber, std::string roomName, std::shared_ptr<Player> master,
 	m_roomMaster(master),
 	m_roomNumber(roomNumber),
 	m_roomState(RoomState::roomStateWait){
-	this->PlayerEnterRoom(master);
 }
 
 Room::~Room() {
@@ -19,6 +18,14 @@ Room::~Room() {
 	}
 		
 	m_inGameThread = nullptr;
+}
+
+void Room::Initialize() {
+	for (int i = m_maximumPlayer; i > 0; --i) 
+		m_playerPosionStack.push(i);
+	
+	m_roomMaster->SetIsRoomMaster(true);
+	this->PlayerEnterRoom(m_roomMaster);
 }
 
 void Room::StartGame(std::function<void(void)> game) {
@@ -43,42 +50,110 @@ void Room::StartGame(std::function<void(void)> game) {
 	});
 }
 
-bool Room::PlayerEnterRoom(std::shared_ptr<Player> player) {
+ErrorTypeEnterRoom Room::PlayerEnterRoom(std::shared_ptr<Player> player, __int16 password /* = 0 */) {
 	if (nullptr == player) 
-		return false;
+		return ErrorTypeEnterRoom::errorTypePlayerLogout;
 
-	if (m_maximumPlayer <= m_roomPlayerManager.GetPlayerCount()) {
-		player->SetPlayerState(PlayerState::playerStateLobby);
-		return false;
+	ErrorTypeEnterRoom errorType = ErrorTypeEnterRoom::errorTypeNone;
+	//Wrong password
+	if (true == m_isUsePassword && false == this->CheckPassword(password)) {
+		errorType = ErrorTypeEnterRoom::errorTypeWrongPassword;
+		Util::LoggingError("Room.log", "Error %d - Wrong password -> Room[%hd], Player[%hd]", 
+			player->GetGPID(), this->GetPassword(), password);
 	}
-	if (PlayerState::playerStateRoom == player->GetPlayerState()) //player already joined another room
-		return false;
-	
+	//Already included in another room
+	else if (PlayerState::playerStateRoom == player->GetPlayerState()) {
+		errorType = ErrorTypeEnterRoom::errorTypeAlreadyIncluded;
+		Util::LoggingError("Room.log", "Error %d - Already included in another room[]", 
+			player->GetGPID());
+	}
+	//already start 
+	else if (true == this->IsRoomStateGaming()) {
+		errorType = ErrorTypeEnterRoom::errorTypeGameStart;
+		Util::LoggingError("Room.log", "Error Already Game start");
+	}	
+	//can not enter room
+	else if (true == this->CheckIsRoomIsFull() ||
+		0 >= m_playerPosionStack.size()) {
+		errorType = ErrorTypeEnterRoom::errorTypeMaxPlayer;
+		Util::LoggingError("Room.log", "Error Full room %d/%d  stackSize[%d]", 
+			m_roomPlayerManager.GetPlayerCount(), m_maximumPlayer, m_playerPosionStack.size());
+	}
+
+	if (ErrorTypeEnterRoom::errorTypeNone != errorType) {
+		return errorType;
+	}
+
 	player->SetPlayerState(PlayerState::playerStateRoom);
+	player->SetPositionIndex(m_playerPosionStack.top());
+	m_playerPosionStack.pop();
 	m_roomPlayerManager.InsertPlayer(player);
-	return true;
+
+	this->UpdateRoomInfoToAllPlayers();
+
+	return errorType;
 }
 
 void Room::PlayerLeaveRoom(std::shared_ptr<Player> player) {
 	if (nullptr == player)
 		return;
 	
+	RoomPacketLeaveRoomResponse leavePacket;
+	leavePacket.m_isSuccess = true;
+
 	m_roomPlayerManager.RemovePlayer(player);//remove player
 	player->SetPlayerState(PlayerState::playerStateLobby);
+	m_playerPosionStack.push(player->GetPositionIndex());
+	player->SetPositionIndex(0);
 
 	if (true == m_roomPlayerManager.IsPlayerEmpty()) {
 		m_roomState = RoomState::roomStateNone;
 		return;
 	}
 		
-	if (m_roomMaster == player) //If the player is room master
+	if (m_roomMaster == player) {//If the player is room master
+		player->SetIsRoomMaster(false);
 		m_roomMaster = m_roomPlayerManager.GetPlayerList().front(); //
+		m_roomMaster->SetIsRoomMaster(true);
+	}
+	player->SendPacket(leavePacket);
+	this->UpdateRoomInfoToAllPlayers();
 
 	return;
 }
 
+void Room::UpdateRoomInfoToAllPlayers() {
+	RoomPacketRoomInfoResponse packet;
+	for (auto p : m_roomPlayerManager.GetPlayerList()) {
+		packet.m_players.emplace_back(
+			p->GetPositionIndex(),
+			p->GetIsRoomMaster(),
+			p->GetPlayerName(),
+			0,
+			p->GetIsReady()
+		);
+	}
+
+	m_roomPlayerManager.SendToAllPlayers(packet);
+}
+
+void Room::UpdateRoomInfoToPlayer(std::shared_ptr<Player> player) {
+	RoomPacketRoomInfoResponse packet;
+	for (auto p : m_roomPlayerManager.GetPlayerList()) {
+		packet.m_players.emplace_back(
+			p->GetPositionIndex(),
+			p->GetIsRoomMaster(),
+			p->GetPlayerName(),
+			0,
+			p->GetIsReady()
+		);
+	}
+
+	player->SendPacket(packet);
+}
+
 void Room::SetPassword(__int16 password) {
-	if (0 < password / 10000)
+	if (10000 < password)
 		return;
 
 	m_password = password; 

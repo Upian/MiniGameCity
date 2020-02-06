@@ -23,7 +23,8 @@ enum class PacketTypeRoom : char {
 	packetTypeRoomLeaveRoomRequest, //Client -> GameServer
 	packetTypeRoomLeaveRoomResponse, //GameServer -> Client
 
-	packetTypeRoomRoomInfo, //GameServer -> Client Broadcast (It will be send when new player enter the room)
+	packetTypeRoomRoomInfoRequest,
+	packetTypeRoomRoomInfoResponse, //GameServer -> Client Broadcast (It will be send when new player enter the room)
 
 	packetTypeRoomCount,
 };
@@ -115,7 +116,6 @@ public:
 		m_listCount = static_cast<__int16>(m_roomList.size());
 
 		buffer << m_listCount;
-
 		for (RoomInfo info : m_roomList) {
 			buffer << info.number;
 			buffer << info.playerCount;
@@ -162,6 +162,7 @@ enum class ErrorTypeEnterRoom : char {
 	errorTypeGameStart,
 	errorTypeMaxPlayer,
 	errorTypeCanNotEnterRoom,
+	errorTypePlayerLogout,
 
 	errorTypeCount,
 };
@@ -223,18 +224,36 @@ struct RoomPacketLeaveRoomResponse : public BaseRoomPacket {
 };
 
 //packetTypeRoomRoomInfo
-struct RoomPacketRoomInfo :public BaseRoomPacket {
-	RoomPacketRoomInfo() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomInfo) {}
+struct RoomPacketRoomInfoRequest : public BaseRoomPacket {
+	RoomPacketRoomInfoRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomInfoRequest) {}
 
+	virtual Buffer& Serialize() override {
+		return buffer;
+	}
+	virtual void  Deserialize(Buffer& buf) override {
+
+	}
+};
+struct RoomPacketRoomInfoResponse : public BaseRoomPacket {
+	RoomPacketRoomInfoResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomInfoResponse) {}
+private:
 	struct PlayerInfo {
-		PlayerInfo(std::string nick) :
-		nickName(nick)
+		explicit PlayerInfo(__int16 position, bool master, std::string name, __int32 index, bool ready) :
+		positiontIndex(position),
+		isRoomMaster(master),
+		nickName(name),
+		imageIndex(index),
+		isPlayerReady(ready)
 		{}
-		std::string nickName;
-		__int32 imageIndex;
-		bool isPlayerReady;
+
+		__int16			positiontIndex;
+		bool			isRoomMaster;
+		std::string		nickName;
+		__int32			imageIndex;
+		bool			isPlayerReady;
 	};
 
+public:
 	std::list<PlayerInfo> m_players;
 	__int16 m_listCount = 0;
 
@@ -243,20 +262,35 @@ struct RoomPacketRoomInfo :public BaseRoomPacket {
 
 		buffer << m_listCount;
 		for (PlayerInfo info : m_players) {
+			buffer << info.positiontIndex;
+			buffer << info.isRoomMaster;
 			buffer << info.nickName;
+			buffer << info.imageIndex;
+			buffer << info.isPlayerReady;
 		}
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		__int16 tempPositionIndex;
+		bool tempIsRoomMaster;
 		std::string tempNickName;
+		__int32 tempImageIndex;
+		bool tempIsPlayerReady;
 
 		buf >> m_listCount;
 		for (int i = 0; i < m_listCount; ++i) {
+			buf >> tempPositionIndex;
+			buf >> tempIsRoomMaster;
 			buf >> tempNickName;
-
+			buf >> tempImageIndex;
+			buf >> tempIsPlayerReady;
 			m_players.emplace_back(
-				tempNickName
+				tempPositionIndex,
+				tempIsRoomMaster,
+				tempNickName,
+				tempImageIndex,
+				tempIsPlayerReady
 			);
 		}
 	}

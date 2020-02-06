@@ -5,11 +5,13 @@
 #include <thread>
 #include <functional>
 #include <list>
+#include <stack>
 
 #include "PlayerManager.h"
 
 class Player;
 class RoomManager;
+enum class ErrorTypeEnterRoom : char;
 
 enum class RoomState {
 	roomStateNone = 0,
@@ -36,9 +38,11 @@ public:
 	Room(int roomNumber, std::string roomName, std::shared_ptr<Player> master, int maxPlayer);
 	~Room();
 
+	void Initialize();
+
 	void StartGame(std::function<void(void)> game);
 
-	bool PlayerEnterRoom(std::shared_ptr<Player> player);
+	ErrorTypeEnterRoom PlayerEnterRoom(std::shared_ptr<Player> player, __int16 password = 0);
 	void PlayerLeaveRoom(std::shared_ptr<Player> player);
 
 	PlayerManager& GetPlayerManager() { return m_roomPlayerManager; }
@@ -49,6 +53,8 @@ public:
 	RoomState GetRoomState() const { return m_roomState; }
 	bool IsRoomStateLobby() const { return RoomState::roomStateWait == m_roomState; }
 	bool IsRoomStateGaming() const { return RoomState::roomStateGaming == m_roomState; }
+	void UpdateRoomInfoToAllPlayers();
+	void UpdateRoomInfoToPlayer(std::shared_ptr<Player> player);
 
 	int GetRoomNumber() const { return m_roomNumber; }
 
@@ -67,6 +73,7 @@ public:
 private:
 	PlayerManager						m_roomPlayerManager;
 	std::shared_ptr<Player>				m_roomMaster = nullptr;
+	std::stack<__int16>					m_playerPosionStack;
 
 	RoomGameType						m_gameType = RoomGameType::GameTypeNone;
 	RoomState							m_roomState = RoomState::roomStateNone;

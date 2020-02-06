@@ -19,7 +19,8 @@ public:
 	void HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_ptr<Player> master);
 	void HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::shared_ptr<Player> player);
 	void HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std::shared_ptr<Player> player);
-	void HandlePacketLeaveRoom(RoomPacketLeaveRoomRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketLeaveRoom(std::shared_ptr<Player> player);
+	void HandlePacketRoomInfo(std::shared_ptr<Player> player);
 
 	void Initialize();
 	std::shared_ptr<Room> FindRoomByPlayer(std::shared_ptr<Player> pplayer);

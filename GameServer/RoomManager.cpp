@@ -34,7 +34,11 @@ void RoomManager::HandleRoomPacket(Buffer & buffer, std::shared_ptr<Player> play
 	}
 	case PacketTypeRoom::packetTypeRoomLeaveRoomRequest: {
 		RoomPacketLeaveRoomRequest packet;
-		this->HandlePacketLeaveRoom(packet, player);
+		this->HandlePacketLeaveRoom(player);
+		break;
+	}
+	case PacketTypeRoom::packetTypeRoomRoomInfoRequest: {
+		this->HandlePacketRoomInfo(player);
 		break;
 	}
 	default:
@@ -86,7 +90,9 @@ void RoomManager::HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::s
 			m_roomNumberList.pop();
 
 			tempRoom = std::make_shared<Room>(roomNumber, packet.m_roomName, master, packet.m_maximumPlayer);
-			if (0 < packet.m_password) 
+			tempRoom->Initialize();
+
+			if (0 < packet.m_password && packet.m_password < 10000) 
 				tempRoom->SetPassword(packet.m_password);
 			
 			m_roomList.push_back(tempRoom);
@@ -168,47 +174,51 @@ void RoomManager::HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std:
 		player->SendPacket(responsePacket);
 		return;
 	}
-	//wrong password
-	else if (false == tempRoom->CheckPassword(packet.m_password)) { 
-		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeWrongPassword;
-		player->SendPacket(responsePacket);
-		return;
-	}
-	//Already included in another room
-	else if (PlayerState::playerStateRoom == player->GetPlayerState()) {
-		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeAlreadyIncluded;
-		player->SendPacket(responsePacket);
-		return;
-	}
-	//already start 
-	else if (true == tempRoom->IsRoomStateGaming()) {
-		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeGameStart;
-		player->SendPacket(responsePacket);
-		return;
-	}
-	//can not enter room
-	else if (true == tempRoom->CheckIsRoomIsFull()) {
-		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeMaxPlayer;
-		player->SendPacket(responsePacket);
-		return;
-	}
-	
-	if (ErrorTypeEnterRoom::errorTypeNone == responsePacket.m_errorType && 
-		false == tempRoom->PlayerEnterRoom(player)) {
-		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeCanNotEnterRoom;
-		player->SendPacket(responsePacket);
-		return;
-	}
+
+	responsePacket.m_errorType = tempRoom->PlayerEnterRoom(player, packet.m_password);
+	if (ErrorTypeEnterRoom::errorTypeNone == responsePacket.m_errorType)
+		responsePacket.m_isSuccess = true;
 
 	Util::LoggingInfo("0_Test.log", "Room status[%d]-[%s], players: %d\n",
 		tempRoom->GetRoomNumber(), tempRoom->GetRoomName().c_str(), tempRoom->GetPlayerCount()); //#Test
-	responsePacket.m_isSuccess = true;
-	responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeNone;
 	player->SendPacket(responsePacket);
+//	//wrong password
+//	else if (false == tempRoom->CheckPassword(packet.m_password)) { 
+//		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeWrongPassword;
+//		player->SendPacket(responsePacket);
+//		return;
+//	}
+//	//Already included in another room
+//	else if (PlayerState::playerStateRoom == player->GetPlayerState()) {
+//		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeAlreadyIncluded;
+//		player->SendPacket(responsePacket);
+//		return;
+//	}
+//	//already start 
+//	else if (true == tempRoom->IsRoomStateGaming()) {
+//		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeGameStart;
+//		player->SendPacket(responsePacket);
+//		return;
+//	}
+//	//can not enter room
+//	else if (true == tempRoom->CheckIsRoomIsFull()) {
+//		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeMaxPlayer;
+//		player->SendPacket(responsePacket);
+//		return;
+//	}
+//	
+//	if (ErrorTypeEnterRoom::errorTypeNone == responsePacket.m_errorType && 
+//		false == tempRoom->PlayerEnterRoom(player)) {
+//		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeCanNotEnterRoom;
+//		player->SendPacket(responsePacket);
+//		return;
+//	}
+
+
 	return;
 }
 
-void RoomManager::HandlePacketLeaveRoom(RoomPacketLeaveRoomRequest& packet, std::shared_ptr<Player> player) {
+void RoomManager::HandlePacketLeaveRoom(std::shared_ptr<Player> player) {
 	auto room = this->FindRoomByPlayer(player);
 	if (nullptr == room) {
 		Util::LoggingInfo("0_Test.log", "Not have room"); //#Test
@@ -217,6 +227,13 @@ void RoomManager::HandlePacketLeaveRoom(RoomPacketLeaveRoomRequest& packet, std:
 
 	room->PlayerLeaveRoom(player);
 	Util::LoggingInfo("0_Test.log", "Leave room"); //#Test
+}
+
+void RoomManager::HandlePacketRoomInfo(std::shared_ptr<Player> player) {
+	auto room = this->FindRoomByPlayer(player);
+	if (nullptr == room)
+		return;
+	room->UpdateRoomInfoToPlayer(player);
 }
 
 void RoomManager::RemoveRoom(std::shared_ptr<Room> room) {
