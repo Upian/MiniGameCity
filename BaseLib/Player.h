@@ -6,14 +6,15 @@
 #include "ServerCommon.h"
 #include "ClientBase.h"
 
-enum PlayerState {
+enum class PlayerState {
 	playerStateNone = 0,
 
-	playerStateIdle = 0,
-	playerStateLobby = 0,
-	playerStateGame = 0,
+	playerStateIdle,
+	playerStateLobby,
+	playerStateRoom,
+	playerStatePlayGame,
 
-	playerStateCount = 0,
+	playerStateCount,
 
 };
 
@@ -31,6 +32,9 @@ public:
 	SOCKET GetSocket() const { return m_socket; }
 	GPID GetGPID() const { return m_gamePlayerId; }
 
+	void SetPlayerState(PlayerState state) { m_playerState = state; }
+	PlayerState GetPlayerState() { return m_playerState; }
+
 	virtual void HandlePacket(BufferInfo* packet) override;
 
 	//operator
@@ -38,5 +42,6 @@ public:
 private:
 	GPID m_gamePlayerId = 0; //
 	bool m_isFirstLoginPlayer = true;
+	PlayerState m_playerState = PlayerState::playerStateNone;
 };
 #endif // !__BASELIB_PLAYER_H__

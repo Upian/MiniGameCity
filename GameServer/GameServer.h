@@ -26,7 +26,7 @@ private:
 	void ConnectToSocialServer();
 
 	void HandlePacketPrepareTransfer(); //PacketPrepareTransfer
-	void HandlePacketRoom(BufferInfo* bufInfo);
+	void HandleBasePacketRoom(BufferInfo* bufInfo);
 
 	ServerType m_serverType = ServerType::serverTypeGame;
 

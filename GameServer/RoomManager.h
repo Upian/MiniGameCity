@@ -14,9 +14,12 @@ class RoomManager{
 public:
 	~RoomManager();
 
+	void HandleRoomPacket(Buffer& buffer, std::shared_ptr<Player> player);
+
 	void HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_ptr<Player> master);
 	void HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::shared_ptr<Player> player);
 	void HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketLeaveRoom(RoomPacketLeaveRoomRequest& packet, std::shared_ptr<Player> player);
 
 	void Initialize();
 	std::shared_ptr<Room> FindRoomByPlayer(std::shared_ptr<Player> pplayer);
@@ -35,10 +38,10 @@ private:
 	
 	std::stack<int> m_roomNumberList;
 
-	int m_maxRoomNumber = 100; //#DesignData
-	int m_maxRoomOnePage = 5; //#DesignData
-	size_t m_minPlayer = 2;	//#DesignData
-	size_t m_maxPlayer = 6;	//#DesignData
+	int m_maximumRoomNumber = 100; //#DesignData
+	int m_maximumRoomOnePage = 5; //#DesignData
+	size_t m_minimumPlayer = 2;	//#DesignData
+	size_t m_maximumPlayer = 6;	//#DesignData
 };
 
 #endif // !__GAMESERVER_ROOM_MANAGER_H__

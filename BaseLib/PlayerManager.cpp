@@ -33,13 +33,45 @@ void PlayerManager::PlayerDisconnect(SOCKET key) {
 	m_playerList.remove(pPlayer);
 }
 
-void PlayerManager::SendToPlayers(BasePacket& packet) {
-	for (std::shared_ptr<Player> k : m_playerList) {
-		if(nullptr == k) continue;
+void PlayerManager::SendToAllPlayers(BasePacket& packet) {
+	for (std::shared_ptr<Player> p : m_playerList) {
+		if(nullptr == p) 
+			continue;
 
-		k->SendPacket(packet);
-		//WSAsend
+		p->SendPacket(packet);
 	}
+}
+
+void PlayerManager::SendToLobbyPlayers(BasePacket& packet) {
+	for (auto p : m_playerList) {
+		if(nullptr == p) 
+			continue;
+
+		if (PlayerState::playerStateLobby != p->GetPlayerState())
+			continue;
+
+		p->SendPacket(packet);
+	}
+}
+
+void PlayerManager::SendToGuildPlayers(BasePacket & packet) {
+}
+
+void PlayerManager::SetAllPlayerState(PlayerState state) {
+	for (auto p : m_playerList) {
+		if(nullptr == p)
+			continue;
+
+		p->SetPlayerState(state);
+	}
+}
+
+bool PlayerManager::IsExistPlayer(std::shared_ptr<Player> player) {
+	for (auto p : m_playerList) {
+		if (player == p)
+			return true;
+	}
+	return false;
 }
 
 std::shared_ptr<Player> PlayerManager::FindPlayer(GPID playerId) {

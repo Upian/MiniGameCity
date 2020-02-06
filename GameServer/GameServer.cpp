@@ -46,7 +46,7 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 
 	switch (type) {
 	case BasePacketType::basePacketTypeRoom: {
-		this->HandlePacketRoom(bufInfo);
+		this->HandleBasePacketRoom(bufInfo);
 		break;
 	}
 		
@@ -70,37 +70,11 @@ void GameServer::HandlePacketPrepareTransfer() {
 *	Game client -> Game server
 *	规 包访 菩哦 贸府
 */ 
-void GameServer::HandlePacketRoom(BufferInfo* bufInfo) {
-	PacketTypeRoom type = (PacketTypeRoom)PacketTypeDeserial(bufInfo->buffer);
-
-	switch (type) {
-	case PacketTypeRoom::packetTypeRoomMakeRoomRequest: {
-		RoomPacketMakeRoomRequest packet;
-		packet.Deserialize(bufInfo->buffer);
-		auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
-		
-		m_roomManager.HandlePacketMakeRoom(packet, player);
-		break;
-	}
-	case PacketTypeRoom::packetTypeRoomRoomListRequest: {
-		RoomPacketRoomListRequest packet;
-		packet.Deserialize(bufInfo->buffer);
-		auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
-		
-		m_roomManager.HandlePacketRoomList(packet, player);
-		break;
-	}
-	case PacketTypeRoom::packetTypeRoomEnterRoomRequest: {
-		RoomPacketEnterRoomRequest packet;
-		packet.Deserialize(bufInfo->buffer);
-		auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
-
-		m_roomManager.HandlePacketEnterRoom(packet, player);
-		break;
-	}
-	default:
-		Util::LoggingInfo("GameServer.log", "Recv wrong room packet ID: %d", type);
-	}
+void GameServer::HandleBasePacketRoom(BufferInfo* bufInfo) {
+	auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
+	if (nullptr == player)
+		return;
+	m_roomManager.HandleRoomPacket(bufInfo->buffer, player);
 }
 
 #pragma endregion Handle packet functions

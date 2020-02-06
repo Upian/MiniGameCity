@@ -11,15 +11,25 @@
 class Player;
 class RoomManager;
 
-enum RoomState {
+enum class RoomState {
 	roomStateNone = 0,
 
-	roomStateLobby,
+	roomStateWait,
 	roomStateGaming,
 
 	roomStateCount,
 };
+enum class RoomGameType : char {
+	GameTypeNone = 0,
+	GameTypeTwentyQuestion,
+	GameTypeRelayNovel,
+	GameTypeBanKeyword,
+	GameTypeCatchMind,
 
+	GameTypeCount,
+};
+
+class InGame;
 
 class Room {
 public:
@@ -33,11 +43,11 @@ public:
 
 	PlayerManager& GetPlayerManager() { return m_roomPlayerManager; }
 	int GetPlayerCount() const { return m_roomPlayerManager.GetPlayerCount(); }
-
-	int GetMaxPlayerCount() const { return m_maxPlayer; }
+	int GetMaxPlayerCount() const { return m_maximumPlayer; }
+	bool IsExistPlayer(std::shared_ptr<Player> player) { return m_roomPlayerManager.IsExistPlayer(player); }
 
 	RoomState GetRoomState() const { return m_roomState; }
-	bool IsRoomStateLobby() const { return RoomState::roomStateLobby == m_roomState; }
+	bool IsRoomStateLobby() const { return RoomState::roomStateWait == m_roomState; }
 	bool IsRoomStateGaming() const { return RoomState::roomStateGaming == m_roomState; }
 
 	int GetRoomNumber() const { return m_roomNumber; }
@@ -47,6 +57,7 @@ public:
 	void SetIsUsePassword(bool isUse) { m_isUsePassword = isUse; }
 	bool GetIsUsePassword() const { return m_isUsePassword; }
 	bool CheckPassword(__int16 password);
+	bool CheckIsRoomIsFull() { return m_maximumPlayer <= m_roomPlayerManager.GetPlayerCount(); }
 
 	std::string& GetRoomName() { return m_roomName; }
 
@@ -56,12 +67,13 @@ public:
 private:
 	PlayerManager						m_roomPlayerManager;
 	std::shared_ptr<Player>				m_roomMaster = nullptr;
-	
+
+	RoomGameType						m_gameType = RoomGameType::GameTypeNone;
 	RoomState							m_roomState = RoomState::roomStateNone;
 	std::thread*						m_inGameThread = nullptr;
 	
 	std::string							m_roomName;
-	int									m_maxPlayer = 0;
+	int									m_maximumPlayer = 0;
 	int									m_roomNumber = 0;
 	bool								m_isUsePassword = false;
 	__int16								m_password;
