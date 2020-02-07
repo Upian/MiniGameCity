@@ -27,6 +27,7 @@ enum class PacketTypeRoom : char {
 	packetTypeRoomRoomInfoResponse, //GameServer -> Client Broadcast (It will be send when new player enter the room)
 
 	packetTypeRoomToggleReadyRequest, //Client -> GameServer
+	packetTypeRoomToggleReadyResponse, //GameServer -> Client (To tell)
 
 	packetTypeRoomCount,
 };
@@ -312,6 +313,19 @@ struct RoomPacketToggleReadyRequest : public BaseRoomPacket {
 
 	}
 };
+struct RoomPacketToggleReadyResponse : public BaseRoomPacket {
+	RoomPacketToggleReadyResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomToggleReadyResponse) {}
 
+	bool m_isReady = false;
+
+	virtual Buffer& Serialize() override {
+		buffer << m_isReady;
+
+		return buffer;
+	}
+	virtual void  Deserialize(Buffer& buf) override {
+		buf >> m_isReady;
+	}
+};
 //
 #endif // !__GAMESERVER_ROOM_PACKET_H__

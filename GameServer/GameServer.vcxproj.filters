@@ -51,5 +51,8 @@
     <ClInclude Include="InGamePacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
+    <ClInclude Include="SocialPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

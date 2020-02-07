@@ -42,7 +42,7 @@ void RoomManager::HandleRoomPacket(Buffer & buffer, std::shared_ptr<Player> play
 		break;
 	}
 	case PacketTypeRoom::packetTypeRoomToggleReadyRequest: {
-
+		this->HaldlePacketToggleReady(player);
 	}
 	default:
 		Util::LoggingInfo("GameServer.log", "Recv wrong room packet ID: %d", type);
