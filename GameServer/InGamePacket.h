@@ -102,7 +102,8 @@ class TwentyPlayerLocationSettingPacket : public TwentyQuestionGamePacket {
 public:
 	TwentyPlayerLocationSettingPacket() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Player_Location_Setting)
 	{
-
+		std::string Player_ID[5];
+		int Player_Count;
 	}
 	~TwentyPlayerLocationSettingPacket();
 private:
