@@ -24,6 +24,27 @@ bool ClientBase::SendPacket(BasePacket& packet) {
 		Util::LoggingError("Network.log", "Send error[%d]", WSAGetLastError());
 		return false;
 	}
-	printf("Send: %d\n", sendBytes);
+	return true;
+}
+
+bool ClientBase::SendPacket(Buffer & buffer) {
+	m_clientBuffer.Clear();
+
+	m_clientBuffer.buffer = buffer;
+	m_clientBuffer.dataBuf.len = buffer.Length();
+	m_clientBuffer.overlapped.hEvent = WSACreateEvent();
+	DWORD sendBytes = 0;
+
+	if (SOCKET_ERROR == WSASend(
+		m_socket,
+		&m_clientBuffer.dataBuf,
+		1,
+		&sendBytes,
+		0,
+		NULL,
+		NULL)) {
+		Util::LoggingError("Network.log", "Send error[%d]", WSAGetLastError());
+		return false;
+	}
 	return true;
 }

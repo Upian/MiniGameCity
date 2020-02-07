@@ -14,11 +14,10 @@ class RoomManager{
 public:
 	~RoomManager();
 
-	void HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_ptr<Player> master);
-	void HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::shared_ptr<Player> player);
-	void HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std::shared_ptr<Player> player);
-
 	void Initialize();
+
+	void HandleRoomPacket(Buffer& buffer, std::shared_ptr<Player> player);
+	
 	std::shared_ptr<Room> FindRoomByPlayer(std::shared_ptr<Player> pplayer);
 	void RemoveRoom(std::shared_ptr<Room> room);
 
@@ -28,6 +27,13 @@ public:
 	//Packet Handling
 	
 private:
+	void HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_ptr<Player> master);
+	void HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketLeaveRoom(std::shared_ptr<Player> player);
+	void HandlePacketRoomInfo(std::shared_ptr<Player> player);
+	void HaldlePacketToggleReady(std::shared_ptr<Player> player);
+
 	void ClearDeactivatedRoom();
 	std::thread* m_roomWatcher = nullptr;
 
@@ -35,10 +41,10 @@ private:
 	
 	std::stack<int> m_roomNumberList;
 
-	int m_maxRoomNumber = 100; //#DesignData
-	int m_maxRoomOnePage = 5; //#DesignData
-	size_t m_minPlayer = 2;	//#DesignData
-	size_t m_maxPlayer = 6;	//#DesignData
+	int m_maximumRoomNumber = 100; //#DesignData
+	int m_maximumRoomOnePage = 5; //#DesignData
+	size_t m_minimumPlayer = 2;	//#DesignData
+	size_t m_maximumPlayer = 6;	//#DesignData
 };
 
 #endif // !__GAMESERVER_ROOM_MANAGER_H__

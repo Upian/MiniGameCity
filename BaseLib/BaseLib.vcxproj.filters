@@ -49,9 +49,6 @@
     <ClInclude Include="PlayerManager.h">
       <Filter>Client</Filter>
     </ClInclude>
-    <ClInclude Include="GamePacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
     <ClInclude Include="Server.h">
       <Filter>Client</Filter>
     </ClInclude>
@@ -60,21 +57,6 @@
     </ClInclude>
     <ClInclude Include="ServerCommon.h">
       <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="SocialPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="LoginPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="LobbyPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="RankingPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="ShopPacket.h">
-      <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="UTF8.h">
       <Filter>Util</Filter>
@@ -101,24 +83,6 @@
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="GamePacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="SocialPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="LoginPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="LobbyPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="RankingPacket.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="ShopPacket.cpp">
-      <Filter>Packet</Filter>
     </ClCompile>
     <ClCompile Include="Server.cpp">
       <Filter>Client</Filter>

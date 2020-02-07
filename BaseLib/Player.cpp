@@ -4,7 +4,7 @@
 
 void Player::Initialize() {
 	//Generate GPID
-
+	m_playerState = PlayerState::playerStateLobby;
 }
 
 void Player::HandlePacket(BufferInfo* bufInfo) {

@@ -1,7 +1,8 @@
+#include <memory>
 #include "PlayerManager.h"
 #include "Player.h"
 #include "Log.h"
-#include <memory>
+#include "BasePacket.h"
 
 void PlayerManager::InsertPlayer(SOCKET socket) {
 	if (nullptr != this->FindPlayerBySocket(socket)) //already exist
@@ -33,13 +34,49 @@ void PlayerManager::PlayerDisconnect(SOCKET key) {
 	m_playerList.remove(pPlayer);
 }
 
-void PlayerManager::SendToPlayers(BasePacket& packet) {
-	for (std::shared_ptr<Player> k : m_playerList) {
-		if(nullptr == k) continue;
 
-		k->SendPacket(packet);
-		//WSAsend
+void PlayerManager::SendToAllPlayers(BasePacket& packet) {
+	Buffer buffer = packet.Serialize();
+
+	for (std::shared_ptr<Player> p : m_playerList) {
+		if(nullptr == p) 
+			continue;
+
+		p->SendPacket(buffer);
 	}
+}
+
+void PlayerManager::SendToLobbyPlayers(BasePacket& packet) {
+	Buffer buffer = packet.Serialize();
+	for (auto p : m_playerList) {
+		if(nullptr == p) 
+			continue;
+
+		if (PlayerState::playerStateLobby != p->GetPlayerState())
+			continue;
+
+		p->SendPacket(buffer);
+	}
+}
+
+void PlayerManager::SendToGuildPlayers(BasePacket & packet) {
+}
+
+void PlayerManager::SetAllPlayerState(PlayerState state) {
+	for (auto p : m_playerList) {
+		if(nullptr == p)
+			continue;
+
+		p->SetPlayerState(state);
+	}
+}
+
+bool PlayerManager::IsExistPlayer(std::shared_ptr<Player> player) {
+	for (auto p : m_playerList) {
+		if (player == p)
+			return true;
+	}
+	return false;
 }
 
 std::shared_ptr<Player> PlayerManager::FindPlayer(GPID playerId) {

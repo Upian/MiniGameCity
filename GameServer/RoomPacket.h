@@ -20,7 +20,14 @@ enum class PacketTypeRoom : char {
 	packetTypeRoomEnterRoomRequest, //Client -> GameServer
 	packetTypeRoomEnterRoomResponse, //GameServer -> Client
 
-	packetTypeRoomRoomInfo, //GameServer -> Client Broadcast (also used EnterRoomResponse)
+	packetTypeRoomLeaveRoomRequest, //Client -> GameServer
+	packetTypeRoomLeaveRoomResponse, //GameServer -> Client
+
+	packetTypeRoomRoomInfoRequest,
+	packetTypeRoomRoomInfoResponse, //GameServer -> Client Broadcast (It will be send when new player enter the room)
+
+	packetTypeRoomToggleReadyRequest, //Client -> GameServer
+	packetTypeRoomToggleReadyResponse, //GameServer -> Client (To tell)
 
 	packetTypeRoomCount,
 };
@@ -39,22 +46,22 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 	RoomPacketMakeRoomRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomMakeRoomRequest) {}
 
 	std::string		m_roomName;
-	int16			m_maxPlayer = 0;
+	int16			m_maximumPlayer = 0;
 	int16			m_password = 0;
 
 	virtual Buffer& Serialize() override {
 
 		buffer << m_roomName;
-		buffer << m_maxPlayer;
+		buffer << m_maximumPlayer;
 		buffer << m_password;
 
 		return buffer;
 	}
-	virtual void Deserialize(Buffer& _buf) override {
-//		DeserializeBuffer(_buf);
-		_buf >> m_roomName;
-		_buf >> m_maxPlayer;
-		_buf >> m_password;
+	virtual void Deserialize(Buffer& buf) override {
+
+		buf >> m_roomName;
+		buf >> m_maximumPlayer;
+		buf >> m_password;
 	}
 };
 struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
@@ -66,12 +73,11 @@ struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
 	virtual Buffer& Serialize() override {
 		buffer << m_success;
 		buffer << m_roomNumber;
-		
 		return buffer;
 	}
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> m_success;
-		_buf >> m_roomNumber;
+	virtual void Deserialize(Buffer& buf) override {
+		buf >> m_success;
+		buf >> m_roomNumber;
 	}
 };
 
@@ -92,16 +98,18 @@ struct RoomPacketRoomListResponse : public BaseRoomPacket {
 	RoomPacketRoomListResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomListResponse) {}
 private:
 	struct RoomInfo {
-		RoomInfo(int num, int plycnt, int maxcount, bool pass, std::string& str) :
+		RoomInfo(int num, int plycnt, int maxcount, bool gameStart, bool pass, std::string& str) :
 		number(num),
 		playerCount(plycnt),
 		maxPlayerCount(maxcount),
+		isGameStart(gameStart),
 		password(pass),
 		roomName(str)
 		{}
 		__int16			number = 0;
 		__int16			playerCount = 0;
 		__int16			maxPlayerCount = 0;
+		bool			isGameStart = false;
 		bool			password = false;
 		std::string		roomName;
 	};
@@ -113,36 +121,39 @@ public:
 		m_listCount = static_cast<__int16>(m_roomList.size());
 
 		buffer << m_listCount;
-
 		for (RoomInfo info : m_roomList) {
 			buffer << info.number;
 			buffer << info.playerCount;
 			buffer << info.maxPlayerCount;
+			buffer << info.isGameStart;
 			buffer << info.password;
 			buffer << info.roomName;
 		}
 
 		return buffer;
 	}
-	virtual void Deserialize(Buffer& _buf) override {
+	virtual void Deserialize(Buffer& buf) override {
 		__int16			tempNumber = 0;
 		__int16			tempPlayerCount = 0;
 		__int16			tempMaxPlayerCount = 0;
+		bool			tempIsGameStart = false;
 		bool			tempPassword = false;
 		std::string		tempStr;
 
-		_buf >> m_listCount;
+		buf >> m_listCount;
 
 		for(int i = 0; i < m_listCount; ++i) {  
-			_buf >> tempNumber;
-			_buf >> tempPlayerCount;
-			_buf >> tempMaxPlayerCount;
-			_buf >> tempPassword;
-			_buf >> tempStr;
+			buf >> tempNumber;
+			buf >> tempPlayerCount;
+			buf >> tempMaxPlayerCount;
+			buf >> tempIsGameStart;
+			buf >> tempPassword;
+			buf >> tempStr;
 			m_roomList.emplace_back(
 				tempNumber,
 				tempPlayerCount,
 				tempMaxPlayerCount,
+				tempIsGameStart,
 				tempPassword,
 				tempStr
 			);
@@ -153,11 +164,14 @@ public:
 //Enter room
 enum class ErrorTypeEnterRoom : char {
 	errorTypeNone = 0,
-	
-	errorTypeMaxPlayer,
-	errorTypeGameStart,
+
 	errorTypeNotExistRoom,
 	errorTypeWrongPassword,
+	errorTypeAlreadyIncluded,
+	errorTypeGameStart,
+	errorTypeMaxPlayer,
+	errorTypeCanNotEnterRoom,
+	errorTypePlayerLogout,
 
 	errorTypeCount,
 };
@@ -181,19 +195,143 @@ struct RoomPacketEnterRoomRequest : public BaseRoomPacket {
 struct RoomPacketEnterRoomResponse : public BaseRoomPacket {
 	RoomPacketEnterRoomResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomEnterRoomResponse) {}
 
-	bool m_isSuccess = false;
+	bool m_isSuccess = true;
+	__int16 m_positionIndex = 0;
 	ErrorTypeEnterRoom m_errorType = ErrorTypeEnterRoom::errorTypeNone;
 
 	virtual Buffer& Serialize() override {
 		buffer << m_isSuccess;
+		buffer << m_positionIndex;
 		buffer << m_errorType;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> m_isSuccess;
+		_buf >> m_positionIndex;
 		_buf >> m_errorType;
 	}
 };
 
+//Leave room
+struct RoomPacketLeaveRoomRequest : public BaseRoomPacket {
+	RoomPacketLeaveRoomRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomLeaveRoomRequest) {}
+
+	virtual Buffer& Serialize() override { return buffer; }
+	virtual void Deserialize(Buffer& buf) override {}
+};
+struct RoomPacketLeaveRoomResponse : public BaseRoomPacket {
+	RoomPacketLeaveRoomResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomLeaveRoomResponse) {}
+
+	bool m_isSuccess = true;
+
+	virtual Buffer& Serialize() override {
+		buffer << m_isSuccess;
+		
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_isSuccess;
+	}
+};
+
+//packetTypeRoomRoomInfo
+struct RoomPacketRoomInfoRequest : public BaseRoomPacket {
+	RoomPacketRoomInfoRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomInfoRequest) {}
+
+	virtual Buffer& Serialize() override {
+		return buffer;
+	}
+	virtual void  Deserialize(Buffer& buf) override {
+
+	}
+};
+struct RoomPacketRoomInfoResponse : public BaseRoomPacket {
+	RoomPacketRoomInfoResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomInfoResponse) {}
+private:
+	struct PlayerInfo {
+		explicit PlayerInfo(__int16 position, bool master, std::string name, __int32 index, bool ready) :
+		positiontIndex(position),
+		isRoomMaster(master),
+		nickName(name),
+		imageIndex(index),
+		isPlayerReady(ready)
+		{}
+
+		__int16			positiontIndex;
+		bool			isRoomMaster;
+		std::string		nickName;
+		__int32			imageIndex;
+		bool			isPlayerReady;
+	};
+
+public:
+	std::list<PlayerInfo> m_players;
+	__int16 m_listCount = 0;
+
+	virtual Buffer& Serialize() override {
+		m_listCount = static_cast<__int16>(m_players.size());
+
+		buffer << m_listCount;
+		for (PlayerInfo info : m_players) {
+			buffer << info.positiontIndex;
+			buffer << info.isRoomMaster;
+			buffer << info.nickName;
+			buffer << info.imageIndex;
+			buffer << info.isPlayerReady;
+		}
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) override {
+		__int16 tempPositionIndex;
+		bool tempIsRoomMaster;
+		std::string tempNickName;
+		__int32 tempImageIndex;
+		bool tempIsPlayerReady;
+
+		buf >> m_listCount;
+		for (int i = 0; i < m_listCount; ++i) {
+			buf >> tempPositionIndex;
+			buf >> tempIsRoomMaster;
+			buf >> tempNickName;
+			buf >> tempImageIndex;
+			buf >> tempIsPlayerReady;
+			m_players.emplace_back(
+				tempPositionIndex,
+				tempIsRoomMaster,
+				tempNickName,
+				tempImageIndex,
+				tempIsPlayerReady
+			);
+		}
+	}
+};
+
+//ready
+struct RoomPacketToggleReadyRequest : public BaseRoomPacket {
+	RoomPacketToggleReadyRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomToggleReadyRequest) {}
+
+	virtual Buffer& Serialize() override {
+		return buffer;
+	}
+	virtual void  Deserialize(Buffer& buf) override {
+
+	}
+};
+struct RoomPacketToggleReadyResponse : public BaseRoomPacket {
+	RoomPacketToggleReadyResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomToggleReadyResponse) {}
+
+	bool m_isReady = false;
+
+	virtual Buffer& Serialize() override {
+		buffer << m_isReady;
+
+		return buffer;
+	}
+	virtual void  Deserialize(Buffer& buf) override {
+		buf >> m_isReady;
+	}
+};
+//
 #endif // !__GAMESERVER_ROOM_PACKET_H__

@@ -14,6 +14,7 @@ public:
 
 	virtual void HandlePacket(BufferInfo* packet) = 0;
 	bool SendPacket(BasePacket& packet);
+	bool SendPacket(Buffer& buffer);
 
 	SOCKET GetSocket() const { return m_socket; }
 
