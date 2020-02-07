@@ -55,6 +55,12 @@ public:
 
 	void SetRoom(std::shared_ptr<Room> room) { m_room = room; }
 	std::shared_ptr<Room> GetRoom() const { return m_room; }
+
+	void UpdateGameScore(int changeScore) { InGameScore += changeScore; }
+	int GetGameScore() { return InGameScore; }
+
+	void SetExitReservation(bool changeExit) { ExitReservation = changeExit; }
+	bool GetExitReservation() { return ExitReservation; }
 #pragma endregion for using game room
 
 
@@ -72,6 +78,9 @@ private:
 	bool m_isRoomMaster = false;
 	__int32 m_imageIndex = 0;
 	bool m_isReady = false;
+
+	int				InGameScore = 0;			//인게임 점수
+	bool			ExitReservation = false;	//게임 나가기 예약
 
 #pragma endregion for using game room
 };
