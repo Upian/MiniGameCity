@@ -32,8 +32,8 @@ private:
 
 	ServerType m_serverType = ServerType::serverTypeGame;
 
-	SOCKET m_managementServer = 0;
-
+	SOCKET m_managementServerSocket = 0;
+	SOCKET m_socialServerSocket = 0;
 	//manager
 	RoomManager m_roomManager;
 	PlayerManager m_playerManager;

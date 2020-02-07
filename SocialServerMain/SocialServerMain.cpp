@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
 		pServer->GetConfigManager()->SetDirectory(argv[1]);
 
 	pServer->SetPortNum(Util::GetConfigToInt("SocialServer.ini", "Network", "Port", 20000));
-	pServer->SetServerName("GameServer");
+	pServer->SetServerName("SocialServer");
 
 	pServer->InitializeBaseServer();
 	pServer->InitializeSocialServer();

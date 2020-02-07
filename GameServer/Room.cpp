@@ -104,21 +104,21 @@ void Room::PlayerLeaveRoom(std::shared_ptr<Player> player) {
 	leavePacket.m_isSuccess = true;
 
 	m_roomPlayerManager.RemovePlayer(player);//remove player
-	player->SetPlayerState(PlayerState::playerStateLobby);
-	player->PlayerInfoClear();
+	
 	m_playerPosionStack.push(player->GetPositionIndex());
-
-
+	
 	if (true == m_roomPlayerManager.IsPlayerEmpty()) {
 		m_roomState = RoomState::roomStateNone;
-		player->SendPacket(leavePacket);
-		return;
 	}
 	else if (m_roomMaster == player) {//If the player is room master
 		player->SetIsRoomMaster(false);
 		m_roomMaster = m_roomPlayerManager.GetPlayerList().front(); //
 		m_roomMaster->SetIsRoomMaster(true);
 	}
+	//reset player info
+	player->SetPlayerState(PlayerState::playerStateLobby);
+	player->PlayerInfoClear();
+
 	player->SendPacket(leavePacket);
 	this->UpdateRoomInfoToAllPlayers();
 
