@@ -33,6 +33,7 @@ void SocialManager::HandlePacketChatNormal(SocialPacketChatNormalRequest& packet
 		return;
 	
 	SocialPacketChatNormalResponse responsePacket;
+	responsePacket.m_name = player->GetPlayerName();
 	responsePacket.m_message = packet.m_message;
 
 	switch (player->GetPlayerState()) {

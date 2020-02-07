@@ -46,14 +46,17 @@ struct SocialPacketChatNormalRequest: public BaseSocialPacket{
 struct SocialPacketChatNormalResponse : public BaseSocialPacket {
 	SocialPacketChatNormalResponse() : BaseSocialPacket(PacketTypeSocial::packetTypeSocialChatNormalResponse) {}
 
+	std::string m_name;
 	std::string m_message;
 
 	virtual Buffer& Serialize() {
+		buffer << m_name;
 		buffer << m_message;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
+		buf >> m_name;
 		buf >> m_message;
 
 		return;
