@@ -86,7 +86,7 @@ void GameServer::HandleBasePacketSocial(BufferInfo * bufInfo) {
 	if (nullptr == player)
 		return;
 
-	
+	m_socialManager.HandleSocialPacket(bufInfo->buffer, player);
 }
 
 #pragma endregion Handle packet functions

@@ -15,9 +15,12 @@ public:
 
 	void HandleSocialPacket(Buffer& buffer, std::shared_ptr<Player> player);
 
-	void HandlePacketChatNormal(SocialPacketChatNormalRequest& packet, std::shared_ptr<Player> player);
+	
 
 private:
+	void HandlePacketChatNormal(SocialPacketChatNormalRequest& packet, std::shared_ptr<Player> player);
+
+
 	GameServer* m_gameServer;
 	SocialServer* m_socialServer;
 };

@@ -19,7 +19,7 @@ void SocialManager::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Player> p
 	switch (type) {
 	case PacketTypeSocial::packetTypeSocialChatNormalRequest: {
 		SocialPacketChatNormalRequest packet;
-
+		packet.Deserialize(buffer);
 		this->HandlePacketChatNormal(packet, player);
 		break;
 	}
@@ -31,20 +31,25 @@ void SocialManager::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Player> p
 void SocialManager::HandlePacketChatNormal(SocialPacketChatNormalRequest& packet, std::shared_ptr<Player> player) {
 	if (nullptr == player)
 		return;
+	
+	SocialPacketChatNormalResponse responsePacket;
+	responsePacket.m_message = packet.m_message;
 
+	switch (player->GetPlayerState()) {
+	case PlayerState::playerStateLobby: {
+		m_gameServer->GetPlayerManager().SendToLobbyPlayers(responsePacket);
+		break;
+	}
+	case PlayerState::playerStateRoom: {
+		auto room = player->GetRoom();
+		if (nullptr == room)
+			return;
 
-//	switch (player->GetPlayerState()) {
-//	case PlayerState::playerStateLobby: {
-//		m_gameServer->GetPlayerManager().SendToLobbyPlayers(packet);
-//	}
-//	case PlayerState::playerStateRoom: {
-//		auto room = player->GetRoom();
-//		if (nullptr == room)
-//			return;
-//
-//		room->GetPlayerManager().SendToAllPlayers(packet);
-//	}
-//	default:
-//
-//	}
+		room->GetPlayerManager().SendToAllPlayers(responsePacket);
+		break;
+	}
+	default:
+		break;
+
+	}
 }

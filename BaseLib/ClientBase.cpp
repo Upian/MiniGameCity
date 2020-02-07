@@ -24,11 +24,11 @@ bool ClientBase::SendPacket(BasePacket& packet) {
 		Util::LoggingError("Network.log", "Send error[%d]", WSAGetLastError());
 		return false;
 	}
-	printf("Send: %d\n", sendBytes);
 	return true;
 }
 
 bool ClientBase::SendPacket(Buffer & buffer) {
+	m_clientBuffer.Clear();
 
 	m_clientBuffer.buffer = buffer;
 	m_clientBuffer.dataBuf.len = buffer.Length();
@@ -46,6 +46,5 @@ bool ClientBase::SendPacket(Buffer & buffer) {
 		Util::LoggingError("Network.log", "Send error[%d]", WSAGetLastError());
 		return false;
 	}
-	printf("Send: %d\n", sendBytes);
 	return true;
 }

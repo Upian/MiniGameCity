@@ -14,16 +14,10 @@ class RoomManager{
 public:
 	~RoomManager();
 
-	void HandleRoomPacket(Buffer& buffer, std::shared_ptr<Player> player);
-
-	void HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_ptr<Player> master);
-	void HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::shared_ptr<Player> player);
-	void HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std::shared_ptr<Player> player);
-	void HandlePacketLeaveRoom(std::shared_ptr<Player> player);
-	void HandlePacketRoomInfo(std::shared_ptr<Player> player);
-	void HaldlePacketToggleReady(std::shared_ptr<Player> player);
-
 	void Initialize();
+
+	void HandleRoomPacket(Buffer& buffer, std::shared_ptr<Player> player);
+	
 	std::shared_ptr<Room> FindRoomByPlayer(std::shared_ptr<Player> pplayer);
 	void RemoveRoom(std::shared_ptr<Room> room);
 
@@ -33,6 +27,13 @@ public:
 	//Packet Handling
 	
 private:
+	void HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::shared_ptr<Player> master);
+	void HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketLeaveRoom(std::shared_ptr<Player> player);
+	void HandlePacketRoomInfo(std::shared_ptr<Player> player);
+	void HaldlePacketToggleReady(std::shared_ptr<Player> player);
+
 	void ClearDeactivatedRoom();
 	std::thread* m_roomWatcher = nullptr;
 
