@@ -32,7 +32,8 @@ public:
 	template<typename ...T_Args> static T_Server* CreateServer(const T_Args& ...args);
 	static void DestroyServer();
 	static T_Server* GetServer();
-	
+	Util::ConfigManager* GetConfigManager() const { return m_configManager; }
+
 	void SetPortNum(int portNum) { m_portNum = portNum; }
 	void SetServerName(std::string str = "") { m_serverName = str; }
 	void InitializeBaseServer();
@@ -48,6 +49,7 @@ private:
 	virtual void HandleBasePacket(BufferInfo* bufInfo) = 0;
 
 	static T_Server* m_instance;
+	Util::ConfigManager* m_configManager;
 
 	void CreateIOWorkerThread();
 	void IOWorkerThread();
@@ -120,9 +122,9 @@ void BaseServer<T_Server>::DestroyServer() {
 #pragma endregion Make server to singleton
 
 template<typename T_Server>
-BaseServer<T_Server>::BaseServer() :
-	m_portNum(Util::GetConfigToInt("BaseServer.ini", "Network", "Port", 19998)) {
+BaseServer<T_Server>::BaseServer() {
 	Util::LogManager::CreateInstance();
+	m_configManager = Util::ConfigManager::CreateInstance();
 }
 
 template<typename T_Server>

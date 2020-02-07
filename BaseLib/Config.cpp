@@ -20,7 +20,7 @@ namespace Util{
 			config = ConfigManager::CreateInstance();
 		
 		std::string directory = config->GetDirectory().append(fileName);
-
+		
 		return GetPrivateProfileInt(section, key, defaultValue, directory.c_str());
 	}
 

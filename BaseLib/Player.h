@@ -43,6 +43,8 @@ public:
 
 
 #pragma region Game
+	void PlayerInfoClear();
+
 	void SetPositionIndex(__int16 position) { m_potionIndex = position; }
 	__int16 GetPositionIndex() const { return m_potionIndex; }
 

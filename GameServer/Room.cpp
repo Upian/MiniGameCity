@@ -86,6 +86,7 @@ ErrorTypeEnterRoom Room::PlayerEnterRoom(std::shared_ptr<Player> player, __int16
 
 	player->SetPlayerState(PlayerState::playerStateRoom);
 	player->SetPositionIndex(m_playerPosionStack.top());
+	player->SetIsReady(false);
 	m_playerPosionStack.pop();
 	m_roomPlayerManager.InsertPlayer(player);
 	player->SetRoom(shared_from_this());
@@ -104,9 +105,8 @@ void Room::PlayerLeaveRoom(std::shared_ptr<Player> player) {
 
 	m_roomPlayerManager.RemovePlayer(player);//remove player
 	player->SetPlayerState(PlayerState::playerStateLobby);
-	player->SetRoom(nullptr);
+	player->PlayerInfoClear();
 	m_playerPosionStack.push(player->GetPositionIndex());
-	player->SetPositionIndex(0);
 
 
 	if (true == m_roomPlayerManager.IsPlayerEmpty()) {
@@ -114,8 +114,7 @@ void Room::PlayerLeaveRoom(std::shared_ptr<Player> player) {
 		player->SendPacket(leavePacket);
 		return;
 	}
-		
-	if (m_roomMaster == player) {//If the player is room master
+	else if (m_roomMaster == player) {//If the player is room master
 		player->SetIsRoomMaster(false);
 		m_roomMaster = m_roomPlayerManager.GetPlayerList().front(); //
 		m_roomMaster->SetIsRoomMaster(true);

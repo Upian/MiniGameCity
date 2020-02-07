@@ -5,18 +5,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="RankingServer">
-      <UniqueIdentifier>{6c2d156a-e1ad-4da1-be22-6f43e7d65083}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RankingServer.h">
-      <Filter>RankingServer</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="RankingServer.cpp">
-      <Filter>RankingServer</Filter>
-    </ClCompile>
+    <ClCompile Include="SocialServerMain.cpp" />
   </ItemGroup>
 </Project>

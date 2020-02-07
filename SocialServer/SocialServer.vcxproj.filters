@@ -5,8 +5,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Packet">
+      <UniqueIdentifier>{a5814f39-7614-4118-880a-017e059ebe4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SocialServer">
+      <UniqueIdentifier>{0fdb3d53-3fd0-4ee7-852b-ad4caa1f4ffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Friend">
+      <UniqueIdentifier>{c0fcd4f8-a449-47b1-8c13-7253a7b232d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SocialServerMain.cpp" />
+    <ClInclude Include="FriendPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="SocialServer.h">
+      <Filter>SocialServer</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SocialServer.cpp">
+      <Filter>SocialServer</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

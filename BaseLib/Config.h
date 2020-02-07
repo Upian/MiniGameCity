@@ -16,13 +16,14 @@ namespace Util {
 
 	class ConfigManager :public Singleton<ConfigManager> {
 	public:
-		void SetDirectory(const char* directory) { m_directory.append(directory); }
+		void SetConfigFile(const char* directory) { m_directory.append(directory); }
+		void SetDirectory(const char* directory) { m_directory = directory; }
 		std::string GetDirectory() const { return m_directory; }
 
 	private:
 		DECLARE_SINGLETON(ConfigManager)
 		ConfigManager(const char* directory);
-		std::string m_directory = "../../../Config/";
+		std::string m_directory = "../../../../RuntimeMGC/Config/";
 
 	};
 

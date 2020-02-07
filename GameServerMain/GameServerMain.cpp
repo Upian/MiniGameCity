@@ -16,11 +16,12 @@ void operator delete(void* ptr, size_t size) {
 //*/
 int main(int argc, char* argv[]) {
 	GameServer* pServer = GameServer::CreateServer();
-	
-	if (1 < argc)
-		pServer->SetPortNum(atoi(argv[1]));
-	else
-		pServer->SetPortNum(Util::GetConfigToInt("GameServer.ini", "Network", "Port", 10000));
+
+
+	if (1 < argc) //set config file
+		pServer->GetConfigManager()->SetDirectory(argv[1]);
+
+	pServer->SetPortNum(Util::GetConfigToInt("GameServer.ini", "Network", "Port", 10000));
 	pServer->SetServerName("GameServer");
 
 	pServer->InitializeBaseServer();

@@ -20,6 +20,9 @@
     <Filter Include="Client">
       <UniqueIdentifier>{8a454554-142b-4530-b63f-6dafb8412a1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ThreadPool">
+      <UniqueIdentifier>{b03f2628-8dcf-4888-b335-3739bc9848aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Log.h">

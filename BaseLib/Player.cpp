@@ -10,3 +10,10 @@ void Player::Initialize() {
 void Player::HandlePacket(BufferInfo* bufInfo) {
 
 }
+
+void Player::PlayerInfoClear() {
+	m_potionIndex = 0;
+	m_room = nullptr;
+	m_isRoomMaster = false;
+	m_isReady = false;
+}
