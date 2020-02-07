@@ -149,7 +149,13 @@ void RoomManager::HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::s
 		Util::LoggingInfo("", "room number[%d] \t Room[%s], %d/%d, %s",
 			room->GetRoomNumber(), room->GetRoomName().c_str(), room->GetPlayerCount(), room->GetMaxPlayerCount(), 
 			room->GetIsUsePassword() ? "Yes" : "No");
-		responsePacket.m_roomList.emplace_back(room->GetRoomNumber(), room->GetPlayerCount(), room->GetMaxPlayerCount(), room->GetIsUsePassword(), room->GetRoomName());
+		responsePacket.m_roomList.emplace_back(
+			room->GetRoomNumber(), 
+			room->GetPlayerCount(), 
+			room->GetMaxPlayerCount(), 
+			(RoomState::roomStateGaming == room->GetRoomState()),
+			room->GetIsUsePassword(), 
+			room->GetRoomName());
 		++count;
 	}
 	
