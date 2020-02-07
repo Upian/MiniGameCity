@@ -5,6 +5,7 @@
 #include "BaseServer.h"
 #include "RoomManager.h"
 #include "PlayerManager.h"
+#include "SocialManager.h"
 
 //const char* serverName = "GameServer";
 //const char* logFile = "GameServer.log";
@@ -27,6 +28,7 @@ private:
 
 	void HandlePacketPrepareTransfer(); //PacketPrepareTransfer
 	void HandleBasePacketRoom(BufferInfo* bufInfo);
+	void HandleBasePacketSocial(BufferInfo* bufInfo);
 
 	ServerType m_serverType = ServerType::serverTypeGame;
 
@@ -35,6 +37,8 @@ private:
 	//manager
 	RoomManager m_roomManager;
 	PlayerManager m_playerManager;
+
+	SocialManager m_socialManager;
 };
 
 

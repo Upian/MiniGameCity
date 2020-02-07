@@ -16,7 +16,7 @@ void operator delete(void* ptr, size_t size) {
 //*/
 int main(int argc, char* argv[]) {
 	GameServer* pServer = GameServer::CreateServer();
-
+	
 	if (1 < argc)
 		pServer->SetPortNum(atoi(argv[1]));
 	else

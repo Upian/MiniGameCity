@@ -17,6 +17,9 @@
     <Filter Include="Player">
       <UniqueIdentifier>{c217afdd-3be8-4904-8a6f-9d729342daef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Social">
+      <UniqueIdentifier>{50754af7-7564-4466-8e6f-c52d38368251}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp">
@@ -30,6 +33,9 @@
     </ClCompile>
     <ClCompile Include="InGame.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="SocialManager.cpp">
+      <Filter>Social</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="SocialPacket.h">
       <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="SocialManager.h">
+      <Filter>Social</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,7 +1,8 @@
+#include <memory>
 #include "PlayerManager.h"
 #include "Player.h"
 #include "Log.h"
-#include <memory>
+#include "BasePacket.h"
 
 void PlayerManager::InsertPlayer(SOCKET socket) {
 	if (nullptr != this->FindPlayerBySocket(socket)) //already exist
@@ -33,16 +34,20 @@ void PlayerManager::PlayerDisconnect(SOCKET key) {
 	m_playerList.remove(pPlayer);
 }
 
+
 void PlayerManager::SendToAllPlayers(BasePacket& packet) {
+	Buffer buffer = packet.Serialize();
+
 	for (std::shared_ptr<Player> p : m_playerList) {
 		if(nullptr == p) 
 			continue;
 
-		p->SendPacket(packet);
+		p->SendPacket(buffer);
 	}
 }
 
 void PlayerManager::SendToLobbyPlayers(BasePacket& packet) {
+	Buffer buffer = packet.Serialize();
 	for (auto p : m_playerList) {
 		if(nullptr == p) 
 			continue;
@@ -50,7 +55,7 @@ void PlayerManager::SendToLobbyPlayers(BasePacket& packet) {
 		if (PlayerState::playerStateLobby != p->GetPlayerState())
 			continue;
 
-		p->SendPacket(packet);
+		p->SendPacket(buffer);
 	}
 }
 

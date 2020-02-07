@@ -7,9 +7,14 @@
 enum class  PacketTypeSocial : char{
 	packetTypeSocialNone,
 
-	packetTypeSocialChatNormal,
-	packetTypeSocialChatFriend,
-	packetTypeSocialChatGuild,
+	packetTypeSocialChatNormalRequest,
+	packetTypeSocialChatNormalResponse,
+
+	packetTypeSocialChatFriendRequest,
+	packetTypeSocialChatFriendResponse,
+
+	packetTypeSocialChatGuildRequest,
+	packetTypeSocialChatGuildResponse,
 
 	packetTypeSocialCount,
 };
@@ -24,6 +29,7 @@ protected:
 
 //Normal chat
 struct SocialPacketChatNormalRequest: public BaseSocialPacket{
+	SocialPacketChatNormalRequest() : BaseSocialPacket(PacketTypeSocial::packetTypeSocialChatNormalRequest) {}
 	std::string m_message;
 
 	virtual Buffer& Serialize() {
@@ -37,6 +43,21 @@ struct SocialPacketChatNormalRequest: public BaseSocialPacket{
 		return;
 	}
 };
+struct SocialPacketChatNormalResponse : public BaseSocialPacket {
+	SocialPacketChatNormalResponse() : BaseSocialPacket(PacketTypeSocial::packetTypeSocialChatNormalResponse) {}
 
+	std::string m_message;
+
+	virtual Buffer& Serialize() {
+		buffer << m_message;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_message;
+
+		return;
+	}
+};
 
 #endif // !__GAMESERVER_SOCIAL_PACKET_H__

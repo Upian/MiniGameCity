@@ -23,6 +23,7 @@
     <ClCompile Include="InGame.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
+    <ClCompile Include="SocialManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameServer.h" />
@@ -31,6 +32,7 @@
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="RoomPacket.h" />
+    <ClInclude Include="SocialManager.h" />
     <ClInclude Include="SocialPacket.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
