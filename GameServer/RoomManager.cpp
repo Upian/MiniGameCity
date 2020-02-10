@@ -149,8 +149,10 @@ void RoomManager::HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::s
 		Util::LoggingInfo("", "room number[%d] \t Room[%s], %d/%d, %s",
 			room->GetRoomNumber(), room->GetRoomName().c_str(), room->GetPlayerCount(), room->GetMaxPlayerCount(), 
 			room->GetIsUsePassword() ? "Yes" : "No");
+		
 		responsePacket.m_roomList.emplace_back(
 			room->GetRoomNumber(), 
+			room->GetCreatedTime(),
 			room->GetPlayerCount(), 
 			room->GetMaxPlayerCount(), 
 			(RoomState::roomStateGaming == room->GetRoomState()),
@@ -168,12 +170,12 @@ void RoomManager::HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std:
 
 	std::shared_ptr<Room> tempRoom = nullptr;
 	for (auto room : m_roomList) {
-		if (packet.m_roomNumber == room->GetRoomNumber()) {
+		if (packet.m_roomNumber == room->GetRoomNumber() && //Check room number
+			packet.m_roomTime == room->GetCreatedTime()) { //Check room created time
 			tempRoom = room;
 			break;
 		}
 	}
-	//실패시 방 퇴장 처리
 	RoomPacketEnterRoomResponse responsePacket;
 	responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeNone;
 	responsePacket.m_isSuccess = false;

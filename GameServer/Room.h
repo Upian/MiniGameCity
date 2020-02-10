@@ -57,6 +57,7 @@ public:
 	void UpdateRoomInfoToPlayer(std::shared_ptr<Player> player);
 
 	int GetRoomNumber() const { return m_roomNumber; }
+	time_t GetCreatedTime() const { return m_createdTime; }
 
 	void SetPassword(__int16 password);
 	__int16 GetPassword() const { return m_password; }
@@ -82,6 +83,7 @@ private:
 	std::string							m_roomName;
 	int									m_maximumPlayer = 0;
 	int									m_roomNumber = 0;
+	time_t								m_createdTime = 0;
 	bool								m_isUsePassword = false;
 	__int16								m_password;
 

@@ -8,6 +8,7 @@ Room::Room(int roomNumber, std::string roomName, std::shared_ptr<Player> master,
 	m_roomMaster(master),
 	m_roomNumber(roomNumber),
 	m_roomState(RoomState::roomStateWait){
+	m_createdTime = time(NULL);
 }
 
 Room::~Room() {

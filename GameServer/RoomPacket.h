@@ -98,15 +98,18 @@ struct RoomPacketRoomListResponse : public BaseRoomPacket {
 	RoomPacketRoomListResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomListResponse) {}
 private:
 	struct RoomInfo {
-		RoomInfo(int num, int plycnt, int maxcount, bool gameStart, bool pass, std::string& str) :
+		RoomInfo(int num, __int64 time , int plycnt, int maxcount, bool gameStart, bool pass, std::string& str) :
 		number(num),
+		createdTime(time),
 		playerCount(plycnt),
 		maxPlayerCount(maxcount),
 		isGameStart(gameStart),
 		password(pass),
 		roomName(str)
 		{}
+
 		__int16			number = 0;
+		__int64			createdTime = 0;
 		__int16			playerCount = 0;
 		__int16			maxPlayerCount = 0;
 		bool			isGameStart = false;
@@ -123,6 +126,7 @@ public:
 		buffer << m_listCount;
 		for (RoomInfo info : m_roomList) {
 			buffer << info.number;
+			buffer << info.createdTime;
 			buffer << info.playerCount;
 			buffer << info.maxPlayerCount;
 			buffer << info.isGameStart;
@@ -134,6 +138,7 @@ public:
 	}
 	virtual void Deserialize(Buffer& buf) override {
 		__int16			tempNumber = 0;
+		__int64			tempTime = 0;
 		__int16			tempPlayerCount = 0;
 		__int16			tempMaxPlayerCount = 0;
 		bool			tempIsGameStart = false;
@@ -144,6 +149,7 @@ public:
 
 		for(int i = 0; i < m_listCount; ++i) {  
 			buf >> tempNumber;
+			buf >> tempTime;
 			buf >> tempPlayerCount;
 			buf >> tempMaxPlayerCount;
 			buf >> tempIsGameStart;
@@ -151,6 +157,7 @@ public:
 			buf >> tempStr;
 			m_roomList.emplace_back(
 				tempNumber,
+				tempTime,
 				tempPlayerCount,
 				tempMaxPlayerCount,
 				tempIsGameStart,
@@ -179,15 +186,18 @@ struct RoomPacketEnterRoomRequest : public BaseRoomPacket {
 	RoomPacketEnterRoomRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomEnterRoomRequest) {}
 
 	__int32 m_roomNumber = 0;
+	__int64 m_roomTime = 0;
 	__int16 m_password = 0;
 	virtual Buffer& Serialize() override{
 		buffer << m_roomNumber;
+		buffer << m_roomTime;
 		buffer << m_password;
 		
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> m_roomNumber;
+		_buf >> m_roomTime;
 		_buf >> m_password;
 	}
 
