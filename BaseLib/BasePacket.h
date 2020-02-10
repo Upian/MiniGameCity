@@ -30,19 +30,12 @@ typedef __int64 int64;
 enum class BasePacketType : char {
 	basePacketTypeNone = 0,
 	// client to server packet
-	clientBasePacketTypeLogin,
-	clientBasePacketTypeRoom,
-	clientBasePacketTypeGame,
-	clientBasePacketTypeMarket,
-	clientBasePacketTypeRanking,
-	clientBasePacketTypeSocial,
-	//server to server packet
-	serverBasePacketTypeLogin,
-	serverBasePacketTypeRoom,
-	serverBasePacketTypeGame,
-	serverBasePacketTypeMarket,
-	serverBasePacketTypeRanking,
-	serverBasePacketTypeSocial,
+	basePacketTypeLogin,
+	basePacketTypeRoom,
+	basePacketTypeGame,
+	basePacketTypeMarket,
+	basePacketTypeRanking,
+	basePacketTypeSocial,
 
 	basePacketTypeCount
 };

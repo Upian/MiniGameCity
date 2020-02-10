@@ -16,9 +16,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FriendPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
     <ClInclude Include="SocialServer.h">
       <Filter>SocialServer</Filter>
     </ClInclude>

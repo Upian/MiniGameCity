@@ -12,18 +12,6 @@
 #include <iostream>
 //#include "Utf8.h" // UTF 실험해봐야함
 
-enum class ServerType : BYTE{
-	serverTypeNone = 0,
-
-	serverTypeLogin,
-	serverTypeLobby,
-	serverTypeGame,
-	serverTypeDBManager,
-	serverTypeSocial,
-
-	serverTypeCount,
-};
-
 /*
 *	Enum type operator
 */

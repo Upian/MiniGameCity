@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FriendPacket.h" />
     <ClInclude Include="SocialServer.h" />
   </ItemGroup>
   <ItemGroup>

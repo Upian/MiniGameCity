@@ -14,10 +14,10 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 	if (nullptr == player)
 		return;
 
-	PacketTypeSocial type = (PacketTypeSocial)PacketTypeDeserial(buffer);
+	PacketTypeSocialClient type = (PacketTypeSocialClient)PacketTypeDeserial(buffer);
 
 	switch (type) {
-	case PacketTypeSocial::packetTypeSocialChatNormalRequest: {
+	case PacketTypeSocialClient::packetTypeSocialChatNormalRequest: {
 		SocialPacketChatNormalRequest packet;
 		packet.Deserialize(buffer);
 		this->HandlePacketChatNormal(packet, player);

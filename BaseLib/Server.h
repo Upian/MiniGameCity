@@ -3,6 +3,7 @@
 #define __BASELIB_SERVER_H__
 
 #include "ClientBase.h"
+#include "PlayerManager.h"
 
 class Server : public ClientBase {
 public:
@@ -11,12 +12,9 @@ public:
 	~Server() {}
 
 	void SetServerSocket(SOCKET socket) { m_socket = socket; }
-	void SetServerType(ServerType type) { m_serverType = type; }
-	ServerType GetServerType() const { return m_serverType; }
 
 private:
-	ServerType m_serverType = ServerType::serverTypeNone;
-
+	PlayerManager m_playerManager;
 };
 
 #endif // !__BASELIB_SERVER_H__
