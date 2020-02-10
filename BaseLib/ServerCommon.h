@@ -10,6 +10,7 @@
 
 #include <bitset>
 #include <iostream>
+//#include "Utf8.h" // UTF 실험해봐야함
 
 enum class ServerType : BYTE{
 	serverTypeNone = 0,
@@ -189,6 +190,21 @@ public:
 		++m_index;
 		return *this;
 	}
+	// Utf8 version
+	//Buffer& operator<<(const char* rhs) {
+	//	Util::Conversion conv;
+	//	char* buf = conv.ToUTF8(rhs);
+
+	//	for (int i = 0; i < strlen(buf); ++i) {
+	//		m_buffer[m_index] = buf[i];
+	//		++m_index;
+	//		++m_length;
+	//	}
+	//	m_buffer[m_index] = '\n';
+	//	++m_length;
+	//	++m_index;
+	//	return *this;
+	//}
 #pragma endregion
 #pragma region operator >>
 	Buffer & operator>>(bool& type) {
@@ -216,6 +232,24 @@ public:
 		++m_index;
 		return *this;
 	}
+	// UTF8 version
+	/*Buffer& operator>>(const char* rhs) {
+		if (m_length <= m_index)
+			return *this;
+
+		std::string str;
+		while ('\n' != m_buffer[m_index]) {
+			str += m_buffer[m_index];
+			++m_index;
+		}
+		++m_index;
+
+		Util::Conversion conv;
+		rhs = conv.ToAnsi(str.c_str());
+
+		return *this;
+	}*/
+
 	Buffer& operator>>(__int16& integer) {
 		if (m_length <= m_index)
 			return *this;
