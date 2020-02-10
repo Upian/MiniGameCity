@@ -21,8 +21,6 @@ public:
 protected:
 	
 private:
-	
-
 	std::thread m_recvThread;
 	Server m_server;
 	bool m_isConnectionReady = false;

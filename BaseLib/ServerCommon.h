@@ -11,18 +11,6 @@
 #include <bitset>
 #include <iostream>
 
-enum class ServerType : BYTE{
-	serverTypeNone = 0,
-
-	serverTypeLogin,
-	serverTypeLobby,
-	serverTypeGame,
-	serverTypeDBManager,
-	serverTypeSocial,
-
-	serverTypeCount,
-};
-
 /*
 *	Enum type operator
 */

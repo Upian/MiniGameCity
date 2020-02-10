@@ -1,7 +1,0 @@
-#pragma once
-#ifndef __SOCIALSERVER_FRIEND_PACKET_H__
-#define __SOCIALSERVER_FRIEND_PACKET_H__
-
-
-
-#endif // !__SOCIALSERVER_FRIEND_PACKET_H__

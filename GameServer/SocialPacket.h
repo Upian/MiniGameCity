@@ -3,9 +3,9 @@
 #define __GAMESERVER_SOCIAL_PACKET_H__
 
 #include "BasePacket.h"
-/**/
-enum class  PacketTypeSocial : char{
-	packetTypeSocialNone,
+
+enum class  PacketTypeSocialClient : char{
+	packetTypeSocialNone = 0,
 
 	packetTypeSocialChatNormalRequest, //Client -> Game server
 	packetTypeSocialChatNormalResponse, //Game server -> All clients
@@ -20,16 +20,16 @@ enum class  PacketTypeSocial : char{
 };
 
 struct BaseSocialPacket : public BasePacket {
-	BaseSocialPacket(PacketTypeSocial packetType) : BasePacket(BasePacketType::clientBasePacketTypeSocial), m_packetTypeSocial(packetType) {
+	BaseSocialPacket(PacketTypeSocialClient packetType) : BasePacket(BasePacketType::basePacketTypeSocial), m_packetTypeSocial(packetType) {
 		this->PacketTypeSerial(m_packetTypeSocial);
 	}
 protected:
-	PacketTypeSocial m_packetTypeSocial = PacketTypeSocial::packetTypeSocialNone;
+	PacketTypeSocialClient m_packetTypeSocial = PacketTypeSocialClient::packetTypeSocialNone;
 };
 
 //Normal chat
 struct SocialPacketChatNormalRequest: public BaseSocialPacket{
-	SocialPacketChatNormalRequest() : BaseSocialPacket(PacketTypeSocial::packetTypeSocialChatNormalRequest) {}
+	SocialPacketChatNormalRequest() : BaseSocialPacket(PacketTypeSocialClient::packetTypeSocialChatNormalRequest) {}
 	std::string m_message;
 
 	virtual Buffer& Serialize() {
@@ -44,7 +44,7 @@ struct SocialPacketChatNormalRequest: public BaseSocialPacket{
 	}
 };
 struct SocialPacketChatNormalResponse : public BaseSocialPacket {
-	SocialPacketChatNormalResponse() : BaseSocialPacket(PacketTypeSocial::packetTypeSocialChatNormalResponse) {}
+	SocialPacketChatNormalResponse() : BaseSocialPacket(PacketTypeSocialClient::packetTypeSocialChatNormalResponse) {}
 
 	std::string m_name;
 	std::string m_message;

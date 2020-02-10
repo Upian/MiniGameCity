@@ -29,8 +29,6 @@ private:
 	void HandleBasePacketRoom(BufferInfo* bufInfo);
 	void HandleBasePacketSocial(BufferInfo* bufInfo);
 
-	ServerType m_serverType = ServerType::serverTypeGame;
-
 	SOCKET m_managementServerSocket = 0;
 	SOCKET m_socialServerSocket = 0;
 	//manager
