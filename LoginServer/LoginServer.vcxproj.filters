@@ -8,15 +8,21 @@
     <Filter Include="LoginServer">
       <UniqueIdentifier>{48c751bd-bbea-4c5f-9f4e-d584f075d43c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Packet">
+      <UniqueIdentifier>{2bf95dbb-af43-456a-aad6-99c85bbaf92b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Login.cpp">
+    <ClCompile Include="LoginServer.cpp">
       <Filter>LoginServer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Login.h">
+    <ClInclude Include="LoginServer.h">
       <Filter>LoginServer</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginPacket.h">
+      <Filter>Packet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -61,14 +61,14 @@
     <ClInclude Include="ServerCommon.h">
       <Filter>Server</Filter>
     </ClInclude>
-    <ClInclude Include="UTF8.h">
-      <Filter>Util</Filter>
-    </ClInclude>
     <ClInclude Include="ClientBase.h">
       <Filter>Client</Filter>
     </ClInclude>
     <ClInclude Include="BaseServerHandler.h">
       <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Utf8.h">
+      <Filter>Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
