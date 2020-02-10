@@ -12,7 +12,7 @@ void LoginServer::HandleBasePacket(BufferInfo* bufInfo) {
 
 	BasePacketType type = (BasePacketType)PacketTypeDeserial(bufInfo->buffer);
 	switch (type) {
-	case BasePacketType::clientBasePacketTypeLogin: {
+	case BasePacketType::basePacketTypeLogin: {
 		this->HandlePacketLogin(bufInfo);
 		break;
 	}

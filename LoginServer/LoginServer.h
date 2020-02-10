@@ -10,11 +10,10 @@ public:
 
 private:
 	MAKE_SERVER(LoginServer)
-		void HandlePacketLogin(BufferInfo* bufInfo);
+	void HandlePacketLogin(BufferInfo* bufInfo);
 
 	void ConnectToManagementServer();
 
-	ServerType serverType = ServerType::serverTypeLogin;
 	SOCKET managementServer = 0;
 };
 

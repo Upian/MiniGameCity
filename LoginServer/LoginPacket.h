@@ -32,7 +32,7 @@ struct Channel {
 
 class LoginPacket : public BasePacket {
 public:
-	LoginPacket(LoginPacketType _loginPacketType) : BasePacket(BasePacketType::clientBasePacketTypeLogin), loginPacketType(_loginPacketType) {
+	LoginPacket(LoginPacketType _loginPacketType) : BasePacket(BasePacketType::basePacketTypeLogin), loginPacketType(_loginPacketType) {
 		this->PacketTypeSerial(loginPacketType);
 	}
 	~LoginPacket() {}
