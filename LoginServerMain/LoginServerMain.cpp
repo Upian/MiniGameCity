@@ -1,11 +1,17 @@
-#include "Login.h"
+#include "LoginServer.h"
 
-int main(void) {
+int main(int argc, char* argv[]) {
 	LoginServer* pServer = LoginServer::CreateServer();
 
-	pServer->SetPortNum(Util::GetConfigToInt("LoginServer.ini", "Network", "Port"));
-	pServer->SetServerName("Login server");
+	/*if (0 < argc)
+		pServer->SetPortNum(atoi(argv[1]));
+	else*/
+	pServer->SetPortNum(Util::GetConfigToInt("LoginServer.ini", "Network", "Port", 10006)); // 10001
+	pServer->SetServerName("LoginServer");
+
 	pServer->InitializeBaseServer();
+	pServer->InitializeLoginServer();
+
 	pServer->RunServer();
 
 	return 0;

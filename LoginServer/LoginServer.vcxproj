@@ -132,10 +132,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Login.cpp" />
+    <ClCompile Include="LoginServer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Login.h" />
+    <ClInclude Include="LoginPacket.h" />
+    <ClInclude Include="LoginServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
