@@ -34,7 +34,7 @@
     <ClCompile Include="InGame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="SocialManager.cpp">
+    <ClCompile Include="SocialServerHandler.cpp">
       <Filter>Social</Filter>
     </ClCompile>
   </ItemGroup>
@@ -60,8 +60,9 @@
     <ClInclude Include="SocialPacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="SocialManager.h">
+    <ClInclude Include="SocialServerHandler.h">
       <Filter>Social</Filter>
     </ClInclude>
+    <ClInclude Include="ManagementServerHandler.h" />
   </ItemGroup>
 </Project>

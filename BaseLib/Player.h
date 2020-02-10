@@ -39,7 +39,7 @@ public:
 	void SetPlayerName(std::string& name) { m_playerName = name; }
 	std::string GetPlayerName() const { return m_playerName; }
 
-	virtual void HandlePacket(BufferInfo* packet) override;
+//	virtual void HandlePacket(BufferInfo* packet) override;
 
 
 #pragma region Game

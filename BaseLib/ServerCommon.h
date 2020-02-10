@@ -11,7 +11,7 @@
 #include <bitset>
 #include <iostream>
 
-enum ServerType : BYTE{
+enum class ServerType : BYTE{
 	serverTypeNone = 0,
 
 	serverTypeLogin,

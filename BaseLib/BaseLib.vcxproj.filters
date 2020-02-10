@@ -67,6 +67,9 @@
     <ClInclude Include="ClientBase.h">
       <Filter>Client</Filter>
     </ClInclude>
+    <ClInclude Include="BaseServerHandler.h">
+      <Filter>Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Log.cpp">
@@ -96,5 +99,6 @@
     <ClCompile Include="ClientBase.cpp">
       <Filter>Client</Filter>
     </ClCompile>
+    <ClCompile Include="BaseServerHandler.cpp" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,8 @@
 #include "BaseServer.h"
 #include "RoomManager.h"
 #include "PlayerManager.h"
-#include "SocialManager.h"
+#include "SocialServerHandler.h"
+#include "ManagementServerHandler.h"
 
 //const char* serverName = "GameServer";
 //const char* logFile = "GameServer.log";
@@ -22,9 +23,7 @@ public:
 
 private:
 	MAKE_SERVER(GameServer)
-	void ConnectToManagementServer();
-	void ConnectToRankingServer();
-	void ConnectToSocialServer();
+
 
 	void HandlePacketPrepareTransfer(); //PacketPrepareTransfer
 	void HandleBasePacketRoom(BufferInfo* bufInfo);
@@ -37,8 +36,9 @@ private:
 	//manager
 	RoomManager m_roomManager;
 	PlayerManager m_playerManager;
-
-	SocialManager m_socialManager;
+	//Handler
+	ManagementServerHandler m_managementServerHandler;
+	SocialServerHandler m_socialServerHandler;
 };
 
 

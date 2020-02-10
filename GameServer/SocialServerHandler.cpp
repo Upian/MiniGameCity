@@ -1,4 +1,4 @@
-#include "SocialManager.h"
+#include "SocialServerHandler.h"
 #include "SocialPacket.h"
 #include "GameServer.h"
 #include "Player.h"
@@ -6,11 +6,11 @@
 #include "Room.h"
 
 
-void SocialManager::Initialize() {
+void SocialServerHandler::Initialize() {
 	m_gameServer = GameServer::GetServer();
 }
 
-void SocialManager::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Player> player) {
+void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Player> player) { //server to client
 	if (nullptr == player)
 		return;
 
@@ -28,7 +28,7 @@ void SocialManager::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Player> p
 	}
 }
 
-void SocialManager::HandlePacketChatNormal(SocialPacketChatNormalRequest& packet, std::shared_ptr<Player> player) {
+void SocialServerHandler::HandlePacketChatNormal(SocialPacketChatNormalRequest& packet, std::shared_ptr<Player> player) {
 	if (nullptr == player)
 		return;
 	

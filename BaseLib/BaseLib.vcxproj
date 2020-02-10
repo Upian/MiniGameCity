@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BasePacket.h" />
+    <ClInclude Include="BaseServerHandler.h" />
     <ClInclude Include="ClientBase.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DesignData.h" />
@@ -146,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="BasePacket.cpp" />
     <ClCompile Include="BaseServer.cpp" />
+    <ClCompile Include="BaseServerHandler.cpp" />
     <ClCompile Include="ClientBase.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Log.cpp" />

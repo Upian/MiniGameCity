@@ -12,7 +12,7 @@ public:
 	ClientBase(SOCKET socket) : m_socket(socket) {}
 	~ClientBase() {}
 
-	virtual void HandlePacket(BufferInfo* packet) = 0;
+	//virtual void HandlePacket(BufferInfo* packet) = 0;
 	bool SendPacket(BasePacket& packet);
 	bool SendPacket(Buffer& buffer);
 

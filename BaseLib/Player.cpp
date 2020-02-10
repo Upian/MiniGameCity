@@ -7,9 +7,9 @@ void Player::Initialize() {
 	m_playerState = PlayerState::playerStateLobby;
 }
 
-void Player::HandlePacket(BufferInfo* bufInfo) {
-
-}
+//void Player::HandlePacket(BufferInfo* bufInfo) {
+//
+//}
 
 void Player::PlayerInfoClear() {
 	m_potionIndex = 0;

@@ -3,24 +3,24 @@
 #define __GAMESERVER_SOCIAL_PACKET_H__
 
 #include "BasePacket.h"
-
+/**/
 enum class  PacketTypeSocial : char{
 	packetTypeSocialNone,
 
-	packetTypeSocialChatNormalRequest,
-	packetTypeSocialChatNormalResponse,
+	packetTypeSocialChatNormalRequest, //Client -> Game server
+	packetTypeSocialChatNormalResponse, //Game server -> All clients
 
-	packetTypeSocialChatFriendRequest,
-	packetTypeSocialChatFriendResponse,
+	packetTypeSocialChatFriendRequest, //Client -> Game server
+	packetTypeSocialChatFriendResponse, //Game server -> friend client
 
-	packetTypeSocialChatGuildRequest,
-	packetTypeSocialChatGuildResponse,
+	packetTypeSocialChatGuildRequest, //Client -> Game server
+	packetTypeSocialChatGuildResponse, //Game server -> All guild clients
 
 	packetTypeSocialCount,
 };
 
 struct BaseSocialPacket : public BasePacket {
-	BaseSocialPacket(PacketTypeSocial packetType) : BasePacket(BasePacketType::basePacketTypeSocial), m_packetTypeSocial(packetType) {
+	BaseSocialPacket(PacketTypeSocial packetType) : BasePacket(BasePacketType::clientBasePacketTypeSocial), m_packetTypeSocial(packetType) {
 		this->PacketTypeSerial(m_packetTypeSocial);
 	}
 protected:

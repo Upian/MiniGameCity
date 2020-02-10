@@ -10,12 +10,12 @@ public:
 	Server(SOCKET socket) : ClientBase(socket) {}
 	~Server() {}
 
+	void SetServerSocket(SOCKET socket) { m_socket = socket; }
 	void SetServerType(ServerType type) { m_serverType = type; }
 	ServerType GetServerType() const { return m_serverType; }
 
 private:
 	ServerType m_serverType = ServerType::serverTypeNone;
-
 
 };
 

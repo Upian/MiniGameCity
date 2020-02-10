@@ -34,7 +34,7 @@ enum class PacketTypeRoom : char {
 
 
 struct BaseRoomPacket : public BasePacket{
-	BaseRoomPacket(PacketTypeRoom packetType) : BasePacket(BasePacketType::basePacketTypeRoom), m_packetTypeRoom(packetType){
+	BaseRoomPacket(PacketTypeRoom packetType) : BasePacket(BasePacketType::clientBasePacketTypeRoom), m_packetTypeRoom(packetType){
 		this->PacketTypeSerial(m_packetTypeRoom);
 	}
 protected:

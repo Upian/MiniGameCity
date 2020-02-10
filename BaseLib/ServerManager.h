@@ -1,14 +1,17 @@
 #pragma once
 #ifndef __BASELIB_SERVER_MANAGER_H__
 #define  __BASELIB_SERVER_MANAGER_H__
+#include <list>
 
-#include "Singleton.h"
+#include "Server.h"
 
-class ServerManager : public Util::Singleton<ServerManager> {
+
+
+class ServerManager  {
 public:
 
 private:
-	DECLARE_SINGLETON(ServerManager)
+	std::list<Server> m_servers;
 
 };
 
