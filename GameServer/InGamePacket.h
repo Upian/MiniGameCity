@@ -22,20 +22,31 @@ enum Twenty_Packet_Type
 	Twenty_None,
 	Twenty_Player_Location_Setting,
 	Twenty_Player_Ready_Complete,
-	Twenty_First_Timer_Start,
-	Twenty_First_Timer_End,
-	Twenty_Question_Provide,
-	Twenty_Remain_Time_Check,
-	Twenty_Ask_Time_Over,
+	Twenty_GameStart_Timer_On,
+	Twenty_GameStart_Timer_Off,
+	Twenty_Provide_5Answer,
+	/*Twenty_Question_Provide*/
+	Twenty_Provider_Select_Answer,
+	Twenty_GameStart,
+	Twenty_InGameTimer,
 	Twenty_Asker_Question,
-	Twenty_Asker_Question_Broadcast,
+	Twenty_Asker_Question_BroadCast,
 	Twenty_Provider_Reply,
 	Twenty_Provider_Reply_Broadcast,
 	Twenty_Asker_Answer,
-	Twenty_Asker_Answer_Correct,
-	Twenty_Asker_Answer_Wrong,
-	Twenty_Question_Chance_Over,
-	Twenty_Provider_Reply_Time_Over
+	Twenty_Asker_Answer_Broadcast,
+	Twenty_Notice_Next_Asker,
+	Twenty_Round_End,
+	Twenty_Update_Score,
+	Twenty_Answer_Open,
+	Twenty_Rest_Time,
+	Twenty_Game_End,
+	Twenty_Escpse_Quiz_Provider,
+	Twenty_Escape_Another_Player,
+	Twenty_Exit_Reservation,
+	Twenty_Exit_Immediately,
+	Twenty_Exit_Notification,
+	Twenty_Remain_Question
 };
 enum Relay_Packet_Type
 {
@@ -109,6 +120,166 @@ public:
 private:
 
 };
+class TwentyPlayerReadyCompletePacket : public TwentyQuestionGamePacket {
+public:
+	TwentyPlayerReadyCompletePacket() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer){}
+};
+class TwentyCountDownStart : public TwentyQuestionGamePacket {
+public:
+	TwentyCountDownStart() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_GameStart_Timer_On)
+	{
+
+	}
+};
+class TwentyCountDownEnd : public TwentyQuestionGamePacket 
+{
+public:
+	TwentyCountDownEnd() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_GameStart_Timer_Off)
+	{
+
+	}
+};
+class TwentyProviderSelectAnswer : public TwentyQuestionGamePacket
+{
+	TwentyProviderSelectAnswer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provide_5Answer)
+	{
+
+	}
+};
+class TwentySelectAnswer : public TwentyQuestionGamePacket {
+	TwentySelectAnswer() :TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Select_Answer)
+	{
+
+	}
+};
+class TwentyGameStart :public TwentyQuestionGamePacket {
+	TwentyGameStart() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_GameStart)
+	{
+
+	}
+};
+class TwentyInGameTimer : public TwentyQuestionGamePacket {
+	TwentyInGameTimer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_InGameTimer)
+	{
+
+	}
+};
+class TwentyAskerQuestion : public TwentyQuestionGamePacket {
+	TwentyAskerQuestion() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Question)
+	{
+
+	}
+};
+class TwentyAskerQuestionBroadCast : public TwentyQuestionGamePacket {
+	TwentyAskerQuestionBroadCast() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Question_BroadCast)
+	{
+
+	}
+};
+class TwentyAskerQuestion : public TwentyQuestionGamePacket {
+	TwentyAskerQuestion() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Question)
+	{
+
+	}
+};
+class TwentyProviderReply : public TwentyQuestionGamePacket {
+	TwentyProviderReply() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Reply)
+	{
+
+	}
+};
+class TwentyProviderReplyBroadCast : public TwentyQuestionGamePacket {
+	TwentyProviderReplyBroadCast() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Reply_Broadcast)
+	{
+
+	}
+};
+class TwentyAskerAnswer : public TwentyQuestionGamePacket {
+	TwentyAskerAnswer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer)
+	{
+
+	}
+};
+class TwentyAskerAnswerBroad : public TwentyQuestionGamePacket {
+	TwentyAskerAnswerBroad() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer_Broadcast)
+	{
+
+	}
+};
+class TwentyNoticeNextAsker : public TwentyQuestionGamePacket {
+	TwentyNoticeNextAsker() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Notice_Next_Asker)
+	{
+
+	}
+};
+class TwentyRoundEnd : public TwentyQuestionGamePacket {
+	TwentyRoundEnd() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Round_End)
+	{
+
+	}
+};
+class TwentyUpdateScore : public TwentyQuestionGamePacket {
+	TwentyUpdateScore() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Update_Score)
+	{
+
+	}
+};
+
+class TwentyAnswerOpen : public TwentyQuestionGamePacket {
+	TwentyAnswerOpen() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Answer_Open)
+	{
+
+	}
+};
+class TwentyRestTime : public TwentyQuestionGamePacket {
+	TwentyRestTime() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Rest_Time)
+	{
+
+	}
+};
+class TwentyGameEnd : public TwentyQuestionGamePacket {
+	TwentyGameEnd() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Game_End)
+	{
+
+	}
+};
+class TwentyEscapeQuizProvider : public TwentyQuestionGamePacket {
+	TwentyEscapeQuizProvider() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escpse_Quiz_Provider)
+	{
+
+	}
+};
+class TwentyEscapeAnotherPlayer : public TwentyQuestionGamePacket {
+	TwentyEscapeAnotherPlayer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escape_Another_Player)
+	{
+
+	}
+};
+class TwentyExitReservation : public TwentyQuestionGamePacket {
+	TwentyExitReservation() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Exit_Reservation)
+	{
+
+	}
+};
+class TwentyExitImmediately : public TwentyQuestionGamePacket {
+	TwentyExitImmediately() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Exit_Immediately)
+	{
+
+	}
+};
+class TwentyExitNotification : public TwentyQuestionGamePacket {
+	TwentyExitNotification() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Exit_Notification)
+	{
+
+	}
+};
+class TwentyRemainQuestion : public TwentyQuestionGamePacket {
+	TwentyRemainQuestion() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Remain_Question)
+	{
+
+	}
+};
+
 class RelayNovelWritingGamePacket : public InGamePacket {
 
 };
