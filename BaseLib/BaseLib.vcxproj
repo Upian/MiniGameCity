@@ -142,7 +142,7 @@
     <ClInclude Include="ServerManager.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="BaseServer.h" />
-    <ClInclude Include="UTF8.h" />
+    <ClInclude Include="Utf8.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasePacket.cpp" />
