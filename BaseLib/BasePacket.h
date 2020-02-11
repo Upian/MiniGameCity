@@ -37,6 +37,11 @@ enum class BasePacketType : char {
 	basePacketTypeRanking,
 	basePacketTypeSocial,
 
+	//Server packet
+
+	basePacketTypeSocialServer, //Game server <-> Social server
+	basePacketTypeRankingServer,
+
 	basePacketTypeCount
 };
 
@@ -116,6 +121,13 @@ inline char PacketTypeDeserial(Buffer& _buf) {
 	return type;
 }
 
+template<typename T_Type,
+	std::enable_if_t<std::is_enum_v<T_Type> >* = nullptr >
+T_Type PacketTypeDeserial(Buffer& _buf) {
+	T_Type type;
+	_buf >> type;
+	return type;
+}
 #define MAKE_PACKET \
 		virtual Buffer& Serialize() override;\
 		virtual void Deserialize() override;

@@ -5,17 +5,16 @@
 #include <WinSock2.h>
 #include <string>
 #include <algorithm>
+#include <bitset>
+
 #pragma comment(lib, "ws2_32.lib")
 #define BUFFER_SIZE 1024
 
-#include <bitset>
-#include <iostream>
+
 //#include "Utf8.h" // UTF 실험해봐야함
 
-/*
-*	Enum type operator
-*/
 
+//Enum type operator
 // |=
 template<typename T_Enum,
 	std::enable_if_t<std::is_enum_v<T_Enum> >* = nullptr >

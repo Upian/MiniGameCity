@@ -43,11 +43,13 @@ void RoomManager::HandleRoomPacket(Buffer & buffer, std::shared_ptr<Player> play
 	}
 	case PacketTypeRoom::packetTypeRoomToggleReadyRequest: {
 		this->HaldlePacketToggleReady(player);
+		break;
 	}
 	default:
 		Util::LoggingInfo("GameServer.log", "Recv wrong room packet ID: %d", type);
 	}
 }
+
 
 void RoomManager::Initialize() {
 	for (int i = m_maximumRoomNumber; i > 0; --i) {
@@ -160,7 +162,7 @@ void RoomManager::HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::s
 			room->GetRoomName());
 		++count;
 	}
-	
+
 	player->SendPacket(responsePacket);
 }
 

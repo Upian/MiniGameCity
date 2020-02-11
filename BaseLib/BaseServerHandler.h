@@ -2,7 +2,7 @@
 #ifndef __BASELIB_BASE_SERVER_HANDLER_H__
 #define __BASELIB_BASE_SERVER_HANDLER_H__
 #include <thread>
-#include "Server.h"
+#include "ClntServer.h"
 
 class BaseServerHandler {
 public:
@@ -13,7 +13,7 @@ public:
 	bool GetConnectionReady() const { return m_isConnectionReady; }
 
 	void SetServerSocket(SOCKET socket) { m_server.SetServerSocket(socket); }
-	Server& GetServer() { return m_server; }
+	ClntServer& GetServer() { return m_server; }
 	void SendPacketToServer(BasePacket& packet) { m_server.SendPacket(packet); }
 
 	virtual void HandlePacket(Buffer& buffer) = 0;//packet from another server
@@ -22,7 +22,7 @@ protected:
 	
 private:
 	std::thread m_recvThread;
-	Server m_server;
+	ClntServer m_server;
 	bool m_isConnectionReady = false;
 };
 #endif // !__BASELIB_BASE_SERVER_HANDLER_H__

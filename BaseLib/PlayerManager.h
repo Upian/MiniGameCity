@@ -11,7 +11,7 @@
 
 class PlayerManager {
 public:	
-	void InsertPlayer(std::shared_ptr<Player> player) { m_playerList.push_back(player); }
+	void InsertPlayer(std::shared_ptr<Player> player);
 	void InsertPlayer(SOCKET socket);
 	
 	void RemovePlayer(std::shared_ptr<Player> player);

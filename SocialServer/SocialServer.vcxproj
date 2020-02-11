@@ -19,9 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SocialPlayer.h" />
+    <ClInclude Include="SocialPlayerManager.h" />
+    <ClInclude Include="SocialServerPacket.h" />
     <ClInclude Include="SocialServer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="SocialPlayer.cpp" />
+    <ClCompile Include="SocialPlayerManager.cpp" />
     <ClCompile Include="SocialServer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

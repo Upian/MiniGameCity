@@ -5,16 +5,15 @@
 #include "ClientBase.h"
 #include "PlayerManager.h"
 
-class Server : public ClientBase {
+class ClntServer : public ClientBase {
 public:
-	Server() {}
-	Server(SOCKET socket) : ClientBase(socket) {}
-	~Server() {}
+	ClntServer() {}
+	ClntServer(SOCKET socket) : ClientBase(socket) {}
+	~ClntServer() {}
 
 	void SetServerSocket(SOCKET socket) { m_socket = socket; }
 
 private:
-	PlayerManager m_playerManager;
 };
 
 #endif // !__BASELIB_SERVER_H__

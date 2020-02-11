@@ -14,15 +14,33 @@
     <Filter Include="Friend">
       <UniqueIdentifier>{c0fcd4f8-a449-47b1-8c13-7253a7b232d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SocialPlayer">
+      <UniqueIdentifier>{98e74aeb-3731-445d-899b-89ddeabf4145}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SocialServer.h">
       <Filter>SocialServer</Filter>
     </ClInclude>
+    <ClInclude Include="SocialServerPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="SocialPlayer.h">
+      <Filter>SocialPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="SocialPlayerManager.h">
+      <Filter>SocialPlayer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SocialServer.cpp">
       <Filter>SocialServer</Filter>
+    </ClCompile>
+    <ClCompile Include="SocialPlayer.cpp">
+      <Filter>SocialPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="SocialPlayerManager.cpp">
+      <Filter>SocialPlayer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
