@@ -52,12 +52,6 @@
     <ClInclude Include="PlayerManager.h">
       <Filter>Client</Filter>
     </ClInclude>
-    <ClInclude Include="Server.h">
-      <Filter>Client</Filter>
-    </ClInclude>
-    <ClInclude Include="ServerManager.h">
-      <Filter>Client</Filter>
-    </ClInclude>
     <ClInclude Include="ServerCommon.h">
       <Filter>Server</Filter>
     </ClInclude>
@@ -69,6 +63,12 @@
     </ClInclude>
     <ClInclude Include="Utf8.h">
       <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="ClntServer.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="ClntServerManager.h">
+      <Filter>Client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -90,15 +90,15 @@
     <ClCompile Include="Player.cpp">
       <Filter>Client</Filter>
     </ClCompile>
-    <ClCompile Include="Server.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="ServerManager.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
     <ClCompile Include="ClientBase.cpp">
       <Filter>Client</Filter>
     </ClCompile>
     <ClCompile Include="BaseServerHandler.cpp" />
+    <ClCompile Include="ClntServer.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="ClntServerManager.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@
 
 #include "BasePacket.h"
 
-enum class  PacketTypeSocialClient : char{
+enum class PacketTypeSocialClient : char{
 	packetTypeSocialNone = 0,
 
 	packetTypeSocialChatNormalRequest, //Client -> Game server

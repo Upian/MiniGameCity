@@ -137,9 +137,9 @@
     <ClInclude Include="Log.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerManager.h" />
-    <ClInclude Include="Server.h" />
+    <ClInclude Include="ClntServer.h" />
     <ClInclude Include="ServerCommon.h" />
-    <ClInclude Include="ServerManager.h" />
+    <ClInclude Include="ClntServerManager.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="BaseServer.h" />
     <ClInclude Include="Utf8.h" />
@@ -153,8 +153,8 @@
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
-    <ClCompile Include="Server.cpp" />
-    <ClCompile Include="ServerManager.cpp" />
+    <ClCompile Include="ClntServer.cpp" />
+    <ClCompile Include="ClntServerManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

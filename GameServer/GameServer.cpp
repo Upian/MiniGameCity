@@ -2,6 +2,7 @@
 #include "PlayerManager.h"
 #include "RoomManager.h"
 #include "RoomPacket.h"
+#include "SocialServerPacket.h"
 
 GameServer::GameServer() {}
 GameServer::~GameServer() {}
@@ -12,6 +13,7 @@ void GameServer::HandleAcceptClient(SOCKET clientSocket) {
 		return;
 	m_playerManager.InsertPlayer(clientSocket); //#temp
 	printf("Connect client[%d] Total players[%d]\n", clientSocket, m_playerManager.GetPlayerList().size());
+
 }
 
 void GameServer::HandleDisconnectClient(SOCKET clientSocket) {
@@ -52,7 +54,7 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 		this->HandleBasePacketSocial(bufInfo);
 		break;
 	}
-	
+
 	default: break;
 		Util::LoggingInfo("GameServer.log", "Recv wrong base packet ID: %d", type);
 	}

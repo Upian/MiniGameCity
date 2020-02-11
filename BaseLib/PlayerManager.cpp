@@ -4,6 +4,13 @@
 #include "Log.h"
 #include "BasePacket.h"
 
+void PlayerManager::InsertPlayer(std::shared_ptr<Player> player) {
+	if (true == this->IsExistPlayer(player)) //already exist
+		return;
+
+	m_playerList.push_back(player); 
+}
+
 void PlayerManager::InsertPlayer(SOCKET socket) {
 	if (nullptr != this->FindPlayerBySocket(socket)) //already exist
 		return;

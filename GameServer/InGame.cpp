@@ -1,5 +1,6 @@
 // #include <WinSock2.h>
 // #include <time.h>
+// #include <random>
 // 
 // #include "InGame.h"
 // 
@@ -13,17 +14,14 @@
 // 4. 캐치 마인드
 // */
 // 
-// void InGame::Twenty_Question_Game(PlayerManager inGamePlayerManager) {
+// void InGame::Twenty_Question_Game(PlayerManager InGamePlayerManager) {
 // 
-// 	라운드 전에 설정해야 할 부분
-// 	Doing_Time = time(NULL);
-// 	Asker_Timer = 30;
-// 	Provider_Timer = 10;
-// 	InGame_Player_List = inGamePlayerManager.GetPlayerList();
-// 	auto a = InGame_Player_List.begin();
-// 	auto b = *a;
+// 	//게임 준비 파트 변수 생성
+// 	InGame_Player_List = InGamePlayerManager.GetPlayerList();
 // 	
-// 	Quiz_Provide_Player = InGame_Player_List.begin();
+// 	Quiz_Provide_Player = InGame_Player.begin();
+// 
+// 	Asker = Asker_Group.begin();
 // 		
 // 	//출제자를 제외한 사람들만의 벡터 만듬
 // 	for (std::shared_ptr<Player> p : InGame_Player_List)
@@ -60,7 +58,7 @@
 // 	}
 // }
 // 
-// 다음 질문자를 가리킴
+// //다음 질문자를 가리킴
 // void InGame::Next_Asker_Point()
 // {
 // 	++Asker;
@@ -102,4 +100,17 @@
 // 	Twenty_Packet_Type packet_name = Twenty_None;
 // 
 // 
+// }
+// 
+// void InGame::SelectFiveAnswer()
+// {
+// 
+// }
+// 
+// void InGame::SetPlayerPosition()
+// {
+// 	std::random_device rd;
+// 	std::mt19937 g(rd());
+// 
+// 	std::shuffle(InGame_Player.begin(), InGame_Player.end(), g);
 // }

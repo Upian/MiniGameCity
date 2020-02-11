@@ -3,6 +3,8 @@
 #define __MANAGEMENTSERVER_MANAGEMENT_SERVER_H__
 
 #include "BaseServer.h"
+#include "ClntServerManager.h"
+
 /*
 *	
 */
@@ -14,7 +16,8 @@ public:
 private:
 	MAKE_SERVER(ManagementServer);
 
-	std::list<SOCKADDR_IN> m_gameServerList;
+	//manager
+	ClntServerManager m_gameServerManager;
 	
 
 };
