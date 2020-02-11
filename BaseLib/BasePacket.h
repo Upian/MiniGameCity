@@ -9,8 +9,11 @@
 
 
 typedef __int16 int16;
+typedef unsigned __int16 uint16;
 typedef __int32 int32;
+typedef unsigned __int32 uint32;
 typedef __int64 int64;
+typedef unsigned __int64 uint64;
 
 /*
 	=== EXAMPLE ===
@@ -41,6 +44,12 @@ enum class BasePacketType : char {
 
 	basePacketTypeSocialServer, //Game server <-> Social server
 	basePacketTypeRankingServer,
+
+	// server to server packet
+	loginPacketTypeManagement,
+
+	// server to db cache packet
+	managementPacketTypeDbCache,
 
 	basePacketTypeCount
 };
