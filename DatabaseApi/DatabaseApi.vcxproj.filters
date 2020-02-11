@@ -10,8 +10,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="소스.cpp">
+    <ClCompile Include="DatabaseAPI.cpp">
       <Filter>SaveDatabase</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DatabaseAPI.h">
+      <Filter>SaveDatabase</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

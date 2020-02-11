@@ -18,10 +18,8 @@ typedef int TURN;
 
 
 struct Account {
-	bool flag = false;
-	int identifier = 0;
-	int gold = 0;
-	std::string nick = "";
+	bool flag = true;
+	std::string nick;
 };
 
 class DatabaseAPI {
@@ -29,20 +27,26 @@ public:
 	DatabaseAPI(); // connect
 	~DatabaseAPI(); // close
 
+	int GetId() {
+		return id;
+	}
+	void SetId(int _id) {
+		id = _id;
+	}
+
 	bool Connect(const std::string& server, const std::string& user, const std::string& password, const std::string& database, const int& port);
 	void Close();
 
-	Account SearchAccount(const std::string& id, const std::string& password);
-	bool SignUpAccount(const std::string& id, const std::string& password, const std::string& nick);
-
-	//packet GetFromDB(TURN turn) {
-
-	//}
+	Account LoginAccount(const std::string& userId, const std::string& userPw);
+	void LogoutAccount();
+	bool SignUpAccount(const std::string& userId, const std::string& userPw, const std::string& userNick);
+	bool StopAccount();
 
 private:
 	MYSQL* conn; // 커낵터
 	MYSQL_RES* res; // 결과 값
 	MYSQL_ROW row; // 결과 row
+	int id = 0; // id 값
 };
 
 
