@@ -4,12 +4,15 @@
 
 #include "BasePacket.h"
 
-enum class PacketTypeSocialServer {
+enum class PacketTypeSocialServer : char {
 	none = 0,
 
 	updatePlayerInfo,
 
 	//Friend
+	addFriendRequest,	
+	addFriendResponse,	
+
 
 	//Guild
 
@@ -30,14 +33,14 @@ protected:
 struct SocialPacketServerUpdatePlayerInfo : public BaseSocialServerPacket {
 	SocialPacketServerUpdatePlayerInfo() : BaseSocialServerPacket(PacketTypeSocialServer::updatePlayerInfo) {}
 
-	__int32 m_test;
+	int m_gpid = 0;
 
 	virtual Buffer& Serialize() {
-		buffer << m_test;
+		buffer << m_gpid;
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
-		buf >> m_test;
+		buf >> m_gpid;
 
 		return;
 	}

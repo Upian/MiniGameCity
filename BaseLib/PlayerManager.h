@@ -12,7 +12,7 @@
 class PlayerManager {
 public:	
 	void InsertPlayer(std::shared_ptr<Player> player);
-	void InsertPlayer(SOCKET socket);
+	std::shared_ptr<Player> InsertPlayer(SOCKET socket);
 	
 	void RemovePlayer(std::shared_ptr<Player> player);
 	void RemovePlayer(GPID key);

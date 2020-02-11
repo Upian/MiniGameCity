@@ -1,5 +1,5 @@
 #include "SocialServerHandler.h"
-#include "SocialPacket.h"
+#include "SocialGamePacket.h"
 #include "GameServer.h"
 #include "Player.h"
 #include "Log.h"
@@ -18,7 +18,7 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 
 	switch (type) {
 	case PacketTypeSocialClient::packetTypeSocialChatNormalRequest: {
-		SocialPacketChatNormalRequest packet;
+		SocialGamePacketChatNormalRequest packet;
 		packet.Deserialize(buffer);
 		this->HandlePacketChatNormal(packet, player);
 		break;
@@ -28,11 +28,11 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 	}
 }
 
-void SocialServerHandler::HandlePacketChatNormal(SocialPacketChatNormalRequest& packet, std::shared_ptr<Player> player) {
+void SocialServerHandler::HandlePacketChatNormal(SocialGamePacketChatNormalRequest& packet, std::shared_ptr<Player> player) {
 	if (nullptr == player)
 		return;
 	
-	SocialPacketChatNormalResponse responsePacket;
+	SocialGamePacketChatNormalResponse responsePacket;
 	responsePacket.m_name = player->GetPlayerName();
 	responsePacket.m_message = packet.m_message;
 

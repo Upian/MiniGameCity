@@ -11,7 +11,14 @@ GameServer::~GameServer() {}
 void GameServer::HandleAcceptClient(SOCKET clientSocket) {
 	if (clientSocket < 1)
 		return;
-	m_playerManager.InsertPlayer(clientSocket); //#temp
+
+	/*
+	*	After accepting client, check if it matches with information received from management server
+	*/
+
+
+	auto player = m_playerManager.InsertPlayer(clientSocket); //#temp
+	this->RegisterAtSocialServer(player);
 	printf("Connect client[%d] Total players[%d]\n", clientSocket, m_playerManager.GetPlayerList().size());
 
 }
@@ -90,6 +97,7 @@ void GameServer::HandleBasePacketSocial(BufferInfo * bufInfo) {
 	m_socialServerHandler.HandleSocialPacket(bufInfo->buffer, player);
 }
 
+
 #pragma endregion Handle packet functions
 
 void GameServer::InitializeGameServer() {
@@ -101,9 +109,15 @@ void GameServer::InitializeGameServer() {
 	m_socialServerHandler.ConnectToServer(
 		Util::GetConfigToString("GameServer.ini", "Network", "SocialServerIP", "10.255.252.100").c_str(),
 		Util::GetConfigToInt("GameServer.ini", "Network", "SocialServerPort", 20100)
-		);
+	);
 
 
 	m_roomManager.Initialize();
-	
+}
+int i = 0;
+void GameServer::RegisterAtSocialServer(std::shared_ptr<Player> pplayer) {
+	SocialPacketServerUpdatePlayerInfo packet;
+	packet.m_gpid = ++i;
+
+	m_socialServerHandler.SendPacketToServer(packet);
 }

@@ -34,7 +34,7 @@
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="RoomPacket.h" />
     <ClInclude Include="SocialServerHandler.h" />
-    <ClInclude Include="SocialPacket.h" />
+    <ClInclude Include="SocialGamePacket.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -2,7 +2,7 @@
 #ifndef __GAMESERVER_SOCIAL_SERVER_HANDLER_H__
 #define __GAMESERVER_SOCIAL_SERVER_HANDLER_H__
 #include <memory>
-#include "SocialPacket.h"
+#include "SocialGamePacket.h"
 #include "BaseServerHandler.h"
 
 class GameServer;
@@ -19,7 +19,7 @@ public:
 	virtual void RegisterToServer() override {}
 	virtual void HandlePacket(Buffer& buffer) override {}
 private:
-	void HandlePacketChatNormal(SocialPacketChatNormalRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketChatNormal(SocialGamePacketChatNormalRequest& packet, std::shared_ptr<Player> player);
 
 	GameServer* m_gameServer;
 };

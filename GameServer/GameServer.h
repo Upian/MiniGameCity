@@ -24,10 +24,11 @@ public:
 private:
 	MAKE_SERVER(GameServer)
 
-
-	void HandlePacketPrepareTransfer(); //PacketPrepareTransfer
+	void HandlePacketPrepareTransfer(); //PacketPrepareTransfer Management server -> game server (client informantion)
 	void HandleBasePacketRoom(BufferInfo* bufInfo);
 	void HandleBasePacketSocial(BufferInfo* bufInfo);
+
+	void RegisterAtSocialServer(std::shared_ptr<Player>);
 
 	SOCKET m_managementServerSocket = 0;
 	SOCKET m_socialServerSocket = 0;

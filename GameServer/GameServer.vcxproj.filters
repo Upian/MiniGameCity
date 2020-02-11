@@ -57,12 +57,12 @@
     <ClInclude Include="InGamePacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="SocialPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
     <ClInclude Include="SocialServerHandler.h">
       <Filter>Social</Filter>
     </ClInclude>
     <ClInclude Include="ManagementServerHandler.h" />
+    <ClInclude Include="SocialGamePacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

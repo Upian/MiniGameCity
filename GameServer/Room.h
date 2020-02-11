@@ -85,7 +85,7 @@ private:
 	int									m_roomNumber = 0;
 	time_t								m_createdTime = 0;
 	bool								m_isUsePassword = false;
-	__int16								m_password;
-
+	__int16								m_password = 0;
+	
 };
 #endif // !__GAMESERVER_LOBBY_H__

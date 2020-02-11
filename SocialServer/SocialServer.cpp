@@ -12,9 +12,11 @@ void SocialServer::InitializeSocialServer() {
 void SocialServer::HandleAcceptClient(SOCKET gameServerSocket) {
 	m_gameServers.InsertServer(gameServerSocket);
 	
+	Util::LoggingInfo("0_test.log", "m_gameserver Size: %d", m_gameServers.Size());
 }
 
-void SocialServer::HandleDisconnectClient(SOCKET clientSocket) {
+void SocialServer::HandleDisconnectClient(SOCKET gameServerSocket) {
+	m_gameServers.RemoveServer(gameServerSocket);
 
 }
 
@@ -22,8 +24,8 @@ void SocialServer::HandleBasePacket(BufferInfo* bufInfo) {
 	if (nullptr == bufInfo)
 		return;
 
-	BasePacketType type = PacketTypeDeserial<BasePacketType>(bufInfo->buffer);
-
+//	BasePacketType type = PacketTypeDeserial<BasePacketType>(bufInfo->buffer);
+	BasePacketType type = (BasePacketType)PacketTypeDeserial(bufInfo->buffer);
 
 	switch (type) {
 	case BasePacketType::basePacketTypeSocialServer: {
@@ -39,11 +41,13 @@ void SocialServer::HandleBasePacket(BufferInfo* bufInfo) {
 }
 
 void SocialServer::HandleBaseSocialPacket(Buffer& buffer) {
-	PacketTypeSocialServer type = PacketTypeDeserial<PacketTypeSocialServer>(buffer);
+	PacketTypeSocialServer type = (PacketTypeSocialServer)PacketTypeDeserial(buffer);
 
 	switch (type) {
-	case PacketTypeSocialServer::updatePlayerInfo: {
-
+	case PacketTypeSocialServer::updatePlayerInfo: { 
+		SocialPacketServerUpdatePlayerInfo packet;
+		packet.Deserialize(buffer);
+		this->LoadPlayerSocialData(packet.m_gpid);
 		break;
 	}
 	default: {
@@ -51,4 +55,12 @@ void SocialServer::HandleBaseSocialPacket(Buffer& buffer) {
 		break;
 	}
 	}
+}
+
+
+void SocialServer::LoadPlayerSocialData(GPID gpid) {
+/*
+*	Load from database
+*	
+*/
 }

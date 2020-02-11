@@ -11,14 +11,15 @@ void PlayerManager::InsertPlayer(std::shared_ptr<Player> player) {
 	m_playerList.push_back(player); 
 }
 
-void PlayerManager::InsertPlayer(SOCKET socket) {
+std::shared_ptr<Player> PlayerManager::InsertPlayer(SOCKET socket) {
 	if (nullptr != this->FindPlayerBySocket(socket)) //already exist
-		return;
+		return nullptr;
 
 	std::shared_ptr<Player> tempPlayer = std::make_shared<Player>(socket);
 	tempPlayer->Initialize();
 	
 	m_playerList.push_back(tempPlayer);
+	return tempPlayer;
 }
 
 void PlayerManager::RemovePlayer(GPID key) {
