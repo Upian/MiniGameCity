@@ -9,8 +9,11 @@
 
 
 typedef __int16 int16;
+typedef unsigned __int16 uint16;
 typedef __int32 int32;
+typedef unsigned __int32 uint32;
 typedef __int64 int64;
+typedef unsigned __int64 uint64;
 
 /*
 	=== EXAMPLE ===
@@ -42,6 +45,12 @@ enum class BasePacketType : char {
 	basePacketTypeSocialServer, //Game server <-> Social server
 	basePacketTypeRankingServer,
 
+	// server to server packet
+	loginPacketTypeManagement,
+
+	// server to db cache packet
+	managementPacketTypeDbCache,
+
 	basePacketTypeCount
 };
 
@@ -63,7 +72,7 @@ protected:
 	//Type -> Byte, (е╦ют)
 	template<typename T_Type,
 		std::enable_if_t<std::is_enum_v<T_Type> >* = nullptr >
-	inline void PacketTypeSerial(T_Type _type) {
+		inline void PacketTypeSerial(T_Type _type) {
 		buffer << _type;
 	}
 
@@ -131,5 +140,5 @@ inline char PacketTypeDeserial(Buffer& _buf) {
 #define MAKE_PACKET \
 		virtual Buffer& Serialize() override;\
 		virtual void Deserialize() override;
-	
+
 #endif

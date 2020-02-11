@@ -8,6 +8,9 @@
     <Filter Include="ManagementServer">
       <UniqueIdentifier>{1ccbdbf0-1adc-4297-91ff-b00833ce1a04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Packet">
+      <UniqueIdentifier>{59bc2577-3adc-40e9-ab15-ea405ac7becd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ManagementServer.cpp">
@@ -17,6 +20,9 @@
   <ItemGroup>
     <ClInclude Include="ManagementServer.h">
       <Filter>ManagementServer</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagementPacket.h">
+      <Filter>Packet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
