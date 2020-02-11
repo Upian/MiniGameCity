@@ -1,9 +1,8 @@
-#ifndef __LOGIN_SERVER_H__
-#define __LOGIN_SERVER_H__
+#ifndef LOGIN_SERVER_H
+#define LOGIN_SERVER_H
 
 #include "BaseServer.h"
 #include "ServerCommon.h"
-#include "PlayerManager.h"
 
 class LoginServer : public BaseServer<LoginServer> {
 public:
@@ -16,8 +15,6 @@ private:
 	void ConnectToManagementServer();
 
 	SOCKET managementServer = 0;
-
-	PlayerManager playerManager;
 };
 
 #endif

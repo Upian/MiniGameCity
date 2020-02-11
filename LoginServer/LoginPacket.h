@@ -37,7 +37,6 @@ enum LoginPacketType : char {
 	loginManagementPacketTypeChannelInRequest, //(string)channelName
 
 	loginPacketTypeSize,
-
 };
 
 struct Channel {
