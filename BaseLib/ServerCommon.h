@@ -249,6 +249,17 @@ public:
 		}
 		return *this;
 	}
+	Buffer& operator>>(unsigned __int16& integer) {
+		if (m_length <= m_index)
+			return *this;
+		integer = 0;
+		for (int i = 0; i < sizeof(unsigned __int16); ++i) {
+			unsigned __int16 temp = ((m_buffer[m_index] & 0xff) << 8 * i);
+			integer |= temp;
+			++m_index;
+		}
+		return *this;
+	}
 	Buffer& operator>>(__int32& integer) {
 		if (m_length <= m_index)
 			return *this;
@@ -260,12 +271,34 @@ public:
 		}
 		return *this;
 	}
+	Buffer& operator>>(unsigned __int32& integer) {
+		if (m_length <= m_index)
+			return *this;
+		integer = 0;
+		for (int i = 0; i < sizeof(unsigned __int32); ++i) {
+			unsigned __int32 temp = ((m_buffer[m_index] & 0xff) << 8 * i);
+			integer |= temp;
+			++m_index;
+		}
+		return *this;
+	}
 	Buffer& operator>>(__int64& integer) {
 		if (m_length <= m_index)
 			return *this;
 		integer = 0;
 		for (int i = 0; i < sizeof(__int64); ++i) {
 			__int64 temp = ((m_buffer[m_index] & 0xff) << 8 * i);
+			integer |= temp;
+			++m_index;
+		}
+		return *this;
+	}
+	Buffer& operator>>(unsigned __int64& integer) {
+		if (m_length <= m_index)
+			return *this;
+		integer = 0;
+		for (int i = 0; i < sizeof(unsigned __int64); ++i) {
+			unsigned __int64 temp = ((m_buffer[m_index] & 0xff) << 8 * i);
 			integer |= temp;
 			++m_index;
 		}

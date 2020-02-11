@@ -7,10 +7,12 @@
 
 #include "ServerCommon.h"
 
-
 typedef __int16 int16;
+typedef unsigned __int16 uint16;
 typedef __int32 int32;
+typedef unsigned __int32 uint32;
 typedef __int64 int64;
+typedef unsigned __int64 uint64;
 
 /*
 	=== EXAMPLE ===
@@ -25,8 +27,6 @@ typedef __int64 int64;
 	char* buffer = chat.Serialize();
 */
 
-
-
 enum class BasePacketType : char {
 	basePacketTypeNone = 0,
 	// client to server packet
@@ -36,6 +36,12 @@ enum class BasePacketType : char {
 	basePacketTypeMarket,
 	basePacketTypeRanking,
 	basePacketTypeSocial,
+
+	// server to server packet
+	loginPacketTypeManagement,
+
+	// server to db cache packet
+	managementPacketTypeDbCache,
 
 	basePacketTypeCount
 };
