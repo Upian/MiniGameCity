@@ -9,16 +9,16 @@ void LoginServer::HandleAcceptClient(SOCKET clientSocket) {
 	if (clientSocket < 1)
 		return;
 	playerManager.InsertPlayer(clientSocket);
-	printf("Connect client[%d] Total players[%d]\n", clientSocket, m_playerManager.GetPlayerList().size());
+	printf("Connect client[%d] Total players[%d]\n", clientSocket, playerManager.GetPlayerList().size());
 }
-void LoginServer::HandleDisconnectClient(SOCKET clientScoket) {
+void LoginServer::HandleDisconnectClient(SOCKET clientSocket) {
 	if (clientSocket < 1)
 		return;
 	auto player = playerManager.FindPlayerBySocket(clientSocket);
 	if (player == nullptr)
 		return;
-	m_playerManager.PlayerDisconnect(clientSocket);
-	printf("Disconnect client[%d] Total players[%d]\n", clientSocket, m_playerManager.GetPlayerList().size());
+	playerManager.PlayerDisconnect(clientSocket);
+	printf("Disconnect client[%d] Total players[%d]\n", clientSocket, playerManager.GetPlayerList().size());
 }
 
 void LoginServer::HandleBasePacket(BufferInfo* bufInfo) {
@@ -45,26 +45,26 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 	switch (type) {
 	case clientLoginPacketTypeLoginRequest: {
 		ClientLoginPacketTypeLoginRequest packetClientRequest{};
-		packetRequest.Deserialize(bufInfo->buffer);
+		packetClientRequest.Deserialize(bufInfo->buffer);
 		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
-		if ((4 > packetRequest.userId.size()) || (packetRequest.userId.size() > ID_SIZE)) {
+		if ((4 > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > ID_SIZE)) {
 			flag = false;
 		}
-		if ((flag == true) && (8 > packetRequest.userPw.size()) || (packetRequest.userPw.size() > PW_SIZE)) {
+		if ((flag == true) && (8 > packetClientRequest.userPw.size()) || (packetClientRequest.userPw.size() > PW_SIZE)) {
 			flag = false;
 		}
 		if (flag == true) {
-			for (int i = 0; i < packetRequest.userId.size(); ++i) {
-				if (!isalnum(packetRequest.userId[i])) {
+			for (int i = 0; i < packetClientRequest.userId.size(); ++i) {
+				if (!isalnum(packetClientRequest.userId[i])) {
 					flag = false;
 					break;
 				}
 			}
-			for (int i = 0; i < packetRequest.userPw.size(); ++i) {
-				if (!isalnum(packetRequest.userPw[i])) {
-				    flag = false;
+			for (int i = 0; i < packetClientRequest.userPw.size(); ++i) {
+				if (!isalnum(packetClientRequest.userPw[i])) {
+					flag = false;
 					break;
 				}
 			}
@@ -115,28 +115,28 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 
 	case clientLoginPacketTypeSignupRequest: {
 		ClientLoginPacketTypeSignupRequest packetClientRequest{};
-		packetRequest.Deserialize(bufInfo->buffer);
+		packetClientRequest.Deserialize(bufInfo->buffer);
 		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
-		if ((4 > packetRequest.userId.size()) || (packetRequest.userId.size() > ID_SIZE)) {
+		if ((4 > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > ID_SIZE)) {
 			flag = false;
 		}
-		if ((flag == true) && (8 > packetRequest.userPw.size()) || (packetRequest.userPw.size() > PW_SIZE)) {
+		if ((flag == true) && (8 > packetClientRequest.userPw.size()) || (packetClientRequest.userPw.size() > PW_SIZE)) {
 			flag = false;
 		}
-		if ((flag == true) && (packetRequest.userNick.size() > NICK_SIZE)) {
+		if ((flag == true) && (packetClientRequest.userNick.size() > NICK_SIZE)) {
 			flag = false;
 		}
 		if (flag == true) {
-			for (int i = 0; i < packetRequest.userId.size(); ++i) {
-				if (!isalnum(packetRequest.userId[i])) {
+			for (int i = 0; i < packetClientRequest.userId.size(); ++i) {
+				if (!isalnum(packetClientRequest.userId[i])) {
 					flag = false;
 					break;
 				}
 			}
-			for (int i = 0; i < packetRequest.userPw.size(); ++i) {
-				if (!isalnum(packetRequest.userPw[i])) {
+			for (int i = 0; i < packetClientRequest.userPw.size(); ++i) {
+				if (!isalnum(packetClientRequest.userPw[i])) {
 					flag = false;
 					break;
 				}
@@ -168,7 +168,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 			packetClientResponse.flag = flag;
 			bufInfo->Clear();
 			bufInfo->buffer = packetClientResponse.Serialize();
-			send(bufInfo->socket, buf, BUFFER_SIZE, 0);
+			send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
 			Util::LoggingInfo("LoginServer.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 		}
 		break;
@@ -176,7 +176,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 
 	case clientLoginPacketTypeDeleteRequest: {
 		ClientLoginPacketTypeDeleteRequest packetClientRequest{};
-		packetRequest.Deserialize(bufInfo->buffer);
+		packetClientRequest.Deserialize(bufInfo->buffer);
 		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		LoginManagementPacketTypeDeleteRequest packetLoginRequest{};
@@ -188,7 +188,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0); // ¼öÁ¤
 		LoginManagementPacketTypeDeleteResponse packetLoginResponse{};
 		packetLoginResponse.Deserialize(bufInfo->buffer);
-		
+
 		ClientLoginPacketTypeDeleteResponse packetClientResponse{};
 		// player serialNumber delete
 		packetClientResponse.flag = packetLoginResponse.flag;

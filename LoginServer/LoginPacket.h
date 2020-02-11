@@ -22,7 +22,7 @@ enum LoginPacketType : char {
 	clientLoginPacketTypeShowChannelRequest, //nothing.
 	clientLoginPacketTypeChannelInResponse, //(bool)flag, (string)ip, (int)port
 	clientLoginPacketTypeChannelInRequest, //(string)channelName
-    
+
 	// login server <-> management sserver
 	loginManagementPacketTypeLoginResponse, //(bool)flag(1), (string)nick(4~8), (unsigned int)serialNumber
 	loginManagementPacketTypeLoginRequest, //(string)userId(4~8), (string)userPw(8~16)  
@@ -48,7 +48,7 @@ struct Channel {
 
 /*
 
-          client <-> login
+		  client <-> login
 
 */
 

@@ -19,36 +19,36 @@
 // |=
 template<typename T_Enum,
 	std::enable_if_t<std::is_enum_v<T_Enum> >* = nullptr >
-inline T_Enum operator|(T_Enum a, char b) {
+	inline T_Enum operator|(T_Enum a, char b) {
 	return static_cast<T_Enum>(static_cast<int>(a) | b);
 }
 template<typename T_Enum,
 	std::enable_if_t<std::is_enum_v<T_Enum> >* = nullptr >
-inline T_Enum& operator|=(T_Enum& a, char b) {
+	inline T_Enum& operator|=(T_Enum& a, char b) {
 	return a = a | b;
 }
 
 // >>=
 template<typename T_Enum,
 	std::enable_if_t<std::is_enum_v<T_Enum> >* = nullptr >
-inline T_Enum operator>>(T_Enum a, int b) {
+	inline T_Enum operator>>(T_Enum a, int b) {
 	return static_cast<T_Enum>(static_cast<int>(a) >> b);
 }
 template<typename T_Enum,
 	std::enable_if_t<std::is_enum_v<T_Enum> >* = nullptr >
-inline T_Enum& operator>>=(T_Enum& a, int b) {
+	inline T_Enum& operator>>=(T_Enum& a, int b) {
 	return a = a >> b;
 }
 
 class Buffer {
 public:
 	Buffer() {}
-	
-	Buffer(const char* rhs) { 
-		memcpy(m_buffer, rhs, sizeof(rhs)); 
+
+	Buffer(const char* rhs) {
+		memcpy(m_buffer, rhs, sizeof(rhs));
 		m_length = sizeof(rhs);
 	}
-	Buffer(char* rhs, size_t sz) { 
+	Buffer(char* rhs, size_t sz) {
 		memcpy(m_buffer, rhs, sz);
 		m_length = sz;
 	}
@@ -63,11 +63,11 @@ public:
 		m_length = sizeof(buffer);
 		return *this;
 	}
-//	Buffer& operator=(char* buffer) {
-//		memcpy(m_buffer, buffer, sizeof(buffer));
-//		m_length = sizeof(buffer);
-//		return *this;
-//	}
+	//	Buffer& operator=(char* buffer) {
+	//		memcpy(m_buffer, buffer, sizeof(buffer));
+	//		m_length = sizeof(buffer);
+	//		return *this;
+	//	}
 	Buffer& operator=(const Buffer& rhs) {
 		if (this == &rhs)
 			return *this;
@@ -77,8 +77,8 @@ public:
 		m_length = rhs.m_length;
 		return *this;
 	}
-	
-	
+
+
 	operator const char*() {
 		return this->m_buffer;
 	}
@@ -94,7 +94,7 @@ public:
 
 #pragma region operator <<
 	//1Byte
-	Buffer& operator<<(char rhs) {
+	Buffer & operator<<(char rhs) {
 		m_buffer[m_index] = rhs;
 		++m_index;
 		++m_length;
@@ -103,7 +103,7 @@ public:
 	//Enum type
 	template<typename T_Arg,
 		std::enable_if_t<std::is_enum_v<T_Arg> >* = nullptr >
-	Buffer& operator<<(T_Arg rhs) {
+		Buffer& operator<<(T_Arg rhs) {
 		for (int i = 0; i < sizeof(rhs); ++i) {
 			m_buffer[m_index] = static_cast<char>(rhs);
 			++m_index;
@@ -112,13 +112,13 @@ public:
 		}
 		return *this;
 	}
-//	Buffer& operator<<(bool rhs) {
-//		m_buffer[m_index] = rhs;
-//		++m_index;
-//		++m_length;
-//		return *this;
-//	}
-	//int
+	//	Buffer& operator<<(bool rhs) {
+	//		m_buffer[m_index] = rhs;
+	//		++m_index;
+	//		++m_length;
+	//		return *this;
+	//	}
+		//int
 	Buffer& operator<<(__int16& rhs) {
 		for (int i = 0; i < sizeof(rhs); ++i) {
 			m_buffer[m_index] = static_cast<char>(rhs);
@@ -306,9 +306,9 @@ public:
 	}
 
 	//Handle deserialize enum value
-	template<typename T_Arg, 
+	template<typename T_Arg,
 		std::enable_if_t<std::is_enum_v<T_Arg> >* = nullptr >
-	Buffer& operator>>(T_Arg& integer) {
+		Buffer& operator>>(T_Arg& integer) {
 		if (m_length <= m_index)
 			return *this;
 

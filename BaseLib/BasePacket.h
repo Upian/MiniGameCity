@@ -64,7 +64,7 @@ protected:
 	//Type -> Byte, (е╦ют)
 	template<typename T_Type,
 		std::enable_if_t<std::is_enum_v<T_Type> >* = nullptr >
-	inline void PacketTypeSerial(T_Type _type) {
+		inline void PacketTypeSerial(T_Type _type) {
 		buffer << _type;
 	}
 
@@ -125,5 +125,5 @@ inline char PacketTypeDeserial(Buffer& _buf) {
 #define MAKE_PACKET \
 		virtual Buffer& Serialize() override;\
 		virtual void Deserialize() override;
-	
+
 #endif
