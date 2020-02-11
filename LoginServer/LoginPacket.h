@@ -1,6 +1,7 @@
 #ifndef LOGIN_PACKET_H
 #define LOGIN_PACKET_H
 #include "BasePacket.h"
+#include "ManagementPacket.h"
 
 #define CHANNEL_SIZE 4
 #define ID_SIZE 8
@@ -23,27 +24,8 @@ enum LoginPacketType : char {
 	clientLoginPacketTypeChannelInResponse, //(bool)flag, (string)ip, (int)port
 	clientLoginPacketTypeChannelInRequest, //(string)channelName
 
-	// login server <-> management sserver
-	loginManagementPacketTypeLoginResponse, //(bool)flag(1), (string)nick(4~8), (unsigned int)serialNumber
-	loginManagementPacketTypeLoginRequest, //(string)userId(4~8), (string)userPw(8~16)  
-	loginManagementPacketTypeLogoutRequest, //(unsigned int)serialNumber
-	loginManagementPacketTypeSignupResponse, //(bool)flag
-	loginManagementPacketTypeSignupRequest, //(string)userId(4~8), (string)userPw(8~16), (string)nick(4~8),
-	loginManagementPacketTypeDeleteResponse, //(bool)flag
-	loginManagementPacketTypeDeleteRequest, //(unsigned int)serialNumber
-	loginManagementPacketTypeShowChannelResponse, //(channel(string, int, int)channelName, numberOfPeople, limitOfPeople)
-	loginManagementPacketTypeShowChannelRequest, //nothing.
-	loginManagementPacketTypeChannelInResponse, //(bool)flag, (string)ip, (int)port
-	loginManagementPacketTypeChannelInRequest, //(string)channelName
-
 	loginPacketTypeSize,
 
-};
-
-struct Channel {
-	std::string channelName;
-	int32 numberOfPeople = 0;
-	int32 limitOfPeople = 0;
 };
 
 /*
@@ -52,19 +34,19 @@ struct Channel {
 
 */
 
-class ClientLoginPacket : public BasePacket {
+class LoginPacket : public BasePacket {
 public:
-	ClientLoginPacket(LoginPacketType _loginPacketType) : BasePacket(BasePacketType::basePacketTypeLogin), loginPacketType(_loginPacketType) {
+	LoginPacket(LoginPacketType _loginPacketType) : BasePacket(BasePacketType::basePacketTypeLogin), loginPacketType(_loginPacketType) {
 		this->PacketTypeSerial(loginPacketType);
 	}
-	~ClientLoginPacket() {}
+	~LoginPacket() {}
 protected:
 	LoginPacketType loginPacketType = loginPacketTypeNone;
 };
 
-class ClientLoginPacketTypeLoginResponse : public ClientLoginPacket {
+class ClientLoginPacketTypeLoginResponse : public LoginPacket {
 public:
-	ClientLoginPacketTypeLoginResponse() : ClientLoginPacket(clientLoginPacketTypeLoginResponse) {}
+	ClientLoginPacketTypeLoginResponse() : LoginPacket(clientLoginPacketTypeLoginResponse) {}
 	~ClientLoginPacketTypeLoginResponse() {}
 
 	virtual Buffer& Serialize() override {
@@ -81,9 +63,9 @@ public:
 	std::string userNick{};
 };
 
-class ClientLoginPacketTypeLoginRequest : public ClientLoginPacket {
+class ClientLoginPacketTypeLoginRequest : public LoginPacket {
 public:
-	ClientLoginPacketTypeLoginRequest() : ClientLoginPacket(clientLoginPacketTypeLoginRequest) {}
+	ClientLoginPacketTypeLoginRequest() : LoginPacket(clientLoginPacketTypeLoginRequest) {}
 	~ClientLoginPacketTypeLoginRequest() {}
 
 	virtual Buffer& Serialize() override {
@@ -101,9 +83,9 @@ public:
 	std::string userPw{};
 };
 
-class ClientLoginPacketTypeLogoutRequest : public ClientLoginPacket {
+class ClientLoginPacketTypeLogoutRequest : public LoginPacket {
 public:
-	ClientLoginPacketTypeLogoutRequest() : ClientLoginPacket(clientLoginPacketTypeLogoutRequest) {}
+	ClientLoginPacketTypeLogoutRequest() : LoginPacket(clientLoginPacketTypeLogoutRequest) {}
 	~ClientLoginPacketTypeLogoutRequest() {}
 
 	virtual Buffer& Serialize() override {
@@ -117,9 +99,9 @@ public:
 	uint32 serialNumber = 0;
 };
 
-class ClientLoginPacketTypeSignupResponse : public ClientLoginPacket {
+class ClientLoginPacketTypeSignupResponse : public LoginPacket {
 public:
-	ClientLoginPacketTypeSignupResponse() : ClientLoginPacket(clientLoginPacketTypeSignupResponse) {}
+	ClientLoginPacketTypeSignupResponse() : LoginPacket(clientLoginPacketTypeSignupResponse) {}
 	~ClientLoginPacketTypeSignupResponse() {}
 
 	virtual Buffer& Serialize() override {
@@ -134,9 +116,9 @@ public:
 	bool flag = true;
 };
 
-class ClientLoginPacketTypeSignupRequest : public ClientLoginPacket {
+class ClientLoginPacketTypeSignupRequest : public LoginPacket {
 public:
-	ClientLoginPacketTypeSignupRequest() : ClientLoginPacket(clientLoginPacketTypeSignupRequest) {}
+	ClientLoginPacketTypeSignupRequest() : LoginPacket(clientLoginPacketTypeSignupRequest) {}
 	~ClientLoginPacketTypeSignupRequest() {}
 
 	virtual Buffer& Serialize() override {
@@ -157,9 +139,9 @@ public:
 	std::string userNick;
 };
 
-class ClientLoginPacketTypeDeleteResponse : public ClientLoginPacket {
+class ClientLoginPacketTypeDeleteResponse : public LoginPacket {
 public:
-	ClientLoginPacketTypeDeleteResponse() : ClientLoginPacket(clientLoginPacketTypeDeleteResponse) {}
+	ClientLoginPacketTypeDeleteResponse() : LoginPacket(clientLoginPacketTypeDeleteResponse) {}
 	~ClientLoginPacketTypeDeleteResponse() {}
 
 	virtual Buffer& Serialize() override {
@@ -174,9 +156,9 @@ public:
 	bool flag = true;
 };
 
-class ClientLoginPacketTypeDeleteRequest : public ClientLoginPacket {
+class ClientLoginPacketTypeDeleteRequest : public LoginPacket {
 public:
-	ClientLoginPacketTypeDeleteRequest() : ClientLoginPacket(clientLoginPacketTypeDeleteRequest) {}
+	ClientLoginPacketTypeDeleteRequest() : LoginPacket(clientLoginPacketTypeDeleteRequest) {}
 	~ClientLoginPacketTypeDeleteRequest() {}
 
 	virtual Buffer& Serialize() override {
@@ -190,9 +172,9 @@ public:
 	uint32 serialNumber = 0;
 };
 
-class ClientLoginPacketTypeShowChannelResponse : public ClientLoginPacket {
+class ClientLoginPacketTypeShowChannelResponse : public LoginPacket {
 public:
-	ClientLoginPacketTypeShowChannelResponse() : ClientLoginPacket(clientLoginPacketTypeShowChannelResponse) {}
+	ClientLoginPacketTypeShowChannelResponse() : LoginPacket(clientLoginPacketTypeShowChannelResponse) {}
 	~ClientLoginPacketTypeShowChannelResponse() {}
 
 	virtual Buffer& Serialize() override {
@@ -215,9 +197,9 @@ public:
 	Channel channel[CHANNEL_SIZE]{}; // 개수 바뀔 수 있음.
 };
 
-class ClientLoginPacketTypeShowChannelRequest : public ClientLoginPacket {
+class ClientLoginPacketTypeShowChannelRequest : public LoginPacket {
 public:
-	ClientLoginPacketTypeShowChannelRequest() : ClientLoginPacket(clientLoginPacketTypeShowChannelRequest) {}
+	ClientLoginPacketTypeShowChannelRequest() : LoginPacket(clientLoginPacketTypeShowChannelRequest) {}
 	~ClientLoginPacketTypeShowChannelRequest() {}
 
 	virtual Buffer& Serialize() override {
@@ -229,9 +211,9 @@ public:
 	}
 };
 
-class ClientLoginPacketTypeChannelInResponse : public ClientLoginPacket {
+class ClientLoginPacketTypeChannelInResponse : public LoginPacket {
 public:
-	ClientLoginPacketTypeChannelInResponse() : ClientLoginPacket(clientLoginPacketTypeChannelInResponse) {}
+	ClientLoginPacketTypeChannelInResponse() : LoginPacket(clientLoginPacketTypeChannelInResponse) {}
 	~ClientLoginPacketTypeChannelInResponse() {}
 
 	virtual Buffer& Serialize() override {
@@ -252,9 +234,9 @@ public:
 	int16 port = 0;
 };
 
-class ClientLoginPacketTypeChannelInRequest : public ClientLoginPacket {
+class ClientLoginPacketTypeChannelInRequest : public LoginPacket {
 public:
-	ClientLoginPacketTypeChannelInRequest() : ClientLoginPacket(clientLoginPacketTypeChannelInRequest) {}
+	ClientLoginPacketTypeChannelInRequest() : LoginPacket(clientLoginPacketTypeChannelInRequest) {}
 	~ClientLoginPacketTypeChannelInRequest() {}
 
 	virtual Buffer& Serialize() override {
@@ -268,230 +250,5 @@ public:
 
 	std::string channelName;
 };
-
-/*
-
-		  login <-> management
-
-*/
-
-class LoginManagementPacket : public BasePacket {
-public:
-	LoginManagementPacket(LoginPacketType _loginPacketType) : BasePacket(BasePacketType::basePacketTypeLogin), loginPacketType(_loginPacketType) {
-		this->PacketTypeSerial(loginPacketType);
-	}
-	~LoginManagementPacket() {}
-protected:
-	LoginPacketType loginPacketType = loginPacketTypeNone;
-};
-
-class LoginManagementPacketTypeLoginResponse : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeLoginResponse() : LoginManagementPacket(loginManagementPacketTypeLoginResponse) {}
-	~LoginManagementPacketTypeLoginResponse() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << flag;
-		buffer << userNick;
-		return buffer;
-	};
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> flag;
-		_buf >> userNick;
-	};
-
-	bool flag = true;
-	std::string userNick{};
-	uint32 serialNumber = 0;
-};
-
-class LoginManagementPacketTypeLoginRequest : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeLoginRequest() : LoginManagementPacket(loginManagementPacketTypeLoginRequest) {}
-	~LoginManagementPacketTypeLoginRequest() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << userId;
-		buffer << userPw;
-
-		return buffer;
-	};
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> userId;
-		_buf >> userPw;
-	};
-
-	std::string userId{};
-	std::string userPw{};
-};
-
-class LoginManagementPacketTypeLogoutRequest : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeLogoutRequest() : LoginManagementPacket(loginManagementPacketTypeLogoutRequest) {}
-	~LoginManagementPacketTypeLogoutRequest() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << serialNumber;
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> serialNumber;
-	}
-	uint32 serialNumber = 0;
-};
-
-class LoginManagementPacketTypeSignupResponse : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeSignupResponse() : LoginManagementPacket(loginManagementPacketTypeSignupResponse) {}
-	~LoginManagementPacketTypeSignupResponse() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << flag;
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-		buffer >> flag;
-	}
-
-	bool flag = true;
-};
-
-class LoginManagementPacketTypeSignupRequest : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeSignupRequest() : LoginManagementPacket(loginManagementPacketTypeSignupRequest) {}
-	~LoginManagementPacketTypeSignupRequest() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << userId;
-		buffer << userPw;
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> userId;
-		_buf >> userPw;
-		_buf >> userNick;
-	}
-
-	std::string userId;
-	std::string userPw;
-	std::string userNick;
-};
-
-class LoginManagementPacketTypeDeleteResponse : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeDeleteResponse() : LoginManagementPacket(loginManagementPacketTypeDeleteResponse) {}
-	~LoginManagementPacketTypeDeleteResponse() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << flag;
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> flag;
-	}
-
-	bool flag = true;
-};
-
-class LoginManagementPacketTypeDeleteRequest : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeDeleteRequest() : LoginManagementPacket(loginManagementPacketTypeDeleteRequest) {}
-	~LoginManagementPacketTypeDeleteRequest() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << serialNumber;
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> serialNumber;
-	}
-
-	uint32 serialNumber = 0;
-};
-
-class LoginManagementPacketTypeShowChannelResponse : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeShowChannelResponse() : LoginManagementPacket(loginManagementPacketTypeShowChannelResponse) {}
-	~LoginManagementPacketTypeShowChannelResponse() {}
-
-	virtual Buffer& Serialize() override {
-		for (int i = 0; i < CHANNEL_SIZE; ++i) {
-			buffer << channel[i].channelName;
-			buffer << channel[i].numberOfPeople;
-			buffer << channel[i].limitOfPeople;
-		}
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-		for (int i = 0; i < CHANNEL_SIZE; ++i) {
-			_buf >> channel[i].channelName;
-			_buf >> channel[i].numberOfPeople;
-			_buf >> channel[i].limitOfPeople;
-		}
-	}
-
-	Channel channel[CHANNEL_SIZE]{}; // 개수 바뀔 수 있음.
-};
-
-class LoginManagementPacketTypeShowChannelRequest : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeShowChannelRequest() : LoginManagementPacket(loginManagementPacketTypeShowChannelRequest) {}
-	~LoginManagementPacketTypeShowChannelRequest() {}
-
-	virtual Buffer& Serialize() override {
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-
-	}
-};
-
-class LoginManagementPacketTypeChannelInResponse : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeChannelInResponse() : LoginManagementPacket(loginManagementPacketTypeChannelInResponse) {}
-	~LoginManagementPacketTypeChannelInResponse() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << flag;
-		buffer << ip;
-		buffer << port;
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> flag;
-		_buf >> ip;
-		_buf >> port;
-	}
-
-	bool flag = true;
-	std::string ip;
-	int16 port = 0;
-};
-
-class LoginManagementPacketTypeChannelInRequest : public LoginManagementPacket {
-public:
-	LoginManagementPacketTypeChannelInRequest() : LoginManagementPacket(loginManagementPacketTypeChannelInRequest) {}
-	~LoginManagementPacketTypeChannelInRequest() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << channelName;
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> channelName;
-	}
-
-	std::string channelName;
-};
-
 
 #endif
