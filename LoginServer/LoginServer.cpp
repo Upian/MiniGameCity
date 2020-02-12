@@ -49,10 +49,10 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
-		if ((4 > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > ID_SIZE)) {
+		if ((Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMinSize") > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMaxSize"))) {
 			flag = false;
 		}
-		if ((flag == true) && (8 > packetClientRequest.userPw.size()) || (packetClientRequest.userPw.size() > PW_SIZE)) {
+		if ((flag == true) && (Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMinSize") > packetClientRequest.userPw.size()) || (packetClientRequest.userPw.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMaxSize"))) {
 			flag = false;
 		}
 		if (flag == true) {
@@ -119,13 +119,13 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
-		if ((4 > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > ID_SIZE)) {
+		if ((Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMinSize") > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMaxSize"))) {
 			flag = false;
 		}
-		if ((flag == true) && (8 > packetClientRequest.userPw.size()) || (packetClientRequest.userPw.size() > PW_SIZE)) {
+		if ((flag == true) && (Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMinSize") > packetClientRequest.userPw.size()) || (packetClientRequest.userPw.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMaxSize"))) {
 			flag = false;
 		}
-		if ((flag == true) && (packetClientRequest.userNick.size() > NICK_SIZE)) {
+		if ((flag == true) && (packetClientRequest.userNick.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserNickMaxSize"))) {
 			flag = false;
 		}
 		if (flag == true) {
