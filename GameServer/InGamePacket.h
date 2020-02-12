@@ -394,7 +394,11 @@ public:
 };
 class TwentyNoticeNextAsker : public TwentyQuestionGamePacket {
 public:
-	TwentyNoticeNextAsker() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Notice_Next_Asker){}
+	TwentyNoticeNextAsker(std::string name, int status) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Notice_Next_Asker)
+	{
+		PlayerName = name;
+		NoticeStatus = status;
+	}
 
 	std::string PlayerName;
 	int NoticeStatus = 0; //0은 질문 답변 듣고 넘김, 1은 질문자 타임오버, 2는 출제자 타임오버
@@ -435,16 +439,23 @@ public:
 };
 class TwentyUpdateScore : public TwentyQuestionGamePacket {
 public:
-	TwentyUpdateScore() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Update_Score){}
+	TwentyUpdateScore(std::string name, int update) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Update_Score)
+	{
+		PlayerName = name;
+		Score = update;
+	}
 
+	std::string PlayerName;
 	int Score;
 
 	virtual Buffer& Serialize() override {
+		buffer << PlayerName;
 		buffer << Score;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		buf >> PlayerName;
 		buf >> Score;
 	}
 };
@@ -586,7 +597,10 @@ public:
 };
 class TwentyRemainQuestion : public TwentyQuestionGamePacket {
 public:
-	TwentyRemainQuestion() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Remain_Question){}
+	TwentyRemainQuestion(int count) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Remain_Question)
+	{
+		RemainQuestionCount = count;
+	}
 
 	int RemainQuestionCount;
 
@@ -596,7 +610,6 @@ public:
 	}
 	virtual void Deserialize(Buffer& buf) override {
 		buf >> RemainQuestionCount;
-
 	}
 };
 

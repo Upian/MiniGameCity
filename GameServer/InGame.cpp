@@ -32,7 +32,7 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 	InGamePlayerManager.SendToAllPlayers(packet);
 
 	//플레이어 수만큼 라운드 진행을 위한 for문
-	for (GameRound = 1; GameRound < InGamePlayer.size() + 1; ++GameRound) {
+	for (GameRound = 0; GameRound < InGamePlayer.size(); ++GameRound) {
 
 		//플레이어 게임 준비 통신을 위한 while문
 		while (1)
@@ -76,6 +76,7 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 		QuestionCount = 20;
 		AskerTimer = 30;
 		ProviderTimer = 15;
+		AskerTurn = true;
 		ActionTime = time(NULL);
 
 		//질문 및 타이머를 반복하기 위한 while문
@@ -100,26 +101,57 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 				{
 					if ((*Asker)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
 
+					//받은 질문을 다시 뿌려줌
 					TwentyAskerQuestion QuestionPacket;
 					QuestionPacket.Deserialize(RecvBuf->buffer);
 					TwentyAskerQuestionBroadCast QuestionBroadCastPacket(InGamePlayer[i]->GetPlayerName(), QuestionPacket.Question);
 					InGamePlayerManager.SendToAllPlayers(QuestionBroadCastPacket);
+
+					//남은 질문횟수 뿌려줌
+					QuestionCount -= 1;
+					TwentyRemainQuestion RemainCountPacket(QuestionCount);
+					InGamePlayerManager.SendToAllPlayers(RemainCountPacket);
+
+					AskerTimer = 30;
+					AskerTurn = false;
+
 					break;
 				}
 				case Twenty_Provider_Reply:
 				{
 					if ((*Quiz_Provide_Player)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
 
+					//받은 답변을 뿌려줌
 					TwentyProviderReply ReplyPacket;
 					ReplyPacket.Deserialize(RecvBuf->buffer);
 					TwentyProviderReplyBroadCast ReplyBroadcastPacket(InGamePlayer[i]->GetPlayerName(), ReplyPacket.ReplyOX);
 					InGamePlayerManager.SendToAllPlayers(ReplyBroadcastPacket);
+
+					Next_Asker_Point();
+
+					//다음 질문자를 알려줌
+					TwentyNoticeNextAsker NoticeAskerPacket(InGamePlayer[i]->GetPlayerName(),0);
+					InGamePlayerManager.SendToAllPlayers(NoticeAskerPacket);
+					
+
 					break;
 				}
 				case Twenty_Asker_Answer:
 				{
 					if ((*Asker)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
 
+					TwentyAskerAnswer AnswerPacket;
+					AnswerPacket.Deserialize(RecvBuf->buffer);
+
+					if (AnswerPacket.AskerAnswer == TwentyAnswer)
+					{
+						//정답을 맞췄을 경우 동작
+
+					}
+					else
+					{
+						 //정답을 틀렸을 경우 동작
+					}
 
 					break;
 				}
@@ -161,15 +193,23 @@ void InGame::Connect_Check_In_Wait_time()
 
 void InGame::Game_Setting_On()
 {
-	Quiz_Provide_Player = InGamePlayer.begin() + GameRound - 1;
+	Quiz_Provide_Player = InGamePlayer.begin() + GameRound;
 
-	for (auto p : InGamePlayer)
+	for (int i = 0; i < InGamePlayer.size(); ++i)
 	{
-		if (p->GetGPID() == (*Quiz_Provide_Player)->GetGPID())
+		if (InGamePlayer[i]->GetGPID() == (*Quiz_Provide_Player)->GetGPID())
 		{
+			if (InGamePlayer[i]->GetGPID() == InGamePlayer.back()->GetGPID())
+			{
+				Asker = AskerGroup.begin();
+			}
+			else {
+				AskerGroup.push_back(InGamePlayer[++i]);
+				Asker = (AskerGroup.end() - 1);
+			}
 			continue;
 		}
-		AskerGroup.push_back(p);
+		AskerGroup.push_back(InGamePlayer[i]);
 	}
 }
 
@@ -218,5 +258,10 @@ void InGame::LoadingTime()
 	{
 		continue;
 	}
+}
+
+void InGame::ScoreUpdate(int update, std::shared_ptr<Player> player)
+{
+	TwentyUpdateScore updatePacket(player->GetPlayerName(), update);
 }
 

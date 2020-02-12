@@ -33,6 +33,7 @@ private:
 	int			LoopCount;				//반복문 카운터
 	int			AskerTimer;				//질문자 질문 타이머
 	int			ProviderTimer;			//출제자 답변 타이머
+	bool		AskerTurn;				//지금이 어떤 시간인지 구분하기위함.
 	time_t		ActionTime;				//타이머 동작하는 시간
 	BufferInfo*	RecvBuf;				//패킷작업시 패킷을 담을 공간.
 	std::string	TwentyAnswer;			//스무고개 정답 변수
@@ -67,6 +68,7 @@ private:
 	void SetPlayerPosition();						//플레이어의 정보가 담긴 벡터를 셔플
 	void AllPlayerReadyCheck();						//모든 플레이어가 준비가 되었는지 확인하는 과정
 	void LoadingTime();
+	void ScoreUpdate(int update, std::shared_ptr<Player> player);
 	Twenty_Packet_Type CheckPacketTypeForRecv(Buffer& buf);
 	TwentyProviderSelectAnswer SelectFiveAnswer(TwentyProviderSelectAnswer packet);
 
