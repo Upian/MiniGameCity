@@ -27,6 +27,8 @@ private:
 	void HandlePacketPrepareTransfer(); //PacketPrepareTransfer Management server -> game server (client informantion)
 	void HandleBasePacketRoom(BufferInfo* bufInfo);
 	void HandleBasePacketSocial(BufferInfo* bufInfo);
+	void HandleBasePacketGame(BufferInfo* bufInfo);
+
 	
 	void RegisterPlayerAtSocialServer(std::shared_ptr<Player>);
 	void PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer);

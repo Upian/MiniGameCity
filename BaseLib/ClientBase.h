@@ -12,7 +12,7 @@ public:
 	ClientBase(SOCKET socket) : m_socket(socket) {}
 	~ClientBase() {}
 
-	//virtual void HandlePacket(BufferInfo* packet) = 0;
+//	virtual void HandlePacket(BufferInfo* packet);  //정의하지 않아서 에러가 발생해서 현재 주석처리하고 player.cpp에서 오버라이딩하지 않고 선언 및 정의 했습니다.
 	bool SendPacket(BasePacket& packet);
 	bool SendPacket(Buffer& buffer);
 

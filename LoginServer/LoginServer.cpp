@@ -81,7 +81,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 			recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0); // ¼öÁ¤
 			LoginManagementPacketTypeLoginResponse packetLoginResponse{};
 			packetLoginResponse.Deserialize(bufInfo->buffer);
-			packetLoginResponse.serialNumber = 10; // serialNumber;
+			packetLoginResponse.GPID = 10; // GPID;
 
 			ClientLoginPacketTypeLoginResponse packetClientResponse{};
 			packetClientResponse.flag = packetLoginResponse.flag;
@@ -104,7 +104,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 	case clientLoginPacketTypeLogoutRequest: {
 		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 		LoginManagementPacketTypeLogoutRequest packetLoginRequest{};
-		packetLoginRequest.serialNumber = 10; // serialnumber;
+		packetLoginRequest.GPID = 10; // serialnumber;
 		bufInfo->Clear();
 		bufInfo->buffer = packetLoginRequest.Serialize();
 		send(managementServer, bufInfo->buffer, BUFFER_SIZE, 0);
@@ -180,7 +180,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		LoginManagementPacketTypeDeleteRequest packetLoginRequest{};
-		packetLoginRequest.serialNumber = 10; // player serialNumber;
+		packetLoginRequest.GPID = 10; // player GPID;
 		bufInfo->Clear();
 		bufInfo->buffer = packetLoginRequest.Serialize();
 		send(managementServer, bufInfo->buffer, BUFFER_SIZE, 0);
@@ -190,7 +190,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		packetLoginResponse.Deserialize(bufInfo->buffer);
 
 		ClientLoginPacketTypeDeleteResponse packetClientResponse{};
-		// player serialNumber delete
+		// player GPID delete
 		packetClientResponse.flag = packetLoginResponse.flag;
 		bufInfo->Clear();
 		bufInfo->buffer = packetClientResponse.Serialize();
