@@ -1,6 +1,5 @@
 #ifndef LOGIN_PACKET_H
 #define LOGIN_PACKET_H
-#include "BasePacket.h"
 #include "ManagementPacket.h"
 
 #define CHANNEL_SIZE 4
@@ -86,14 +85,14 @@ public:
 	~ClientLoginPacketTypeLogoutRequest() {}
 
 	virtual Buffer& Serialize() override {
-		buffer << serialNumber;
+		buffer << GPID;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> serialNumber;
+		_buf >> GPID;
 	}
-	uint32 serialNumber = 0;
+	uint32 GPID = 0;
 };
 
 class ClientLoginPacketTypeSignupResponse : public LoginPacket {
@@ -159,14 +158,14 @@ public:
 	~ClientLoginPacketTypeDeleteRequest() {}
 
 	virtual Buffer& Serialize() override {
-		buffer << serialNumber;
+		buffer << GPID;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> serialNumber;
+		_buf >> GPID;
 	}
-	uint32 serialNumber = 0;
+	uint32 GPID = 0;
 };
 
 class ClientLoginPacketTypeShowChannelResponse : public LoginPacket {

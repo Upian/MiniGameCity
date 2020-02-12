@@ -1,24 +1,21 @@
 #ifndef __MANAGEMENT_PACKET_H__
 #define __MANAGEMENT_PACKET_H__
-#include "BasePacket.h"
+#include "DBCachePacket.h"
 
 // must go to ini file 
-#define CHANNEL_SIZE 4
-#define ID_SIZE 8
-#define PW_SIZE 16
-#define NICK_SIZE 24
+#define CHANNEL_SIZE 4 // test
 
 enum ManagementPacketType : char {
 	managementPacketTypeNone = 0,
 
 	// login server <-> management sserver
-	loginManagementPacketTypeLoginResponse, //(bool)flag(1), (string)nick(4~8), (unsigned int)serialNumber
+	loginManagementPacketTypeLoginResponse, //(bool)flag(1), (string)nick(4~8), (unsigned int)GPID
 	loginManagementPacketTypeLoginRequest, //(string)userId(4~8), (string)userPw(8~16)  
-	loginManagementPacketTypeLogoutRequest, //(unsigned int)serialNumber
+	loginManagementPacketTypeLogoutRequest, //(unsigned int)GPID
 	loginManagementPacketTypeSignupResponse, //(bool)flag
 	loginManagementPacketTypeSignupRequest, //(string)userId(4~8), (string)userPw(8~16), (string)nick(4~8),
 	loginManagementPacketTypeDeleteResponse, //(bool)flag
-	loginManagementPacketTypeDeleteRequest, //(unsigned int)serialNumber
+	loginManagementPacketTypeDeleteRequest, //(unsigned int)GPID
 	loginManagementPacketTypeShowChannelResponse, //(channel(string, int, int)channelName, numberOfPeople, limitOfPeople)
 	loginManagementPacketTypeShowChannelRequest, //nothing.
 	loginManagementPacketTypeChannelInResponse, //(bool)flag, (string)ip, (int)port
@@ -66,7 +63,7 @@ public:
 
 	bool flag = true;
 	std::string userNick{};
-	uint32 serialNumber = 0;
+	uint32 GPID = 0;
 };
 
 class LoginManagementPacketTypeLoginRequest : public ManagementPacket {
@@ -95,14 +92,14 @@ public:
 	~LoginManagementPacketTypeLogoutRequest() {}
 
 	virtual Buffer& Serialize() override {
-		buffer << serialNumber;
+		buffer << GPID;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> serialNumber;
+		_buf >> GPID;
 	}
-	uint32 serialNumber = 0;
+	uint32 GPID = 0;
 };
 
 class LoginManagementPacketTypeSignupResponse : public ManagementPacket {
@@ -167,15 +164,15 @@ public:
 	~LoginManagementPacketTypeDeleteRequest() {}
 
 	virtual Buffer& Serialize() override {
-		buffer << serialNumber;
+		buffer << GPID;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> serialNumber;
+		_buf >> GPID;
 	}
 
-	uint32 serialNumber = 0;
+	uint32 GPID = 0;
 };
 
 class LoginManagementPacketTypeShowChannelResponse : public ManagementPacket {

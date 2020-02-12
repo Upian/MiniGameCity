@@ -12,13 +12,13 @@ enum DBCachePacketType : char {
 	dbCachePacketTypeNone = 0,
 
 	// management server <-> db 
-	managementDBCachePacketTypeLoginResponse, //(bool)flag(1), (string)nick(4~8), (unsigned int)serialNumber
+	managementDBCachePacketTypeLoginResponse, //(bool)flag(1), (string)nick(4~8), (unsigned int)GPID
 	managementDBCachePacketTypeLoginRequest, //(string)userId(4~8), (string)userPw(8~16)  
-	managementDBCachePacketTypeLogoutRequest, //(unsigned int)serialNumber
+	managementDBCachePacketTypeLogoutRequest, //(unsigned int)GPID
 	managementDBCachePacketTypeSignupResponse, //(bool)flag
 	managementDBCachePacketTypeSignupRequest, //(string)userId(4~8), (string)userPw(8~16), (string)nick(4~8),
 	managementDBCachePacketTypeDeleteResponse, //(bool)flag
-	managementDBCachePacketTypeDeleteRequest, //(unsigned int)serialNumber
+	managementDBCachePacketTypeDeleteRequest, //(unsigned int)GPID
 
 	dbCachePacketTypeSize,
 };
@@ -56,7 +56,7 @@ public:
 
 	bool flag = true;
 	std::string userNick{};
-	uint32 serialNumber = 0;
+	uint32 GPID = 0;
 };
 
 class ManagementDBCachePacketTypeLoginRequest : public DBCachePacket {
@@ -85,14 +85,14 @@ public:
 	~ManagementDBCachePacketTypeLogoutRequest() {}
 
 	virtual Buffer& Serialize() override {
-		buffer << serialNumber;
+		buffer << GPID;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> serialNumber;
+		_buf >> GPID;
 	}
-	uint32 serialNumber = 0;
+	uint32 GPID = 0;
 };
 
 class ManagementDBCachePacketTypeSignupResponse : public DBCachePacket {
@@ -157,15 +157,15 @@ public:
 	~ManagementDBCachePacketTypeDeleteRequest() {}
 
 	virtual Buffer& Serialize() override {
-		buffer << serialNumber;
+		buffer << GPID;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> serialNumber;
+		_buf >> GPID;
 	}
 
-	uint32 serialNumber = 0;
+	uint32 GPID = 0;
 };
 
 #endif
