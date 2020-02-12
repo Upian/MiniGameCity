@@ -49,10 +49,10 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
-		if ((Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMinSize") > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMaxSize"))) {
+		if ((Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMinSize", 4) > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMaxSize", 8))) {
 			flag = false;
 		}
-		if ((flag == true) && (Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMinSize") > packetClientRequest.userPw.size()) || (packetClientRequest.userPw.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMaxSize"))) {
+		if ((flag == true) && (Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMinSize", 8) > packetClientRequest.userPw.size()) || (packetClientRequest.userPw.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMaxSize", 16))) {
 			flag = false;
 		}
 		if (flag == true) {
@@ -121,13 +121,13 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
-		if ((Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMinSize") > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMaxSize"))) {
+		if ((Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMinSize", 4) > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMaxSize", 8))) {
 			flag = false;
 		}
-		if ((flag == true) && (Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMinSize") > packetClientRequest.userPw.size()) || (packetClientRequest.userPw.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMaxSize"))) {
+		if ((flag == true) && (Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMinSize", 8) > packetClientRequest.userPw.size()) || (packetClientRequest.userPw.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserPwMaxSize", 16))) {
 			flag = false;
 		}
-		if ((flag == true) && (packetClientRequest.userNick.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserNickMaxSize"))) {
+		if ((flag == true) && (packetClientRequest.userNick.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserNickMaxSize", 24))) {
 			flag = false;
 		}
 		if (flag == true) {
