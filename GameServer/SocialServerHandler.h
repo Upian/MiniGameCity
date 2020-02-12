@@ -16,6 +16,9 @@ public:
 
 	void HandleSocialPacket(Buffer& buffer, std::shared_ptr<Player> player); //Client to server
 
+	void UpdatePlayerInfoAtLogin(std::shared_ptr<Player>);
+	void UpdatePlayerInfoAtLogout(std::shared_ptr<Player>);
+
 	virtual void RegisterToServer() override {}
 	virtual void HandlePacket(Buffer& buffer) override;
 private:

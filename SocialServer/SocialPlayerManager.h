@@ -12,12 +12,14 @@ class ClntServer;
 
 class SocialPlayerManager {
 public:
-	std::shared_ptr<SocialPlayer> InsertPlayer(GPID gpid, SOCKET socket);
 	std::shared_ptr<SocialPlayer> InsertPlayer(GPID gpid, std::shared_ptr<ClntServer> server);
+	void RemovePlayer(GPID);
 
 	std::list<std::shared_ptr<SocialPlayer> >& GetSocialPlayerList() { return m_socialPlayers; }
 
 	std::shared_ptr<SocialPlayer> FindSocialPlayer(GPID gpid);
+	std::shared_ptr<SocialPlayer> FindSocialPlayer(std::string);
+
 	bool IsExistSocialPlayer(GPID gpid);
 private:
 	std::list<std::shared_ptr<SocialPlayer> > m_socialPlayers;

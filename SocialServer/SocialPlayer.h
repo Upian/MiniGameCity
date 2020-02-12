@@ -16,13 +16,19 @@ public:
 	SocialPlayer(GPID gpid, std::shared_ptr<ClntServer> server);
 	~SocialPlayer() {}
 
+	void Initialize();
+
 	GPID GetGPID() const { return m_gpid; }
 	std::string GetName() const { return m_name; }
 
 	std::shared_ptr<ClntServer> GetServer() const { return m_server; }
 	std::shared_ptr<Guild> GetGuild() const { return m_guild; }
 
-	
+	//Friend
+	bool IsFriendRequestEmpty() const { return m_friendRequestQueue.empty(); }
+	std::shared_ptr<SocialPlayer> GetFriendRequest() { m_friendRequestQueue.front(); m_friendRequestQueue.pop(); }
+	void AddFriendRequest(std::shared_ptr<SocialPlayer> pplayer) { m_friendRequestQueue.push(pplayer); }
+
 	void SetName(std::string na) { m_name = na; } //#Test
 
 private:
@@ -32,7 +38,7 @@ private:
 	std::string m_name;
 
 	//Friend
-	std::queue<std::shared_ptr<SocialPlayer> > m_confirmAddFriendQueue;
+	std::queue<std::shared_ptr<SocialPlayer> > m_friendRequestQueue;
 	std::list<std::shared_ptr<SocialPlayer> > m_friendList;
 	
 	//Guild

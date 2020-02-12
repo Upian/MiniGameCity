@@ -43,10 +43,24 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 	PacketTypeSocialServer type = (PacketTypeSocialServer)PacketTypeDeserial(bufInfo->buffer);
 
 	switch (type) {
-	case PacketTypeSocialServer::acceptPlayerLogin: { 
-		SocialPacketServerAcceptPlayerLogin packet;
+	case PacketTypeSocialServer::updatePlayerLogin: { 
+		SocialPacketServerUpdatePlayerLogin packet;
 		packet.Deserialize(bufInfo->buffer);
-		this->HandleAcceptPlayerLogin(packet, m_gameServers.FindServerBySocket(bufInfo->socket));
+		this->HandleUpdatePlayerLogin(packet, m_gameServers.FindServerBySocket(bufInfo->socket));
+		break;
+	}
+	case PacketTypeSocialServer::updatePlayerLogout: {
+		SocialPacketServerUpdatePlayerLogout packet;
+		packet.Deserialize(bufInfo->buffer);
+		this->HandleUpdatePlayerLogout(packet, m_gameServers.FindServerBySocket(bufInfo->socket));
+		break;
+	}
+	case PacketTypeSocialServer::addFriendRequest: {
+		SocialPacketServerAddFriendRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		auto srcPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_src);
+		auto destPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_destName);
+		m_friendManager.HandleAddFriendRequest(srcPlayer, destPlayer);
 		break;
 	}
 	default: {
@@ -56,7 +70,7 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 	}
 }
 
-void SocialServer::HandleAcceptPlayerLogin(SocialPacketServerAcceptPlayerLogin& packet, std::shared_ptr<ClntServer> server) {
+void SocialServer::HandleUpdatePlayerLogin(SocialPacketServerUpdatePlayerLogin& packet, std::shared_ptr<ClntServer> server) {
 	if (nullptr == server) 
 		return;
 	
@@ -65,6 +79,18 @@ void SocialServer::HandleAcceptPlayerLogin(SocialPacketServerAcceptPlayerLogin& 
 		return;
 
 	pplayer->SetName(packet.m_name); //#Test
+	Util::LoggingDebug("", "---------------------------------------------");
+	for (auto k : m_socialPlayerManager.GetSocialPlayerList()) {
+		Util::LoggingDebug("", "%s[%u]", k->GetName().c_str(), k->GetGPID());
+	}
+	Util::LoggingDebug("", "---------------------------------------------");
+	//#DatabaseLoad
+	this->LoadPlayerSocialData(pplayer);
+}
+
+void SocialServer::HandleUpdatePlayerLogout(SocialPacketServerUpdatePlayerLogout& packet, std::shared_ptr<ClntServer> server) {
+	m_socialPlayerManager.RemovePlayer(packet.m_gpid);
+	//#DatabaseSave
 	Util::LoggingDebug("", "---------------------------------------------");
 	for (auto k : m_socialPlayerManager.GetSocialPlayerList()) {
 		Util::LoggingDebug("", "%s[%u]", k->GetName().c_str(), k->GetGPID());

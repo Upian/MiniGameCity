@@ -29,7 +29,6 @@ private:
 	void HandleBasePacketSocial(BufferInfo* bufInfo);
 	void HandleBasePacketGame(BufferInfo* bufInfo);
 
-	void RegisterPlayerAtSocialServer(std::shared_ptr<Player>);
 	void PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer);
 
 	SOCKET m_managementServerSocket = 0;

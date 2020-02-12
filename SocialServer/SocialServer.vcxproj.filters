@@ -31,6 +31,9 @@
     <ClInclude Include="SocialPlayerManager.h">
       <Filter>SocialPlayer</Filter>
     </ClInclude>
+    <ClInclude Include="FriendsManager.h">
+      <Filter>Friend</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SocialServer.cpp">
@@ -41,6 +44,9 @@
     </ClCompile>
     <ClCompile Include="SocialPlayerManager.cpp">
       <Filter>SocialPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="FriendsManager.cpp">
+      <Filter>Friend</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
