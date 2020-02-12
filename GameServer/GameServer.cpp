@@ -54,7 +54,10 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 		this->HandleBasePacketSocial(bufInfo);
 		break;
 	}
-
+	case BasePacketType::basePacketTypeGame: {
+		this->HandleBasePacketGame(bufInfo);
+		break;
+	}
 	default: break;
 		Util::LoggingInfo("GameServer.log", "Recv wrong base packet ID: %d", type);
 	}
@@ -82,12 +85,20 @@ void GameServer::HandleBasePacketRoom(BufferInfo* bufInfo) {
 	m_roomManager.HandleRoomPacket(bufInfo->buffer, player);
 }
 
-void GameServer::HandleBasePacketSocial(BufferInfo * bufInfo) {
+void GameServer::HandleBasePacketSocial(BufferInfo* bufInfo) {
 	auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
 	if (nullptr == player)
 		return;
 
 	m_socialServerHandler.HandleSocialPacket(bufInfo->buffer, player);
+}
+
+void GameServer::HandleBasePacketGame(BufferInfo* bufInfo) {
+	auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
+	if (nullptr == player)
+		return;
+
+	player->HandlePacket(bufInfo);
 }
 
 #pragma endregion Handle packet functions

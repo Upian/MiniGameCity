@@ -28,6 +28,7 @@ private:
 	void HandlePacketPrepareTransfer(); //PacketPrepareTransfer
 	void HandleBasePacketRoom(BufferInfo* bufInfo);
 	void HandleBasePacketSocial(BufferInfo* bufInfo);
+	void HandleBasePacketGame(BufferInfo* bufInfo);
 
 	SOCKET m_managementServerSocket = 0;
 	SOCKET m_socialServerSocket = 0;

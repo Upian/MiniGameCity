@@ -6,6 +6,7 @@
 // Should I put this function in BaseServer or here?
 
 
+
 bool ClientBase::SendPacket(BasePacket& packet) {
 	m_clientBuffer.Clear();
 
