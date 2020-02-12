@@ -289,9 +289,8 @@ void ManagementServer::ConnectToDBCache() {
 	SOCKADDR_IN address;
 	ZeroMemory(&address, sizeof(address));
 	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = inet_addr(Util::GetConfigToString("ManagementServer.ini", "Network", "DBCacheIP", "127.0.0.1").c_str()); // 10.255.252.95
-	address.sin_port = htons(Util::GetConfigToInt("ManagementServer.ini", "Network", "DBCachePort", 10005)); // 10002
-
+	address.sin_addr.s_addr = inet_addr(Util::GetConfigToString("ManagementServer.ini", "Network", "DBCacheIP", "127.0.0.1").c_str());
+	address.sin_port = htons(Util::GetConfigToInt("ManagementServer.ini", "Network", "DBCachePort", 20000));
 	if (SOCKET_ERROR == connect(dbCache, (SOCKADDR*)&address, sizeof(address))) {
 		Util::LoggingFatal("ManagementServer.log", "ERROR - Can not connect to db server");
 		_exit(0);

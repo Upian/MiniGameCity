@@ -269,7 +269,7 @@ void LoginServer::ConnectToManagementServer() {
 	ZeroMemory(&address, sizeof(address));
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = inet_addr(Util::GetConfigToString("LoginServer.ini", "Network", "ManagementServerIP", "127.0.0.1").c_str()); // 10.255.252.95
-	address.sin_port = htons(Util::GetConfigToInt("LoginServer.ini", "Network", "ManagementServerPort", 19998)); // 19999
+	address.sin_port = htons(Util::GetConfigToInt("LoginServer.ini", "Network", "ManagementServerPort", 19999)); // 19999
 
 	if (SOCKET_ERROR == connect(managementServer, (SOCKADDR*)&address, sizeof(address))) {
 		Util::LoggingFatal("LoginServer.log", "ERROR - Can not connect to management server");

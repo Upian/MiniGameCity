@@ -39,10 +39,10 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("DBCache.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
-		if ((Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMinSize") > packetManagementRequest.userId.size()) || (packetManagementRequest.userId.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMaxSize"))) {
+		if ((Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMinSize", 4) > packetManagementRequest.userId.size()) || (packetManagementRequest.userId.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMaxSize", 8))) {
 			flag = false;
 		}
-		if ((flag == true) && (Util::GetConfigToInt("DBCache.ini", "Definition", "UserPwMinSize") > packetManagementRequest.userPw.size()) || (packetManagementRequest.userPw.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserPwMaxSize"))) {
+		if ((flag == true) && (Util::GetConfigToInt("DBCache.ini", "Definition", "UserPwMinSize", 8) > packetManagementRequest.userPw.size()) || (packetManagementRequest.userPw.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserPwMaxSize", 16))) {
 			flag = false;
 		}
 		if (flag == true) {
@@ -73,7 +73,7 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			Account account = db.LoginAccount(packetManagementRequest.userId, packetManagementRequest.userPw);
 			packetManagementResponse.flag = account.flag;
 			packetManagementResponse.userNick = account.nick;
-			int id = db.GetId();
+			packetManagementResponse.GPID = db.GetId();
 			db.Close();
 
 			bufInfo->Clear();
@@ -115,13 +115,13 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("DBCache.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
-		if ((Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMinSize") > packetManagementRequest.userId.size()) || (packetManagementRequest.userId.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMaxSize"))) {
+		if ((Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMinSize", 4) > packetManagementRequest.userId.size()) || (packetManagementRequest.userId.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMaxSize", 8))) {
 			flag = false;
 		}
-		if ((flag == true) && (Util::GetConfigToInt("DBCache.ini", "Definition", "UserPwMinSize") > packetManagementRequest.userPw.size()) || (packetManagementRequest.userPw.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserPwMaxSize"))) {
+		if ((flag == true) && (Util::GetConfigToInt("DBCache.ini", "Definition", "UserPwMinSize", 8) > packetManagementRequest.userPw.size()) || (packetManagementRequest.userPw.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserPwMaxSize", 16))) {
 			flag = false;
 		}
-		if ((flag == true) && (packetManagementRequest.userNick.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserNickMaxSize"))) {
+		if ((flag == true) && (packetManagementRequest.userNick.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserNickMaxSize", 24))) {
 			flag = false;
 		}
 		if (flag == true) {
