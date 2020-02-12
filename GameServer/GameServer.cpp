@@ -3,11 +3,16 @@
 #include "RoomManager.h"
 #include "RoomPacket.h"
 #include "SocialServerPacket.h"
+#include "PreLoadPacket.h"
 
 GameServer::GameServer() {}
 GameServer::~GameServer() {}
 
 #pragma region Client connection
+namespace {
+	int testGpid = 0;
+	char testName = 'a';
+}
 void GameServer::HandleAcceptClient(SOCKET clientSocket) {
 	if (clientSocket < 1)
 		return;
@@ -15,12 +20,22 @@ void GameServer::HandleAcceptClient(SOCKET clientSocket) {
 	/*
 	*	After accepting client, check if it matches with information received from management server
 	*/
-
-
+// 
+// 
+// 
+// 	
 	auto player = m_playerManager.InsertPlayer(clientSocket); //#temp
-	this->RegisterAtSocialServer(player);
-	printf("Connect client[%d] Total players[%d]\n", clientSocket, m_playerManager.GetPlayerList().size());
+	player->SetGPID(++testGpid); //#Test 
+	std::string name;
+	name += testName++;
+	player->SetPlayerName(name); //#Test
+	//Resister Social server
+	this->RegisterPlayerAtSocialServer(player);
+	
+	//Send player data to each player
+	this->PreLoadClientDataToPlayer(player);
 
+	Util::LoggingDebug("GameServer.log", "Connect Client[%d], name[%s], GPID[%d]", clientSocket, player->GetPlayerName().c_str(), player->GetGPID());
 }
 
 void GameServer::HandleDisconnectClient(SOCKET clientSocket) {
@@ -114,10 +129,22 @@ void GameServer::InitializeGameServer() {
 
 	m_roomManager.Initialize();
 }
-int i = 0;
-void GameServer::RegisterAtSocialServer(std::shared_ptr<Player> pplayer) {
+
+void GameServer::RegisterPlayerAtSocialServer(std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+
 	SocialPacketServerUpdatePlayerInfo packet;
-	packet.m_gpid = ++i;
+	packet.m_gpid = pplayer->GetGPID();
 
 	m_socialServerHandler.SendPacketToServer(packet);
+}
+
+void GameServer::PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+
+	PreLoadPacketLoadPlayerInfo packet;
+	packet.m_playerName = pplayer->GetPlayerName();
+	pplayer->SendPacket(packet);
 }

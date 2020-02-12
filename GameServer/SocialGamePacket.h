@@ -74,25 +74,41 @@ struct SocialGamePacketChatNormalResponse : public BaseSocialGamePacket {
 struct SocialGamePacketAddFriendRequest : public BaseSocialGamePacket {
 	SocialGamePacketAddFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialAddFriendRequest) {}
 
-	std::string m_name;
+	std::string m_destName;
 
 	virtual Buffer& Serialize() {
+		buffer << m_destName;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
+		buf >> m_destName;
 
 		return;
 	}
 };
+// enum class ErrorCodeAddFriend : char {
+// 	none = 0,
+// 
+// 	notExistPlayer,
+// 	fullFriendList,
+// 
+// 	count,
+// };
 struct SocialGamePacketAddFriendResponse : public BaseSocialGamePacket {
 	SocialGamePacketAddFriendResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialAddFriendResponse) {}
 
+	bool m_success = false;
+
 	virtual Buffer& Serialize() {
+		buffer << m_success;
+//		buffer << m_errorCode;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
+		buf >> m_success;
+//		buf >> m_errorCode;
 
 		return;
 	}

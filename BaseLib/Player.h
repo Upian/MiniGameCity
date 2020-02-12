@@ -32,12 +32,13 @@ public:
 
 	SOCKET GetSocket() const { return m_socket; }
 	GPID GetGPID() const { return m_gamePlayerId; }
+	void SetGPID(int i) { m_gamePlayerId = i; } //#Test
 
 	void SetPlayerState(PlayerState state) { m_playerState = state; }
 	PlayerState GetPlayerState() { return m_playerState; }
 
 	void SetPlayerName(std::string& name) { m_playerName = name; }
-	std::string GetPlayerName() const { return m_playerName; }
+	std::string& GetPlayerName() { return m_playerName; }
 
 //	virtual void HandlePacket(BufferInfo* packet) override;
 

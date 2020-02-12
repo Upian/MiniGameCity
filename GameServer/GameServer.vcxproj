@@ -30,6 +30,7 @@
     <ClInclude Include="InGame.h" />
     <ClInclude Include="InGamePacket.h" />
     <ClInclude Include="ManagementServerHandler.h" />
+    <ClInclude Include="PreLoadPacket.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="RoomPacket.h" />

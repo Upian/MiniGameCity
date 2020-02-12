@@ -59,6 +59,7 @@ void SocialServer::HandleBaseSocialPacket(Buffer& buffer) {
 
 
 void SocialServer::LoadPlayerSocialData(GPID gpid) {
+	printf("accept %d", gpid);
 /*
 *	Load from database
 *	

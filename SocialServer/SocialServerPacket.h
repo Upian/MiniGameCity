@@ -33,7 +33,7 @@ protected:
 struct SocialPacketServerUpdatePlayerInfo : public BaseSocialServerPacket {
 	SocialPacketServerUpdatePlayerInfo() : BaseSocialServerPacket(PacketTypeSocialServer::updatePlayerInfo) {}
 
-	int m_gpid = 0;
+	GPID m_gpid = 0;
 
 	virtual Buffer& Serialize() {
 		buffer << m_gpid;
@@ -46,5 +46,36 @@ struct SocialPacketServerUpdatePlayerInfo : public BaseSocialServerPacket {
 	}
 };
 
+//Friend
+struct SocialPacketServerAddFriendRequest : public BaseSocialServerPacket {
+	SocialPacketServerAddFriendRequest() : BaseSocialServerPacket(PacketTypeSocialServer::addFriendRequest) {}
 
+	GPID m_src;
+	std::string m_destName;
+
+	virtual Buffer& Serialize() {
+		buffer << m_src;
+		buffer << m_destName;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_src;
+		buf >> m_destName;
+
+		return;
+	}
+};
+struct SocialPacketServerAddFriendResponse : public BaseSocialServerPacket {
+	SocialPacketServerAddFriendResponse() : BaseSocialServerPacket(PacketTypeSocialServer::addFriendResponse) {}
+
+	virtual Buffer& Serialize() {
+	
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		
+		return;
+	}
+};
 #endif // !__SOCIALSERVER_BASE_SOCIAL_PACKET_H__

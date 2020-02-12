@@ -64,5 +64,8 @@
     <ClInclude Include="SocialGamePacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
+    <ClInclude Include="PreLoadPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

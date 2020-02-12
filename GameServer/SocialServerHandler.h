@@ -17,9 +17,13 @@ public:
 	void HandleSocialPacket(Buffer& buffer, std::shared_ptr<Player> player); //Client to server
 
 	virtual void RegisterToServer() override {}
-	virtual void HandlePacket(Buffer& buffer) override {}
+	virtual void HandlePacket(Buffer& buffer) override;
 private:
+	//Client to Game server
 	void HandlePacketChatNormal(SocialGamePacketChatNormalRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketAddFriend(SocialGamePacketAddFriendRequest& packet, std::shared_ptr<Player> player);
+
+	//Social server to Game server
 
 	GameServer* m_gameServer;
 };

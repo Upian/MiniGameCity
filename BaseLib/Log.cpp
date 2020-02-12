@@ -103,6 +103,10 @@ namespace Util {
 	}
 
 	void LoggingFatal(std::string fileName, const char* msg, ...) {
+		Util::LogManager* logger = Util::LogManager::GetInstance();
+		if (logger->GetLogLevel() < LogLevel::logLevelFatal)
+			return;
+
 		int len = 0;
 		char msgBuf[1024] = { 0, };
 
@@ -115,6 +119,10 @@ namespace Util {
 		Logging(LogLevel::logLevelFatal, fileName, msgBuf);
 	}
 	void LoggingError(std::string fileName, const char* msg, ...) {
+		Util::LogManager* logger = Util::LogManager::GetInstance();
+		if (logger->GetLogLevel() < LogLevel::logLevelError)
+			return;
+
 		int len = 0;
 		char msgBuf[1024] = { 0, };
 
@@ -127,6 +135,10 @@ namespace Util {
 		Logging(LogLevel::logLevelError, fileName, msgBuf);
 	}
 	void LoggingInfo(std::string fileName, const char* msg, ...) {
+		Util::LogManager* logger = Util::LogManager::GetInstance();
+		if (logger->GetLogLevel() < LogLevel::logLevelInfo)
+			return;
+
 		int len = 0;
 		char msgBuf[1024] = { 0, };
 
@@ -139,6 +151,10 @@ namespace Util {
 		Logging(LogLevel::logLevelInfo, fileName, msgBuf);
 	}
 	void LoggingDebug(std::string fileName, const char* msg, ...) {
+		Util::LogManager* logger = Util::LogManager::GetInstance();
+		if (logger->GetLogLevel() < LogLevel::logLevelDebug)
+			return;
+
 		int len = 0;
 		char msgBuf[1024] = { 0, };
 

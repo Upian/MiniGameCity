@@ -148,7 +148,7 @@ void RoomManager::HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::s
 		if ((page * m_maximumRoomOnePage) <= count)
 			break;
 
-		Util::LoggingInfo("", "room number[%d] \t Room[%s], %d/%d, %s",
+		Util::LoggingDebug("Room.log", "room number[%d] \t Room[%s], %d/%d, %s",
 			room->GetRoomNumber(), room->GetRoomName().c_str(), room->GetPlayerCount(), room->GetMaxPlayerCount(), 
 			room->GetIsUsePassword() ? "Yes" : "No");
 		
@@ -195,41 +195,9 @@ void RoomManager::HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std:
 	}
 		
 
-	Util::LoggingInfo("0_Test.log", "Room status[%d]-[%s], players: %d\n",
+	Util::LoggingDebug("Room.log", "Room status[%d]-[%s], players: %d\n",
 		tempRoom->GetRoomNumber(), tempRoom->GetRoomName().c_str(), tempRoom->GetPlayerCount()); //#Test
 	player->SendPacket(responsePacket);
-//	//wrong password
-//	else if (false == tempRoom->CheckPassword(packet.m_password)) { 
-//		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeWrongPassword;
-//		player->SendPacket(responsePacket);
-//		return;
-//	}
-//	//Already included in another room
-//	else if (PlayerState::playerStateRoom == player->GetPlayerState()) {
-//		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeAlreadyIncluded;
-//		player->SendPacket(responsePacket);
-//		return;
-//	}
-//	//already start 
-//	else if (true == tempRoom->IsRoomStateGaming()) {
-//		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeGameStart;
-//		player->SendPacket(responsePacket);
-//		return;
-//	}
-//	//can not enter room
-//	else if (true == tempRoom->CheckIsRoomIsFull()) {
-//		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeMaxPlayer;
-//		player->SendPacket(responsePacket);
-//		return;
-//	}
-//	
-//	if (ErrorTypeEnterRoom::errorTypeNone == responsePacket.m_errorType && 
-//		false == tempRoom->PlayerEnterRoom(player)) {
-//		responsePacket.m_errorType = ErrorTypeEnterRoom::errorTypeCanNotEnterRoom;
-//		player->SendPacket(responsePacket);
-//		return;
-//	}
-
 
 	return;
 }

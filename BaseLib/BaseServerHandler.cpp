@@ -25,15 +25,20 @@ void BaseServerHandler::ConnectToServer(std::string ipAddress, short port) {
 
 void BaseServerHandler::RecvThread() {
 	char buf[BUFFER_SIZE];
+//	Buffer buf;
 	while (true) {
+		ZeroMemory(buf, BUFFER_SIZE);
 		int recvBytes = recv(m_server.GetSocket(), buf, BUFFER_SIZE, 0);
-
 		if (0 <= recvBytes) {
 			closesocket(m_server.GetSocket());
 			return;
 		}
+		if (-1 == recvBytes) {
+			Util::LoggingFatal("BaseServerHandler.log", "Recv thread Error[%d]", WSAGetLastError());
+			closesocket(m_server.GetSocket());
+			return;
+		}
 		Buffer buffer(buf, recvBytes);
-
 		this->HandlePacket(buffer);
 	}
 }

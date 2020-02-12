@@ -1,5 +1,6 @@
 #include "SocialServerHandler.h"
 #include "SocialGamePacket.h"
+#include "SocialServerPacket.h"
 #include "GameServer.h"
 #include "Player.h"
 #include "Log.h"
@@ -23,8 +24,28 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 		this->HandlePacketChatNormal(packet, player);
 		break;
 	}
+	case PacketTypeSocialClient::packetTypeSocialAddFriendRequest: {
+		SocialGamePacketAddFriendRequest packet;
+		packet.Deserialize(buffer);
+		this->HandlePacketAddFriend(packet, player);
+	}
 	default:
 		Util::LoggingError("Social.log", "Un defined packet error. packet type[%d]", type);
+	}
+}
+
+void SocialServerHandler::HandlePacket(Buffer& buffer) {
+	BasePacketType type = (BasePacketType)PacketTypeDeserial(buffer);
+	if (BasePacketType::basePacketTypeSocialServer != type)
+		return;
+	
+	PacketTypeSocialServer socialType = (PacketTypeSocialServer)PacketTypeDeserial(buffer);
+	switch (socialType) {
+	case PacketTypeSocialServer::addFriendResponse: {
+		Util::LoggingInfo("", "TTTETST Recv packet");
+		break;
+	}
+	default:break;
 	}
 }
 
@@ -53,4 +74,14 @@ void SocialServerHandler::HandlePacketChatNormal(SocialGamePacketChatNormalReque
 		break;
 
 	}
+}
+void SocialServerHandler::HandlePacketAddFriend(SocialGamePacketAddFriendRequest& packet, std::shared_ptr<Player> player) {
+	if (nullptr == player)
+		return;
+	
+	SocialPacketServerAddFriendRequest sendPacket;
+	sendPacket.m_src = player->GetGPID();/*player->GetGPID();*/
+	sendPacket.m_destName = packet.m_destName;
+	Util::LoggingDebug("", "Send packet to social server [%d] --> [%s]", sendPacket.m_src, sendPacket.m_destName.c_str());
+	this->SendPacketToServer(sendPacket);
 }
