@@ -3,11 +3,6 @@
 
 #include "BasePacket.h"
 
-// must go to ini file 
-#define ID_SIZE 8
-#define PW_SIZE 16
-#define NICK_SIZE 24
-
 enum DBCachePacketType : char {
 	dbCachePacketTypeNone = 0,
 

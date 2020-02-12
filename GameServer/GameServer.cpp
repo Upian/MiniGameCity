@@ -121,8 +121,8 @@ void GameServer::HandleBasePacketGame(BufferInfo* bufInfo) {
 	auto player = m_playerManager.FindPlayerBySocket(bufInfo->socket);
 	if (nullptr == player)
 		return;
-
-	player->HandlePacket(bufInfo);
+	
+	player->SetGamePacket(bufInfo);
 }
 
 #pragma endregion Handle packet functions

@@ -102,6 +102,8 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		break;
 	}
 	case clientLoginPacketTypeLogoutRequest: {
+		ClientLoginPacketTypeLogoutRequest packetClientRequest{};
+		packetClientRequest.Deserialize(bufInfo->buffer);
 		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 		LoginManagementPacketTypeLogoutRequest packetLoginRequest{};
 		packetLoginRequest.GPID = 10; // serialnumber;

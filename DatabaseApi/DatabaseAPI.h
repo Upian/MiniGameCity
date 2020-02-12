@@ -1,6 +1,3 @@
-//헤더 파일로 만들어야 함
-//올릴 때에는 lib추가해서
-
 #ifndef __DB_API_H__
 #define __DB_API_H__
 
@@ -28,10 +25,10 @@ public:
 	~DatabaseAPI(); // close
 
 	int GetId() {
-		return id;
+		return GPID;
 	}
-	void SetId(int _id) {
-		id = _id;
+	void SetId(unsigned __int32 _GPID) {
+		GPID = _GPID;
 	}
 
 	bool Connect(const std::string& server, const std::string& user, const std::string& password, const std::string& database, const int& port);
@@ -46,9 +43,7 @@ private:
 	MYSQL* conn; // 커낵터
 	MYSQL_RES* res; // 결과 값
 	MYSQL_ROW row; // 결과 row
-	int id = 0; // id 값
+	unsigned __int32 GPID  = 0; // id 값
 };
-
-
 
 #endif // __DB_API_H__

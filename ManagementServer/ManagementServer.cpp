@@ -127,9 +127,10 @@ void ManagementServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		break;
 	}
 	case loginManagementPacketTypeLogoutRequest: {
+		LoginManagementPacketTypeLogoutRequest packetLoginRequest{};
+		packetLoginRequest.Deserialize(bufInfo->buffer);
 		Util::LoggingInfo("ManagementServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 		ManagementDBCachePacketTypeLogoutRequest packetManagementRequest{};
-		packetManagementRequest.GPID = 10; // serialnumber;
 		bufInfo->Clear();
 		bufInfo->buffer = packetManagementRequest.Serialize();
 		send(dbCache, bufInfo->buffer, BUFFER_SIZE, 0);

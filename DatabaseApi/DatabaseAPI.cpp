@@ -39,7 +39,7 @@ Account DatabaseAPI::LoginAccount(const std::string& userId, const std::string& 
 	row = mysql_fetch_row(res);
 
 	if (row != nullptr) {
-		id = atoi(row[0]);
+		GPID = atoi(row[0]);
 		account.flag = true;
 		account.nick = row[3];
 	}
@@ -50,7 +50,7 @@ Account DatabaseAPI::LoginAccount(const std::string& userId, const std::string& 
 	mysql_free_result(res);
 	sql = "UPDATE ";
 	sql += DB_NAME;
-	sql += ".login SET date_login=now() WHERE id=" + std::to_string(id);
+	sql += ".login SET date_login=now() WHERE GPID=" + std::to_string(GPID);
 	if (mysql_query(conn, sql.c_str())) {
 		printf("로그인업데이트 실패\n");
 		account.flag = false;
@@ -63,7 +63,7 @@ Account DatabaseAPI::LoginAccount(const std::string& userId, const std::string& 
 void DatabaseAPI::LogoutAccount() {
 	std::string sql = "UPDATE ";
 	sql += DB_NAME;
-	sql += ".login SET date_logout=now() WHERE id=" + std::to_string(id);
+	sql += ".login SET date_logout=now() WHERE GPID=" + std::to_string(GPID);
 	printf("%s\n", sql.c_str());
 	if (mysql_query(conn, sql.c_str())) {
 		printf("로그아웃다시\n");
@@ -82,21 +82,21 @@ bool DatabaseAPI::SignUpAccount(const std::string& userId, const std::string& us
 	}
 
 	mysql_free_result(res);
-	sql = "SELECT login.id FROM login WHERE user_id='" + userId + "'";
+	sql = "SELECT login.GPID FROM login WHERE user_id='" + userId + "'";
 	if (mysql_query(conn, sql.c_str())) {
-		printf("id 가져오기 실패\n");
+		printf("GPID 가져오기 실패\n");
 		return false;
 	}
 	res = mysql_use_result(conn);
 	row = mysql_fetch_row(res);
 
-	id = atoi(row[0]);
+	GPID = atoi(row[0]);
 
 	mysql_free_result(res);
 	sql = "INSERT INTO ";
 	sql += DB_NAME;
-	sql += ".user (id) VALUES ";
-	sql += "(" + std::to_string(id) + ")";
+	sql += ".user (GPID) VALUES ";
+	sql += "(" + std::to_string(GPID) + ")";
 	if (mysql_query(conn, sql.c_str())) {
 		printf("update user 실패\n");
 		return false;
@@ -104,8 +104,8 @@ bool DatabaseAPI::SignUpAccount(const std::string& userId, const std::string& us
 
 	sql = "INSERT INTO ";
 	sql += DB_NAME;
-	sql += ".ranking (id, ranking) VALUES ";
-	sql += "(" + std::to_string(id) + ", " + std::to_string(id) + ")";
+	sql += ".ranking (GPID, ranking) VALUES ";
+	sql += "(" + std::to_string(GPID) + ", " + std::to_string(GPID) + ")";
 	if (mysql_query(conn, sql.c_str())) {
 		printf("update ranking 실패\n");
 		return false;
@@ -113,8 +113,8 @@ bool DatabaseAPI::SignUpAccount(const std::string& userId, const std::string& us
 
 	sql = "INSERT INTO ";
 	sql += DB_NAME;
-	sql += ".inventory (id) VALUES ";
-	sql += "(" + std::to_string(id) + ")";
+	sql += ".inventory (GPID) VALUES ";
+	sql += "(" + std::to_string(GPID) + ")";
 
 	if (mysql_query(conn, sql.c_str())) {
 		printf("update inventory 실패\n");
@@ -123,8 +123,8 @@ bool DatabaseAPI::SignUpAccount(const std::string& userId, const std::string& us
 
 	sql = "INSERT INTO ";
 	sql += DB_NAME;
-	sql += ".social (id) VALUES ";
-	sql += "(" + std::to_string(id) + ")";
+	sql += ".social (GPID) VALUES ";
+	sql += "(" + std::to_string(GPID) + ")";
 
 	if (mysql_query(conn, sql.c_str())) {
 		printf("update social 실패\n");
@@ -136,7 +136,7 @@ bool DatabaseAPI::SignUpAccount(const std::string& userId, const std::string& us
 bool DatabaseAPI::StopAccount() {
 	std::string sql = "UPDATE ";
 	sql += DB_NAME;
-	sql += ".login SET user_status=0 WHERE id=" + std::to_string(id);
+	sql += ".login SET user_status=0 WHERE GPID=" + std::to_string(GPID);
 	printf("%s\n", sql.c_str());
 	if (mysql_query(conn, sql.c_str())) {
 		printf("stopAccount 실패\n");
