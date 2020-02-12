@@ -4,9 +4,6 @@
 #include "ManagementPacket.h"
 
 #define CHANNEL_SIZE 4
-#define ID_SIZE 8
-#define PW_SIZE 16
-#define NICK_SIZE 24
 
 enum LoginPacketType : char {
 	loginPacketTypeNone = 0,
@@ -187,7 +184,7 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		for (int i = 0; i < CHANNEL_SIZE; ++i) {
+		for (int i = 0; i < Util::GetConfigToInt("LoginServer.ini", "Definition", "ChannelSize"); ++i) {
 			_buf >> channel[i].channelName;
 			_buf >> channel[i].numberOfPeople;
 			_buf >> channel[i].limitOfPeople;
