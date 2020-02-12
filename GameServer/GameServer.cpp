@@ -30,7 +30,7 @@ void GameServer::HandleAcceptClient(SOCKET clientSocket) {
 	name += testName++;
 	player->SetPlayerName(name); //#Test
 	//Resister Social server
-	this->RegisterPlayerAtSocialServer(player);
+	m_socialServerHandler.UpdatePlayerInfoAtLogin(player);
 	
 	//Send player data to each player
 	this->PreLoadClientDataToPlayer(player);
@@ -44,6 +44,8 @@ void GameServer::HandleDisconnectClient(SOCKET clientSocket) {
 	auto player = m_playerManager.FindPlayerBySocket(clientSocket);
 	if (nullptr == player)
 		return;
+
+	m_socialServerHandler.UpdatePlayerInfoAtLogout(player);
 
 	auto room = player->GetRoom();//m_roomManager.FindRoomByPlayer(player);
 	if(nullptr != room)
@@ -131,6 +133,7 @@ void GameServer::InitializeGameServer() {
 		Util::GetConfigToString("GameServer.ini", "Network", "ManagementServerIP", "10.255.252.100").c_str(),
 		Util::GetConfigToInt("GameServer.ini", "Network", "ManagementServerPort", 19999)
 	);
+	m_socialServerHandler.Initialize();
 	m_socialServerHandler.ConnectToServer(
 		Util::GetConfigToString("GameServer.ini", "Network", "SocialServerIP", "10.255.252.100").c_str(),
 		Util::GetConfigToInt("GameServer.ini", "Network", "SocialServerPort", 20100)
@@ -138,16 +141,6 @@ void GameServer::InitializeGameServer() {
 
 
 	m_roomManager.Initialize();
-}
-
-void GameServer::RegisterPlayerAtSocialServer(std::shared_ptr<Player> pplayer) {
-	if (nullptr == pplayer)
-		return;
-
-	SocialPacketServerUpdatePlayerInfo packet;
-	packet.m_gpid = pplayer->GetGPID();
-
-	m_socialServerHandler.SendPacketToServer(packet);
 }
 
 void GameServer::PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer) {

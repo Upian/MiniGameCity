@@ -34,6 +34,27 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 	}
 }
 
+void SocialServerHandler::UpdatePlayerInfoAtLogin(std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+
+	SocialPacketServerUpdatePlayerLogin packet;
+	packet.m_gpid = pplayer->GetGPID();
+	packet.m_name = pplayer->GetPlayerName();
+
+	this->SendPacketToServer(packet);
+}
+
+void SocialServerHandler::UpdatePlayerInfoAtLogout(std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+
+	SocialPacketServerUpdatePlayerLogout packet;
+	packet.m_gpid = pplayer->GetGPID();
+
+	this->SendPacketToServer(packet);
+}
+
 void SocialServerHandler::HandlePacket(Buffer& buffer) {
 	BasePacketType type = (BasePacketType)PacketTypeDeserial(buffer);
 	if (BasePacketType::basePacketTypeSocialServer != type)
@@ -59,6 +80,8 @@ void SocialServerHandler::HandlePacketChatNormal(SocialGamePacketChatNormalReque
 
 	switch (player->GetPlayerState()) {
 	case PlayerState::playerStateLobby: {
+		if (nullptr == m_gameServer)
+			m_gameServer = GameServer::GetServer();
 		m_gameServer->GetPlayerManager().SendToLobbyPlayers(responsePacket);
 		break;
 	}

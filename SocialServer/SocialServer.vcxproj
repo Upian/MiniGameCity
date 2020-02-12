@@ -19,12 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FriendsManager.h" />
     <ClInclude Include="SocialPlayer.h" />
     <ClInclude Include="SocialPlayerManager.h" />
     <ClInclude Include="SocialServerPacket.h" />
     <ClInclude Include="SocialServer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FriendsManager.cpp" />
     <ClCompile Include="SocialPlayer.cpp" />
     <ClCompile Include="SocialPlayerManager.cpp" />
     <ClCompile Include="SocialServer.cpp" />
