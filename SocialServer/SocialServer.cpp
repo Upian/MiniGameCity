@@ -1,7 +1,7 @@
 #include "SocialServer.h"
 #include "BasePacket.h"
 #include "SocialServerPacket.h"
-
+#include "SocialPlayer.h"
 SocialServer::SocialServer() {}
 SocialServer::~SocialServer() {}
 
@@ -24,12 +24,11 @@ void SocialServer::HandleBasePacket(BufferInfo* bufInfo) {
 	if (nullptr == bufInfo)
 		return;
 
-//	BasePacketType type = PacketTypeDeserial<BasePacketType>(bufInfo->buffer);
 	BasePacketType type = (BasePacketType)PacketTypeDeserial(bufInfo->buffer);
 
 	switch (type) {
 	case BasePacketType::basePacketTypeSocialServer: {
-		this->HandleBaseSocialPacket(bufInfo->buffer);
+		this->HandleBaseSocialPacket(bufInfo);
 		break;
 	}
 	default: {
@@ -40,14 +39,14 @@ void SocialServer::HandleBasePacket(BufferInfo* bufInfo) {
 	}
 }
 
-void SocialServer::HandleBaseSocialPacket(Buffer& buffer) {
-	PacketTypeSocialServer type = (PacketTypeSocialServer)PacketTypeDeserial(buffer);
+void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
+	PacketTypeSocialServer type = (PacketTypeSocialServer)PacketTypeDeserial(bufInfo->buffer);
 
 	switch (type) {
-	case PacketTypeSocialServer::updatePlayerInfo: { 
-		SocialPacketServerUpdatePlayerInfo packet;
-		packet.Deserialize(buffer);
-		this->LoadPlayerSocialData(packet.m_gpid);
+	case PacketTypeSocialServer::acceptPlayerLogin: { 
+		SocialPacketServerAcceptPlayerLogin packet;
+		packet.Deserialize(bufInfo->buffer);
+		this->HandleAcceptPlayerLogin(packet, m_gameServers.FindServerBySocket(bufInfo->socket));
 		break;
 	}
 	default: {
@@ -57,11 +56,26 @@ void SocialServer::HandleBaseSocialPacket(Buffer& buffer) {
 	}
 }
 
+void SocialServer::HandleAcceptPlayerLogin(SocialPacketServerAcceptPlayerLogin& packet, std::shared_ptr<ClntServer> server) {
+	if (nullptr == server) 
+		return;
+	
+	std::shared_ptr<SocialPlayer> pplayer = m_socialPlayerManager.InsertPlayer(packet.m_gpid, server);
+	if (nullptr == pplayer)
+		return;
 
-void SocialServer::LoadPlayerSocialData(GPID gpid) {
-	printf("accept %d", gpid);
+	pplayer->SetName(packet.m_name); //#Test
+	Util::LoggingDebug("", "---------------------------------------------");
+	for (auto k : m_socialPlayerManager.GetSocialPlayerList()) {
+		Util::LoggingDebug("", "%s[%u]", k->GetName().c_str(), k->GetGPID());
+	}
+	Util::LoggingDebug("", "---------------------------------------------");
+}
+
+void SocialServer::LoadPlayerSocialData(std::shared_ptr<SocialPlayer> pplayer) {
 /*
 *	Load from database
 *	
 */
+
 }

@@ -94,7 +94,7 @@ public:
 
 #pragma region operator <<
 	//1Byte
-	Buffer & operator<<(char rhs) {
+	Buffer& operator<<(char rhs) {
 		m_buffer[m_index] = rhs;
 		++m_index;
 		++m_length;
@@ -128,7 +128,25 @@ public:
 		}
 		return *this;
 	}
+	Buffer& operator<<(unsigned __int16& rhs) {
+		for (int i = 0; i < sizeof(rhs); ++i) {
+			m_buffer[m_index] = static_cast<char>(rhs);
+			++m_index;
+			++m_length;
+			rhs >>= 8;
+		}
+		return *this;
+	}
 	Buffer& operator<<(__int32& rhs) {
+		for (int i = 0; i < sizeof(rhs); ++i) {
+			m_buffer[m_index] = static_cast<char>(rhs);
+			++m_index;
+			++m_length;
+			rhs >>= 8;
+		}
+		return *this;
+	}
+	Buffer& operator<<(unsigned __int32& rhs) {
 		for (int i = 0; i < sizeof(rhs); ++i) {
 			m_buffer[m_index] = static_cast<char>(rhs);
 			++m_index;
@@ -146,7 +164,7 @@ public:
 		}
 		return *this;
 	}
-	Buffer& operator<<(size_t& rhs) {
+	Buffer& operator<<(unsigned __int64& rhs) {
 		for (int i = 0; i < sizeof(rhs); ++i) {
 			m_buffer[m_index] = static_cast<char>(rhs);
 			++m_index;

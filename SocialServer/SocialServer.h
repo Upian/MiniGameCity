@@ -4,6 +4,7 @@
 #include "BaseServer.h"
 #include "ClntServerManager.h"
 #include "SocialPlayerManager.h"
+#include "SocialServerPacket.h"
 
 class SocialServer : public BaseServer<SocialServer> {
 public:
@@ -12,8 +13,9 @@ public:
 private:
 	MAKE_SERVER(SocialServer);
 
-	void HandleBaseSocialPacket(Buffer& buffer);
-	void LoadPlayerSocialData(GPID gpid);
+	void HandleBaseSocialPacket(BufferInfo* bufInfo);
+	void HandleAcceptPlayerLogin(SocialPacketServerAcceptPlayerLogin&, std::shared_ptr<ClntServer>);
+	void LoadPlayerSocialData(std::shared_ptr<SocialPlayer>);
 	ClntServerManager m_gameServers;
 	SocialPlayerManager m_socialPlayerManager;
 };

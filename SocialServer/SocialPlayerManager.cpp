@@ -2,14 +2,18 @@
 #include "SocialPlayer.h"
 #include "ClntServer.h"
 
-void SocialPlayerManager::InsertPlayer(GPID gpid, SOCKET socket) {
+std::shared_ptr<SocialPlayer> SocialPlayerManager::InsertPlayer(GPID gpid, SOCKET socket) {
 	if (true == this->IsExistSocialPlayer(gpid))
-		return;
-
-
+		return nullptr;
 }
-void SocialPlayerManager::InsertPlayer(GPID gpid, ClntServer server) {
-	
+std::shared_ptr<SocialPlayer> SocialPlayerManager::InsertPlayer(GPID gpid, std::shared_ptr<ClntServer> server) {
+	if (true == this->IsExistSocialPlayer(gpid))
+		return nullptr;
+
+	std::shared_ptr<SocialPlayer> temp(new SocialPlayer(gpid, server));
+
+	m_socialPlayers.push_back(temp);
+	return temp;
 }
 
 std::shared_ptr<SocialPlayer> SocialPlayerManager::FindSocialPlayer(GPID gpid)

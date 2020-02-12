@@ -59,6 +59,8 @@ void SocialServerHandler::HandlePacketChatNormal(SocialGamePacketChatNormalReque
 
 	switch (player->GetPlayerState()) {
 	case PlayerState::playerStateLobby: {
+		if (nullptr == m_gameServer)
+			m_gameServer = GameServer::GetServer();
 		m_gameServer->GetPlayerManager().SendToLobbyPlayers(responsePacket);
 		break;
 	}

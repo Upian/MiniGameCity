@@ -131,6 +131,7 @@ void GameServer::InitializeGameServer() {
 		Util::GetConfigToString("GameServer.ini", "Network", "ManagementServerIP", "10.255.252.100").c_str(),
 		Util::GetConfigToInt("GameServer.ini", "Network", "ManagementServerPort", 19999)
 	);
+	m_socialServerHandler.Initialize();
 	m_socialServerHandler.ConnectToServer(
 		Util::GetConfigToString("GameServer.ini", "Network", "SocialServerIP", "10.255.252.100").c_str(),
 		Util::GetConfigToInt("GameServer.ini", "Network", "SocialServerPort", 20100)
@@ -144,8 +145,9 @@ void GameServer::RegisterPlayerAtSocialServer(std::shared_ptr<Player> pplayer) {
 	if (nullptr == pplayer)
 		return;
 
-	SocialPacketServerUpdatePlayerInfo packet;
+	SocialPacketServerAcceptPlayerLogin packet;
 	packet.m_gpid = pplayer->GetGPID();
+	packet.m_name = pplayer->GetPlayerName(); //#Test
 
 	m_socialServerHandler.SendPacketToServer(packet);
 }
