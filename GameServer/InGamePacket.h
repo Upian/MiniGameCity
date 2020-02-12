@@ -153,11 +153,9 @@ public:
 
 	bool PlayerReadyCheck(Buffer& buf)
 	{
-		char BaseType;
 		InGamePacketType InGameType;
 		Twenty_Packet_Type CheckType;
 
-		buf >> BaseType;
 		buf >> InGameType;
 		buf >> CheckType;
 		
@@ -231,11 +229,9 @@ public:
 
 	bool AnswerCheck(Buffer& buf)
 	{
-		char BaseType;
 		InGamePacketType InGameType;
 		Twenty_Packet_Type packetType;
 
-		buf >> BaseType;
 		buf >> InGameType;
 		buf >> packetType;
 		
@@ -263,7 +259,12 @@ class TwentyInGameTimer : public TwentyQuestionGamePacket {
 public:
 	TwentyInGameTimer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_InGameTimer){}
 
+	int Remaintime = 0;
+
 	virtual Buffer& Serialize() override {
+
+		buffer << Remaintime;
+
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
@@ -288,7 +289,11 @@ public:
 };
 class TwentyAskerQuestionBroadCast : public TwentyQuestionGamePacket {
 public:
-	TwentyAskerQuestionBroadCast() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Question_BroadCast){}
+	TwentyAskerQuestionBroadCast(std::string name, std::string question) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Question_BroadCast)
+	{
+		PlayerName = name;
+		Question = question;
+	}
 
 	std::string PlayerName = 0;
 	std::string Question = 0;
@@ -309,7 +314,7 @@ public:
 };
 class TwentyProviderReply : public TwentyQuestionGamePacket {
 public:
-	TwentyProviderReply() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Reply){}
+	TwentyProviderReply() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Reply) {}
 
 	int ReplyOX = 0;
 
@@ -326,7 +331,11 @@ public:
 };
 class TwentyProviderReplyBroadCast : public TwentyQuestionGamePacket {
 public:
-	TwentyProviderReplyBroadCast() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Reply_Broadcast){}
+	TwentyProviderReplyBroadCast(std::string name,int Reply) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Reply_Broadcast)
+	{
+		PlayerName = name;
+		ReplyOX = Reply;
+	}
 
 	std::string PlayerName;
 	int ReplyOX = 0;
@@ -347,55 +356,96 @@ class TwentyAskerAnswer : public TwentyQuestionGamePacket {
 public:
 	TwentyAskerAnswer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer){}
 
+	std::string AskerAnswer;
+
 	virtual Buffer& Serialize() override {
+
+		buffer << AskerAnswer;
+
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+
+		buf >> AskerAnswer;
 
 	}
 };
-class TwentyAskerAnswerBroad : public TwentyQuestionGamePacket {
+class TwentyAskerAnswerBroadCast : public TwentyQuestionGamePacket {
 public:
-	TwentyAskerAnswerBroad() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer_Broadcast){}
+	TwentyAskerAnswerBroadCast() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer_Broadcast){}
+
+	std::string AskerAnswer;
+	std::string AskerName;
+	int AnswerResult = 0;
 
 	virtual Buffer& Serialize() override {
+		
+		buffer << AskerAnswer;
+		buffer << AskerName;
+		buffer << AnswerResult;
+
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> AskerAnswer;
+		buf >> AskerName;
+		buf >> AnswerResult;
 	}
 };
 class TwentyNoticeNextAsker : public TwentyQuestionGamePacket {
 public:
 	TwentyNoticeNextAsker() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Notice_Next_Asker){}
 
+	std::string PlayerName;
+	int NoticeStatus = 0; //0은 질문 답변 듣고 넘김, 1은 질문자 타임오버, 2는 출제자 타임오버
+
 	virtual Buffer& Serialize() override {
+		buffer << PlayerName;
+		buffer << NoticeStatus;
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
 
+		buf >> PlayerName;
+		buf >> NoticeStatus;
 	}
 };
 class TwentyRoundEnd : public TwentyQuestionGamePacket {
 public:
 	TwentyRoundEnd() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Round_End){}
 
+	std::string Provider;
+	std::string Asker;
+	int Round = 0;
+
 	virtual Buffer& Serialize() override {
+
+		buffer << Provider;
+		buffer << Asker;
+		buffer << Round;
+
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
 
+		buf >> Provider;
+		buf >> Asker;
+		buf >> Round;
 	}
 };
 class TwentyUpdateScore : public TwentyQuestionGamePacket {
 public:
 	TwentyUpdateScore() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Update_Score){}
 
+	int Score;
+
 	virtual Buffer& Serialize() override {
+		buffer << Score;
+
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> Score;
 	}
 };
 
@@ -403,11 +453,14 @@ class TwentyAnswerOpen : public TwentyQuestionGamePacket {
 public:
 	TwentyAnswerOpen() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Answer_Open){}
 
+	std::string Answer;
+
 	virtual Buffer& Serialize() override {
+		buffer << Answer;
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> Answer;
 	}
 };
 class TwentyRestTime : public TwentyQuestionGamePacket {
@@ -425,44 +478,85 @@ class TwentyGameEnd : public TwentyQuestionGamePacket {
 public:
 	TwentyGameEnd() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Game_End){}
 
+	std::string RankSortPlayer[5];
+	int RankScore[5];
+
 	virtual Buffer& Serialize() override {
+		for (std::string s : RankSortPlayer)
+		{
+			buffer << s;
+		}
+		for (int i : RankScore)
+		{
+			buffer << i;
+		}
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		buf >> RankSortPlayer[0];
+		buf >> RankSortPlayer[1];
+		buf >> RankSortPlayer[2];
+		buf >> RankSortPlayer[3];
+		buf >> RankSortPlayer[4];
 
+		buf >> RankScore[0];
+		buf >> RankScore[1];
+		buf >> RankScore[2];
+		buf >> RankScore[3];
+		buf >> RankScore[4];
 	}
 };
 class TwentyEscapeQuizProvider : public TwentyQuestionGamePacket {
 public:
 	TwentyEscapeQuizProvider() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escpse_Quiz_Provider){}
 
+	std::string PlayerName;
+	int RemainMember = 0;	//남은 멤버가 한명일 경우 1을 설정
+
 	virtual Buffer& Serialize() override {
+
+		buffer << PlayerName;
+		buffer << RemainMember;
+
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> PlayerName;
+		buf >> RemainMember;
 	}
 };
 class TwentyEscapeAnotherPlayer : public TwentyQuestionGamePacket {
 public:
 	TwentyEscapeAnotherPlayer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escape_Another_Player){}
 
+	std::string PlayerName;
+	int RemainMember = 0;	//남은 멤버가 한명일 경우 1을 설정
+	int AskerOrWaiter = 0;	//질문자는 1, 대기자는 0
+
 	virtual Buffer& Serialize() override {
+		buffer << PlayerName;
+		buffer << RemainMember;
+		buffer << AskerOrWaiter;
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> PlayerName;
+		buf >> RemainMember;
+		buf >> AskerOrWaiter;
 	}
 };
 class TwentyExitReservation : public TwentyQuestionGamePacket {
 public:
 	TwentyExitReservation() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Exit_Reservation){}
 
+	int ReservationType = 0; //0은 예약 취소, 1은 나가기 예약
+
 	virtual Buffer& Serialize() override {
+		buffer << ReservationType;
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ReservationType;
 	}
 };
 class TwentyExitImmediately : public TwentyQuestionGamePacket {
@@ -480,6 +574,9 @@ class TwentyExitNotification : public TwentyQuestionGamePacket {
 public:
 	TwentyExitNotification() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Exit_Notification){}
 
+	std::string PlayerName;
+	int ReservationType = 0;	//0은 예약 취소, 1은 나가기 예약
+
 	virtual Buffer& Serialize() override {
 		return buffer;
 	}
@@ -491,10 +588,14 @@ class TwentyRemainQuestion : public TwentyQuestionGamePacket {
 public:
 	TwentyRemainQuestion() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Remain_Question){}
 
+	int RemainQuestionCount;
+
 	virtual Buffer& Serialize() override {
+		buffer << RemainQuestionCount;
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		buf >> RemainQuestionCount;
 
 	}
 };
@@ -507,9 +608,5 @@ class BanKeywordGamePacket : public InGamePacket {
 };
 class CatchMianGamePacket : public InGamePacket {
 
-};
-struct Player_Location_Setting_Packet : public InGamePacket
-{
-	int packet_type = Twenty_Player_Location_Setting;
 };
 #endif

@@ -8,19 +8,11 @@ void Player::Initialize() {
 	m_playerState = PlayerState::playerStateLobby;
 }
 
-void Player::HandlePacket(BufferInfo* bufInfo) {
-	if (nullptr == bufInfo)
-		return;
+/*void Player::HandlePacket(BufferInfo* bufInfo) {}*/
 
-	BasePacketType type = (BasePacketType)PacketTypeDeserial(bufInfo->buffer);
-
-	switch (type)
-	{
-	case BasePacketType::basePacketTypeGame: {
-		InGameBuf = bufInfo;
-		break;
-	}
-	}
+void Player::SetGamePacket(BufferInfo* buffer)
+{
+	InGameBuf = buffer;
 }
 
 BufferInfo* Player::GetGamePacket() {

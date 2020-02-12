@@ -40,7 +40,7 @@ public:
 	void SetPlayerName(std::string& name) { m_playerName = name; }
 	std::string& GetPlayerName() { return m_playerName; }
 
-	virtual void HandlePacket(BufferInfo* packet);
+	/*virtual void HandlePacket(BufferInfo* packet);*/
 
 
 #pragma region Game
@@ -65,6 +65,7 @@ public:
 	void SetExitReservation(bool changeExit) { ExitReservation = changeExit; }
 	bool GetExitReservation() { return ExitReservation; }
 
+	void SetGamePacket(BufferInfo* buffer);
 	BufferInfo* GetGamePacket();
 #pragma endregion for using game room
 
@@ -86,7 +87,7 @@ private:
 
 	int				InGameScore = 0;			//인게임 점수
 	bool			ExitReservation = false;	//게임 나가기 예약
-	BufferInfo*		InGameBuf;
+	BufferInfo*		InGameBuf;					//인게임에 사용할 버퍼
 
 #pragma endregion for using game room
 };

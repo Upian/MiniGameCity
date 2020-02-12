@@ -53,8 +53,8 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 			TwentyCountDownEnd endpacket;
 			InGamePlayerManager.SendToAllPlayers(endpacket);
 
-			//연결이 끊어진 사람이 존재하는가 판단해야 하는 부분(현재 미구현) - 5초
-			Sleep(5000);
+			//연결이 끊어진 사람이 존재하는가 판단해야 하는 부분(현재 미구현) - 10초
+			Sleep(10000);
 			TwentyGameStart GameStartPacket;
 			InGamePlayerManager.SendToAllPlayers(GameStartPacket);
 
@@ -71,9 +71,69 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 			}
 			break;
 		}
+
+		//인게임 내에서 사용할 변수 셋팅
+		QuestionCount = 20;
+		AskerTimer = 30;
+		ProviderTimer = 15;
+		ActionTime = time(NULL);
+
 		//질문 및 타이머를 반복하기 위한 while문
 		while (1)
 		{
+			for (int i = 0; i < InGamePlayer.size(); ++i)
+			{
+				RecvBuf = InGamePlayer[i]->GetGamePacket();
+				if (RecvBuf == nullptr) break;
+
+				InGamePacketType GameType;
+				GameType = (InGamePacketType)PacketTypeDeserial(RecvBuf->buffer);
+
+				if (GameType != Twenty_Question_Game) break;
+
+				Twenty_Packet_Type PacketType;
+				PacketType = (Twenty_Packet_Type)PacketTypeDeserial(RecvBuf->buffer);
+
+				switch (PacketType)
+				{
+				case Twenty_Asker_Question:
+				{
+					if ((*Asker)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
+
+					TwentyAskerQuestion QuestionPacket;
+					QuestionPacket.Deserialize(RecvBuf->buffer);
+					TwentyAskerQuestionBroadCast QuestionBroadCastPacket(InGamePlayer[i]->GetPlayerName(), QuestionPacket.Question);
+					InGamePlayerManager.SendToAllPlayers(QuestionBroadCastPacket);
+					break;
+				}
+				case Twenty_Provider_Reply:
+				{
+					if ((*Quiz_Provide_Player)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
+
+					TwentyProviderReply ReplyPacket;
+					ReplyPacket.Deserialize(RecvBuf->buffer);
+					TwentyProviderReplyBroadCast ReplyBroadcastPacket(InGamePlayer[i]->GetPlayerName(), ReplyPacket.ReplyOX);
+					InGamePlayerManager.SendToAllPlayers(ReplyBroadcastPacket);
+					break;
+				}
+				case Twenty_Asker_Answer:
+				{
+					if ((*Asker)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
+
+
+					break;
+				}
+				case Twenty_Exit_Reservation:
+				{
+					break;
+				}
+				default:
+				{
+					break;
+				}
+					
+				}
+			}
 			//recv 받을 시 switch문
 
 			//timer 셋팅
@@ -111,10 +171,6 @@ void InGame::Game_Setting_On()
 		}
 		AskerGroup.push_back(p);
 	}
-}
-
-void InGame::Recive_Buffer_Process()
-{
 }
 
 TwentyProviderSelectAnswer InGame::SelectFiveAnswer(TwentyProviderSelectAnswer packet)
@@ -163,3 +219,4 @@ void InGame::LoadingTime()
 		continue;
 	}
 }
+
