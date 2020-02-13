@@ -64,18 +64,23 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			ManagementDBCachePacketTypeLoginResponse packetManagementResponse{};
 
 			DatabaseAPI db;
-			if (db.Connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT)) {
+			if (db.Connect(Util::GetConfigToString("DBCache.ini", "DB", "Host", "127.0.0.1"), 
+				           Util::GetConfigToString("DBCache.ini", "DB", "User", "root"), 
+				           Util::GetConfigToString("DBCache.ini", "DB", "Pass", "minicity1!"), 
+				           Util::GetConfigToString("DBCache.ini", "DB", "Name", "minigamecity"), 
+				           Util::GetConfigToInt("DBCache.ini", "DB", "Port", 3306))) {
+
 				printf("db 立加 己傍\n");
 				Account account = db.LoginAccount(packetManagementRequest.userId, packetManagementRequest.userPw);
 				packetManagementResponse.flag = account.flag;
 				packetManagementResponse.userNick = account.nick;
-				packetManagementResponse.GPID = db.GetId();
+				packetManagementResponse.GPID = db.GetGpid();
 				db.Close();
 			}
 			else {
 				printf("db 立加 角菩\n");
 				packetManagementResponse.flag = false;
-				packetManagementResponse.userNick = nullptr;
+				packetManagementResponse.userNick = "";
 				packetManagementResponse.GPID = 0;
 			}
 
@@ -88,7 +93,7 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 		else {
 			ManagementDBCachePacketTypeLoginResponse packetManagementResponse{};
 			packetManagementResponse.flag = false;
-			packetManagementResponse.userNick = nullptr;
+			packetManagementResponse.userNick = "";
 			packetManagementResponse.GPID = 0;
 			bufInfo->Clear();
 			bufInfo->buffer = packetManagementResponse.Serialize();
@@ -104,8 +109,12 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("DBCache.log", "Type : ManagementDBCachePacketTypeLogoutRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		DatabaseAPI db;
-		db.SetId(packetManagementRequest.GPID);
-		if (db.Connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT)) {
+		db.SetGpid(packetManagementRequest.GPID);
+		if (db.Connect(Util::GetConfigToString("DBCache.ini", "DB", "Host", "127.0.0.1"),
+			           Util::GetConfigToString("DBCache.ini", "DB", "User", "root"),
+			           Util::GetConfigToString("DBCache.ini", "DB", "Pass", "minicity1!"),
+			           Util::GetConfigToString("DBCache.ini", "DB", "Name", "minigamecity"),
+			           Util::GetConfigToInt("DBCache.ini", "DB", "Port", 3306))) {
 			printf("db 立加 己傍\n");
 			db.LogoutAccount();
 			db.Close();
@@ -149,7 +158,11 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 		if (flag == true) {
 			ManagementDBCachePacketTypeSignupResponse packetManagementResponse{};
 			DatabaseAPI db;
-			if (db.Connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT)) {
+			if (db.Connect(Util::GetConfigToString("DBCache.ini", "DB", "Host", "127.0.0.1"),
+				           Util::GetConfigToString("DBCache.ini", "DB", "User", "root"),
+				           Util::GetConfigToString("DBCache.ini", "DB", "Pass", "minicity1!"),
+				           Util::GetConfigToString("DBCache.ini", "DB", "Name", "minigamecity"),
+				           Util::GetConfigToInt("DBCache.ini", "DB", "Port", 3306))) {
 				printf("db 立加 己傍\n");
 				packetManagementResponse.flag = db.SignUpAccount(packetManagementRequest.userId, packetManagementRequest.userPw, packetManagementRequest.userNick);
 				db.Close();
@@ -183,8 +196,12 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 
 		ManagementDBCachePacketTypeDeleteResponse packetManagementResponse{};
 		DatabaseAPI db;
-		db.SetId(packetManagementRequest.GPID);
-		if (db.Connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT)) {
+		db.SetGpid(packetManagementRequest.GPID);
+		if (db.Connect(Util::GetConfigToString("DBCache.ini", "DB", "Host", "127.0.0.1"),
+			           Util::GetConfigToString("DBCache.ini", "DB", "User", "root"),
+			           Util::GetConfigToString("DBCache.ini", "DB", "Pass", "minicity1!"),
+			           Util::GetConfigToString("DBCache.ini", "DB", "Name", "minigamecity"),
+			           Util::GetConfigToInt("DBCache.ini", "DB", "Port", 3306))) {
 			printf("db 立加 己傍\n");
 			packetManagementResponse.flag = db.StopAccount();
 			db.Close();

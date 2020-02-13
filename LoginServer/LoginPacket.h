@@ -56,7 +56,7 @@ public:
 	};
 
 	bool flag = true;
-	std::string userNick{};
+	std::string userNick;
 };
 
 class ClientLoginPacketTypeLoginRequest : public LoginPacket {
@@ -75,8 +75,8 @@ public:
 		_buf >> userPw;
 	};
 
-	std::string userId{};
-	std::string userPw{};
+	std::string userId;
+	std::string userPw;
 };
 
 class ClientLoginPacketTypeLogoutRequest : public LoginPacket {

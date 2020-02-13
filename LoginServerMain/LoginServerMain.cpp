@@ -3,12 +3,12 @@
 int main(int argc, char* argv[]) {
 	LoginServer* pServer = LoginServer::CreateServer();
 
-	/*if (0 < argc)
+	if (1 < argc)
 		pServer->SetPortNum(atoi(argv[1]));
-	else*/
+	else
 	pServer->SetPortNum(Util::GetConfigToInt("LoginServer.ini", "Network", "Port", 10000));
 	pServer->SetServerName("LoginServer");
-
+	
 	pServer->InitializeBaseServer();
 	pServer->InitializeLoginServer();
 

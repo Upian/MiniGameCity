@@ -52,7 +52,7 @@ public:
 	};
 
 	bool flag = true;
-	std::string userNick{};
+	std::string userNick;
 	uint32 GPID = 0;
 };
 
@@ -72,8 +72,8 @@ public:
 		_buf >> userPw;
 	};
 
-	std::string userId{};
-	std::string userPw{};
+	std::string userId;
+	std::string userPw;
 };
 
 class ManagementDBCachePacketTypeLogoutRequest : public DBCachePacket {

@@ -198,15 +198,15 @@ public:
 // 	}
 	//Utf8 version
 	Buffer& operator<<(std::string& rhs) {
-		Util::Conversion conv;
-		char* buf = conv.ToUTF8(rhs.c_str());
-		if (*buf == NULL) {
+		if (rhs.size() == 0) {
 			m_buffer[m_index] = '\n';
 			++m_length;
 			++m_index;
 			return *this;
 		}
 
+		Util::Conversion conv;
+		char* buf = conv.ToUTF8(rhs.c_str());
 		for (int i = 0; i < strlen(buf); ++i) {
 			m_buffer[m_index] = buf[i];
 			++m_index;

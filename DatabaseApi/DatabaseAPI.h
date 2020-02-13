@@ -5,15 +5,7 @@
 #include <mysql.h>
 #include <string>
 #include "Utf8.h"
-
-#define DB_HOST "127.0.0.1"
-#define DB_USER "root"
-#define DB_PASS "minicity1!"
-#define DB_NAME "minigamecity"
-#define DB_PORT 3306
-
-typedef int TURN;
-
+#include "Config.h"
 
 struct Account {
 	bool flag = true;
@@ -22,14 +14,14 @@ struct Account {
 
 class DatabaseAPI {
 public:
-	DatabaseAPI(); // connect
-	~DatabaseAPI(); // close
+	DatabaseAPI();
+	~DatabaseAPI(); 
 
-	int GetId() {
-		return GPID;
+	int GetGpid() {
+		return gpid;
 	}
-	void SetId(unsigned __int32 _GPID) {
-		GPID = _GPID;
+	void SetGpid(unsigned __int32 _gpid) {
+		gpid = _gpid;
 	}
 
 	bool Connect(const std::string& server, const std::string& user, const std::string& password, const std::string& database, const int& port);
@@ -41,10 +33,16 @@ public:
 	bool StopAccount();
 
 private:
-	MYSQL* conn; // 커낵터
-	MYSQL_RES* res; // 결과 값
-	MYSQL_ROW row; // 결과 row
-	unsigned __int32 GPID  = 0; // id 값
+	MYSQL* conn;
+	MYSQL_RES* res;
+	MYSQL_ROW row;
+	unsigned __int32 gpid  = 0;
+
+	std::string dbHost = Util::GetConfigToString("DBCache.ini", "DB", "Host", "127.0.0.1");
+	std::string dbUser = Util::GetConfigToString("DBCache.ini", "DB", "User", "root");
+	std::string dbPass = Util::GetConfigToString("DBCache.ini", "DB", "Pass", "minicity1!");
+	std::string dbName = Util::GetConfigToString("DBCache.ini", "DB", "Name", "minigamecity");
+	int dbPort = Util::GetConfigToInt("DBCache.ini", "DB", "Port", 3306);
 };
 
 #endif // __DB_API_H__
