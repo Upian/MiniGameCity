@@ -87,11 +87,14 @@ void SocialServerHandler::HandlePacket(Buffer& buffer) {
 		SocialPacketServerConfirmFriendResponse packet;
 		packet.Deserialize(buffer);
 		auto pplayer = m_gameServer->GetPlayerManager().FindPlayer(packet.m_gpid);
-
-		for (auto s : packet.m_names) {
-			printf("Friend confirm: %s\n", s.c_str());
-		}
-
+		this->HandlePacketConfirmFriendResponse(packet, pplayer);
+		break;
+	}
+	case PacketTypeSocialServer::acceptFriendResponse: {
+		SocialPacketServerAcceptFriendResponse packet;
+		packet.Deserialize(buffer);
+		auto pplayer = m_gameServer->GetPlayerManager().FindPlayer(packet.m_gpid);
+		this->HandlePacketAcceptFriendResponse(packet, pplayer);
 		break;
 	}
 	default:break;
@@ -167,4 +170,23 @@ void SocialServerHandler::HandlePacketAddFriendResponse(SocialPacketServerAddFri
 	responsePacket.m_errorCode = responsePacket.m_errorCode;
 
 	pplayer->SendPacket(responsePacket);
+}
+
+void SocialServerHandler::HandlePacketConfirmFriendResponse(SocialPacketServerConfirmFriendResponse& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+	SocialGamePacketConfirmFriendResponse responsePacket;
+	responsePacket.m_names = packet.m_names;
+	
+	pplayer->SendPacket(responsePacket);
+}
+
+void SocialServerHandler::HandlePacketAcceptFriendResponse(SocialPacketServerAcceptFriendResponse& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+	
+	SocialGamePacketAcceptFriendResponse responsePacket;
+	responsePacket.m_errorCode = packet.m_errorCode;
+
+	pplayer->SendPacket(packet);
 }

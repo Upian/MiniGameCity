@@ -15,6 +15,15 @@ enum class ErrorTypeAddFriend : char {
 	count,
 };
 
+enum class ErrorTypeAcceptFriend : char {
+	none = 0,
+
+	srcFriendListIsFull,
+	destFriendListIsFull,
+
+	count,
+};
+
 enum class ErrorTypeEnterRoom : char {
 	errorTypeNone = 0,
 

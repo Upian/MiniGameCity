@@ -43,5 +43,22 @@ void FriendsManager::HandleConfirmFriendRequest(std::shared_ptr<SocialPlayer> pp
 }
 
 void FriendsManager::HandleAcceptFriendReequest(std::shared_ptr<SocialPlayer> src, std::shared_ptr<SocialPlayer> dest) {
-	
+	if (false == dest->IsExistFriendRequestList(src))
+		return;
+	if (src == dest)
+		return;
+
+	SocialPacketServerAcceptFriendResponse packet;
+	packet.m_gpid = src->GetGPID();
+	packet.m_errorCode = ErrorTypeAcceptFriend::none;
+	if (false == src->AddFriendList(src))
+		packet.m_errorCode = ErrorTypeAcceptFriend::srcFriendListIsFull;
+	if (false == dest->AddFriendList(dest))
+		packet.m_errorCode = ErrorTypeAcceptFriend::destFriendListIsFull;
+
+	if (ErrorTypeAcceptFriend::none != packet.m_errorCode) { //둘 중 하나라도 친구 추가 실패 하면
+		src->DeleteFriendList(dest);
+		dest->DeleteFriendList(src);
+	}
+	src->GetServer()->SendPacket(packet);
 }

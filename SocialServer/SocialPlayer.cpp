@@ -39,18 +39,16 @@ bool SocialPlayer::IsExistFriendRequestList(std::shared_ptr<SocialPlayer> player
 	return false;
 }
 
-void SocialPlayer::AcceptFriendRequest(std::shared_ptr<SocialPlayer> destPlayer) {
-	if (nullptr == destPlayer)
-		return;
-	if (false == IsExistFriendRequestList(destPlayer))
-		return;
+bool SocialPlayer::AddFriendList(std::shared_ptr<SocialPlayer> player) {
+	if (m_maxFriendListSize <= m_friendList.size())
+		return false;
 
-	m_friendRequestList.remove(destPlayer);
-	
-	if (m_friendList.size() >= m_maxFriendListSize) 
-		return;
-	
-	m_friendList.push_back(destPlayer);
+	if (nullptr == player)
+		return false;
+
+	m_friendList.push_back(player);
+	return true;
 }
+
 
 

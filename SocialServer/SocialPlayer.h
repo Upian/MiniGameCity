@@ -35,7 +35,9 @@ public:
 	std::list<std::shared_ptr<SocialPlayer> >& GetFriendRequestList() { return m_friendRequestList; }
 	ErrorTypeAddFriend AddFriendRequest(std::shared_ptr<SocialPlayer> pplayer);
 	bool IsExistFriendRequestList(std::shared_ptr<SocialPlayer>);
-	void AcceptFriendRequest(std::shared_ptr<SocialPlayer>);
+	bool AddFriendList(std::shared_ptr<SocialPlayer>);
+	bool IsAddFriendAvailable() { return m_maxFriendListSize > m_friendList.size(); }
+	void DeleteFriendList(std::shared_ptr<SocialPlayer> player) { m_friendList.remove(player); }
 
 	void SetName(std::string na) { m_name = na; } //#Test
 

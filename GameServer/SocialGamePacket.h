@@ -117,7 +117,6 @@ struct SocialGamePacketConfirmFriendRequest : public BaseSocialGamePacket {
 
 	virtual Buffer& Serialize() {
 	
-
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
@@ -168,6 +167,22 @@ struct SocialGamePacketAcceptFriendRequest : public BaseSocialGamePacket {
 	virtual void Deserialize(Buffer& buf) {
 		buf >> m_isAccept;
 		buf >> m_name;
+	}
+};
+struct SocialGamePacketAcceptFriendResponse : public BaseSocialGamePacket {
+	SocialGamePacketAcceptFriendResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialAcceptFriendResponse) {}
+
+	ErrorTypeAcceptFriend m_errorCode = ErrorTypeAcceptFriend::none;
+
+	virtual Buffer& Serialize() {
+		buffer << m_errorCode;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_errorCode;
+
+		return;
 	}
 };
 #endif // !__GAMESERVER_SOCIAL_PACKET_H__

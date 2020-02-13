@@ -18,7 +18,7 @@ enum class PacketTypeSocialServer : char {
 	confirmFriendRequest,	//dest player to server (client -> server)
 	confirmFriendResponse,	
 	acceptFriendRequest, //accept friend request
-
+	acceptFriendResponse, //accept friend request
 	//Guild
 
 
@@ -177,6 +177,25 @@ struct SocialPacketServerAcceptFriendRequest : public BaseSocialServerPacket {
 		buf >> m_gpid;
 		buf >> m_isAccept;
 		buf >> m_name;
+
+		return;
+	}
+};
+struct SocialPacketServerAcceptFriendResponse : public BaseSocialServerPacket {
+	SocialPacketServerAcceptFriendResponse() : BaseSocialServerPacket(PacketTypeSocialServer::acceptFriendResponse) {}
+
+	GPID m_gpid;
+	ErrorTypeAcceptFriend m_errorCode = ErrorTypeAcceptFriend::none;
+
+	virtual Buffer& Serialize() {
+		buffer << m_gpid;
+		buffer << m_errorCode;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_gpid;
+		buf >> m_errorCode;
 
 		return;
 	}
