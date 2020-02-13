@@ -19,6 +19,8 @@ enum class PacketTypeSocialServer : char {
 	confirmFriendResponse,	
 	acceptFriendRequest, //accept friend request
 	acceptFriendResponse, //accept friend request
+	friendListRequest, //Get players friends list
+	friendListResponse,
 	//Guild
 
 

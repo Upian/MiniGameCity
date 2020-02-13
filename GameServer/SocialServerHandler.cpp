@@ -41,6 +41,11 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 		SocialGamePacketAcceptFriendRequest packet;
 		packet.Deserialize(buffer);
 		this->HandlePacketAcceptFriendRequest(packet, player);
+		break;
+	}
+	case PacketTypeSocialClient::packetTypeSocialFriendListRequest: {
+		
+		break;
 	}
 	default:
 		Util::LoggingError("Social.log", "Un defined packet error. packet type[%d]", type);

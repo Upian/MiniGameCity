@@ -185,4 +185,42 @@ struct SocialGamePacketAcceptFriendResponse : public BaseSocialGamePacket {
 		return;
 	}
 };
+
+struct SocialGamePacketFriendListRequest : public BaseSocialGamePacket {
+	SocialGamePacketFriendListRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialFriendListRequest) {}
+
+	virtual Buffer& Serialize() {
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		return;
+	}
+};
+struct SocialGamePacketFriendListResponse : public BaseSocialGamePacket {
+	SocialGamePacketFriendListResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialFriendListResponse) {}
+
+	__int16 m_size = 0;
+	std::list<std::string> m_friends;
+
+	virtual Buffer& Serialize() {
+		m_size = m_friends.size();
+
+		for (auto k : m_friends) {
+			buffer << k;
+		}
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		std::string tempString;
+
+		buf >> m_size;
+
+		for (int i = 0; i < m_size; ++i) {
+			buf >> tempString;
+			m_friends.emplace_back(tempString);
+		}
+
+		return;
+	}
+};
 #endif // !__GAMESERVER_SOCIAL_PACKET_H__
