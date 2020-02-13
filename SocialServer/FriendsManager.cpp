@@ -6,18 +6,19 @@
 void FriendsManager::HandleAddFriendRequest(std::shared_ptr<SocialPlayer> srcPlayer, std::shared_ptr<SocialPlayer> destPlayer) {
 	if (nullptr == srcPlayer)
 		return;
-
-
+	
 	if (nullptr == destPlayer) {
 		//#DatabaseLoad
 		//Handle database
 		return;
 	}
 
-	
 	SocialPacketServerAddFriendResponse packet;
 	packet.m_gpid = srcPlayer->GetGPID();
 	packet.m_errorType = destPlayer->AddFriendRequest(srcPlayer);
+	if (srcPlayer == destPlayer)
+		packet.m_errorType = ErrorTypeAddFriend::samePlayer;
+
 	if (ErrorTypeAddFriend::none != packet.m_errorType) //Fail
 		packet.m_success = false;
 	else 
@@ -39,4 +40,8 @@ void FriendsManager::HandleConfirmFriendRequest(std::shared_ptr<SocialPlayer> pp
 	}
 
 	pplayer->GetServer()->SendPacket(packet);
+}
+
+void FriendsManager::HandleAcceptFriendReequest(std::shared_ptr<SocialPlayer> src, std::shared_ptr<SocialPlayer> dest) {
+	
 }

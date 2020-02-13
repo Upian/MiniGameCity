@@ -60,7 +60,7 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		packet.Deserialize(bufInfo->buffer);
 		auto srcPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_srcGpid);
 		auto destPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_destName);
-		Util::LoggingDebug("", "%s wants to friends with %s", srcPlayer->GetName().c_str(), destPlayer->GetName().c_str());
+		Util::LoggingDebug("", "%s wants to friends with %s", srcPlayer->GetName().c_str(), destPlayer->GetName().c_str());//#Test
 		m_friendManager.HandleAddFriendRequest(srcPlayer, destPlayer);
 		break;
 	}
@@ -69,6 +69,14 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		packet.Deserialize(bufInfo->buffer);
 		auto pplayer = m_socialPlayerManager.FindSocialPlayer(packet.m_gpid);
 		m_friendManager.HandleConfirmFriendRequest(pplayer);
+		break;
+	}
+	case PacketTypeSocialServer::acceptFriendRequest: {
+		SocialPacketServerAcceptFriendRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		auto srcPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_gpid);
+		auto destPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_name);
+		m_friendManager.HandleAcceptFriendReequest(srcPlayer, destPlayer);
 		break;
 	}
 	default: {

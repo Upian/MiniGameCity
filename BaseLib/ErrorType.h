@@ -10,6 +10,7 @@ enum class ErrorTypeAddFriend : char {
 	destFriendListIsFull,
 	destFriendRequestListIsFull,
 	alreadySendRequest,
+	samePlayer,
 
 	count,
 };

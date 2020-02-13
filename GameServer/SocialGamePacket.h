@@ -19,6 +19,8 @@ enum class PacketTypeSocialClient : char{
 	packetTypeSocialAddFriendResponse,
 	packetTypeSocialConfirmFriendRequest, //받은 친추 목록
 	packetTypeSocialConfirmFriendResponse,
+	packetTypeSocialAcceptFriendRequest, //친구 요청 수락
+	packetTypeSocialAcceptFriendResponse,
 	packetTypeSocialFriendListRequest, //친구 리스트
 	packetTypeSocialFriendListResponse,
 
@@ -149,6 +151,23 @@ struct SocialGamePacketConfirmFriendResponse : public BaseSocialGamePacket {
 			m_names.emplace_back(tempName);
 		}
 		return;
+	}
+};
+
+struct SocialGamePacketAcceptFriendRequest : public BaseSocialGamePacket {
+	SocialGamePacketAcceptFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialAcceptFriendRequest) {}
+
+	bool m_isAccept = false;
+	std::string m_name;
+
+	virtual Buffer& Serialize() {
+		buffer << m_isAccept;
+		buffer << m_name;
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_isAccept;
+		buf >> m_name;
 	}
 };
 #endif // !__GAMESERVER_SOCIAL_PACKET_H__

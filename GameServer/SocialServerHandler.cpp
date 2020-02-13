@@ -37,6 +37,11 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 		this->HandlePacketConfirmFriendRequest(player);
 		break;
 	}
+	case PacketTypeSocialClient::packetTypeSocialAcceptFriendRequest: {
+		SocialGamePacketAcceptFriendRequest packet;
+		packet.Deserialize(buffer);
+		this->HandlePacketAcceptFriendRequest(packet, player);
+	}
 	default:
 		Util::LoggingError("Social.log", "Un defined packet error. packet type[%d]", type);
 	}
@@ -141,6 +146,18 @@ void SocialServerHandler::HandlePacketConfirmFriendRequest(std::shared_ptr<Playe
 	this->SendPacketToServer(sendPacket);
 }
 
+void SocialServerHandler::HandlePacketAcceptFriendRequest(SocialGamePacketAcceptFriendRequest& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+
+	SocialPacketServerAcceptFriendRequest sendPacket;
+	sendPacket.m_gpid = pplayer->GetGPID();
+	sendPacket.m_isAccept = packet.m_isAccept;
+	sendPacket.m_name = packet.m_name;
+	
+	this->SendPacketToServer(sendPacket);
+}
+///////////////////////////////////////////////////////////////
 void SocialServerHandler::HandlePacketAddFriendResponse(SocialPacketServerAddFriendResponse& packet, std::shared_ptr<Player> pplayer) {
 	if (nullptr == pplayer)
 		return;

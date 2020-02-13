@@ -31,4 +31,26 @@ ErrorTypeAddFriend SocialPlayer::AddFriendRequest(std::shared_ptr<SocialPlayer> 
 	return ErrorTypeAddFriend::none;
 }
 
+bool SocialPlayer::IsExistFriendRequestList(std::shared_ptr<SocialPlayer> player) {
+	for (auto p : m_friendRequestList) {
+		if (player == p)
+			return true;
+	}
+	return false;
+}
+
+void SocialPlayer::AcceptFriendRequest(std::shared_ptr<SocialPlayer> destPlayer) {
+	if (nullptr == destPlayer)
+		return;
+	if (false == IsExistFriendRequestList(destPlayer))
+		return;
+
+	m_friendRequestList.remove(destPlayer);
+	
+	if (m_friendList.size() >= m_maxFriendListSize) 
+		return;
+	
+	m_friendList.push_back(destPlayer);
+}
+
 
