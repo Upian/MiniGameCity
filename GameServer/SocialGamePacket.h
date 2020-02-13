@@ -3,7 +3,7 @@
 #define __GAMESERVER_SOCIAL_PACKET_H__
 
 #include "BasePacket.h"
-
+#include "ErrorType.h"
 enum class PacketTypeSocialClient : char{
 	packetTypeSocialNone = 0,
 	//Chat
@@ -16,8 +16,8 @@ enum class PacketTypeSocialClient : char{
 	//Friend
 	packetTypeSocialAddFriendRequest,
 	packetTypeSocialAddFriendResponse,
-	packetTypeSocialAcceptFriendRequest,
-	packetTypeSocialAcceptFriendResponse,
+	packetTypeSocialConfirmFriendRequest,
+	packetTypeSocialConfirmFriendResponse,
 
 	packetTypeSocialCount,
 };
@@ -87,28 +87,21 @@ struct SocialGamePacketAddFriendRequest : public BaseSocialGamePacket {
 		return;
 	}
 };
-// enum class ErrorCodeAddFriend : char {
-// 	none = 0,
-// 
-// 	notExistPlayer,
-// 	fullFriendList,
-// 
-// 	count,
-// };
+
 struct SocialGamePacketAddFriendResponse : public BaseSocialGamePacket {
 	SocialGamePacketAddFriendResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialAddFriendResponse) {}
 
 	bool m_success = false;
-
+	ErrorTypeAddFriend m_errorCode = ErrorTypeAddFriend::none;
 	virtual Buffer& Serialize() {
 		buffer << m_success;
-//		buffer << m_errorCode;
+		buffer << m_errorCode;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
 		buf >> m_success;
-//		buf >> m_errorCode;
+		buf >> m_errorCode;
 
 		return;
 	}

@@ -134,6 +134,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="DesignData.h" />
     <ClInclude Include="DesignDataManager.h" />
+    <ClInclude Include="ErrorType.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerManager.h" />

@@ -10,6 +10,9 @@ class SocialServer;
 class Player;
 class Buffer;
 
+//packet
+struct SocialPacketServerAddFriendResponse;
+
 class SocialServerHandler : public BaseServerHandler{
 public:
 	void Initialize();
@@ -23,10 +26,12 @@ public:
 	virtual void HandlePacket(Buffer& buffer) override;
 private:
 	//Client to Game server
-	void HandlePacketChatNormal(SocialGamePacketChatNormalRequest& packet, std::shared_ptr<Player> player);
-	void HandlePacketAddFriend(SocialGamePacketAddFriendRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketChatNormalRequest(SocialGamePacketChatNormalRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketAddFriendRequest(SocialGamePacketAddFriendRequest& packet, std::shared_ptr<Player> player);
 
 	//Social server to Game server
+	void HandlePacketAddFriendResponse(SocialPacketServerAddFriendResponse& packet, std::shared_ptr<Player> pplayer);
+
 
 	GameServer* m_gameServer;
 };

@@ -2,7 +2,10 @@
 #ifndef __SOCIALSERVER_SOCIAL_SERVER_PACKET_H__
 #define __SOCIALSERVER_SOCIAL_SERVER_PACKET_H__
 
+#include <list>
+
 #include "BasePacket.h"
+#include "ErrorType.h"
 using GPID = unsigned __int32;
 enum class PacketTypeSocialServer : char {
 	none = 0,
@@ -67,20 +70,21 @@ struct SocialPacketServerUpdatePlayerLogout : public BaseSocialServerPacket {
 };
 
 //Friend
+
 struct SocialPacketServerAddFriendRequest : public BaseSocialServerPacket {
 	SocialPacketServerAddFriendRequest() : BaseSocialServerPacket(PacketTypeSocialServer::addFriendRequest) {}
 
-	GPID m_src;
+	GPID m_srcGpid;
 	std::string m_destName;
 
 	virtual Buffer& Serialize() {
-		buffer << m_src;
+		buffer << m_srcGpid;
 		buffer << m_destName;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
-		buf >> m_src;
+		buf >> m_srcGpid;
 		buf >> m_destName;
 
 		return;
@@ -89,12 +93,22 @@ struct SocialPacketServerAddFriendRequest : public BaseSocialServerPacket {
 struct SocialPacketServerAddFriendResponse : public BaseSocialServerPacket {
 	SocialPacketServerAddFriendResponse() : BaseSocialServerPacket(PacketTypeSocialServer::addFriendResponse) {}
 
+	GPID m_gpid = 0;
+	bool m_success = false;
+	ErrorTypeAddFriend m_errorType = ErrorTypeAddFriend::none;
+
 	virtual Buffer& Serialize() {
-	
+		buffer << m_gpid;
+		buffer << m_success;
+		buffer << m_errorType;
+
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
-		
+		buf >> m_gpid;
+		buf >> m_success;
+		buf >> m_errorType;
+
 		return;
 	}
 };
@@ -131,8 +145,14 @@ struct SocialPacketServerConfirmAddFriendResponse : public BaseSocialServerPacke
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
-		
+		std::string tempName;
+
+		buf >> m_size;
+		for (int i = 0; i < m_size; ++i) {
+			buf >> tempName;
+			m_names.emplace_back(tempName);
+		}
 		return;
 	}
 };
-#endif // !__SOCIALSERVER_BASE_SOCIAL_PACKET_H__
+#endif // !__SOCIALSERVER_SOCIAL_SERVER_PACKET_H__

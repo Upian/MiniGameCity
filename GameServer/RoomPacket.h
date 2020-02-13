@@ -6,6 +6,7 @@
 #include <list>
 #include "BasePacket.h"
 #include "Player.h"
+#include "ErrorType.h"
 
 //1byte
 enum class PacketTypeRoom : char {
@@ -169,19 +170,8 @@ public:
 };
 
 //Enter room
-enum class ErrorTypeEnterRoom : char {
-	errorTypeNone = 0,
 
-	errorTypeNotExistRoom,
-	errorTypeWrongPassword,
-	errorTypeAlreadyIncluded,
-	errorTypeGameStart,
-	errorTypeMaxPlayer,
-	errorTypeCanNotEnterRoom,
-	errorTypePlayerLogout,
 
-	errorTypeCount,
-};
 struct RoomPacketEnterRoomRequest : public BaseRoomPacket {
 	RoomPacketEnterRoomRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomEnterRoomRequest) {}
 

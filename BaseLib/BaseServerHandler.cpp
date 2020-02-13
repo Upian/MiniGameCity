@@ -19,17 +19,16 @@ void BaseServerHandler::ConnectToServer(std::string ipAddress, short port) {
 	}
 	Util::LoggingInfo("", "Success - connect to server[%s/%hd]", ipAddress.c_str(), port);
 
-	m_recvThread = std::thread([this]()->void {this->RecvThread(); });
+	m_recvThread = new std::thread([this]()->void {this->RecvThread(); });
 	return;
 }
 
 void BaseServerHandler::RecvThread() {
 	char buf[BUFFER_SIZE];
-//	Buffer buf;
 	while (true) {
 		ZeroMemory(buf, BUFFER_SIZE);
 		int recvBytes = recv(m_server.GetSocket(), buf, BUFFER_SIZE, 0);
-		if (0 <= recvBytes) {
+		if (0 == recvBytes) {
 			closesocket(m_server.GetSocket());
 			return;
 		}

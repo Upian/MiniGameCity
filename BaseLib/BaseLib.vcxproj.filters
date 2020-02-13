@@ -23,6 +23,9 @@
     <Filter Include="ThreadPool">
       <UniqueIdentifier>{b03f2628-8dcf-4888-b335-3739bc9848aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Definition">
+      <UniqueIdentifier>{c13d0e5e-36ef-41ed-ac0c-d6b8779f89eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Log.h">
@@ -69,6 +72,9 @@
     </ClInclude>
     <ClInclude Include="ClntServerManager.h">
       <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorType.h">
+      <Filter>Definition</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
