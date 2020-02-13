@@ -79,6 +79,8 @@ private:
 	std::string m_playerName;
 
 #pragma region Game
+
+
 	std::shared_ptr<Room> m_room = nullptr;
 	__int16 m_potionIndex = 0;
 	bool m_isRoomMaster = false;

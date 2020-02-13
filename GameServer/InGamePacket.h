@@ -372,7 +372,12 @@ public:
 };
 class TwentyAskerAnswerBroadCast : public TwentyQuestionGamePacket {
 public:
-	TwentyAskerAnswerBroadCast() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer_Broadcast){}
+	TwentyAskerAnswerBroadCast(std::string name, std::string answer, int answervalue) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer_Broadcast)
+	{
+		AskerAnswer = answer;
+		AskerName = name;
+		AnswerResult = answervalue;
+	}
 
 	std::string AskerAnswer;
 	std::string AskerName;
@@ -416,7 +421,12 @@ public:
 };
 class TwentyRoundEnd : public TwentyQuestionGamePacket {
 public:
-	TwentyRoundEnd() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Round_End){}
+	TwentyRoundEnd(std::string prov, std::string ask, int round) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Round_End)
+	{
+		Provider = prov;
+		Asker = ask;
+		Round = round;
+	}
 
 	std::string Provider;
 	std::string Asker;
@@ -583,7 +593,11 @@ public:
 };
 class TwentyExitNotification : public TwentyQuestionGamePacket {
 public:
-	TwentyExitNotification() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Exit_Notification){}
+	TwentyExitNotification(std::string name,int type) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Exit_Notification)
+	{
+		PlayerName = name;
+		ReservationType = type;
+	}
 
 	std::string PlayerName;
 	int ReservationType = 0;	//0은 예약 취소, 1은 나가기 예약

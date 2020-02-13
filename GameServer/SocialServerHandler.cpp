@@ -11,6 +11,7 @@ void SocialServerHandler::Initialize() {
 	m_gameServer = GameServer::GetServer();
 }
 
+//Client to game server
 void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Player> player) { //server to client
 	if (nullptr == player)
 		return;
@@ -21,13 +22,30 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 	case PacketTypeSocialClient::packetTypeSocialChatNormalRequest: {
 		SocialGamePacketChatNormalRequest packet;
 		packet.Deserialize(buffer);
-		this->HandlePacketChatNormal(packet, player);
+		this->HandlePacketChatNormalRequest(packet, player);
 		break;
 	}
 	case PacketTypeSocialClient::packetTypeSocialAddFriendRequest: {
 		SocialGamePacketAddFriendRequest packet;
 		packet.Deserialize(buffer);
-		this->HandlePacketAddFriend(packet, player);
+		this->HandlePacketAddFriendRequest(packet, player);
+		break;
+	}
+	case PacketTypeSocialClient::packetTypeSocialConfirmFriendRequest: {
+		SocialGamePacketConfirmFriendRequest packet;
+		packet.Deserialize(buffer);
+		this->HandlePacketConfirmFriendRequest(player);
+		break;
+	}
+	case PacketTypeSocialClient::packetTypeSocialAcceptFriendRequest: {
+		SocialGamePacketAcceptFriendRequest packet;
+		packet.Deserialize(buffer);
+		this->HandlePacketAcceptFriendRequest(packet, player);
+		break;
+	}
+	case PacketTypeSocialClient::packetTypeSocialFriendListRequest: {
+		
+		break;
 	}
 	default:
 		Util::LoggingError("Social.log", "Un defined packet error. packet type[%d]", type);
@@ -55,6 +73,7 @@ void SocialServerHandler::UpdatePlayerInfoAtLogout(std::shared_ptr<Player> pplay
 	this->SendPacketToServer(packet);
 }
 
+//Social server to client
 void SocialServerHandler::HandlePacket(Buffer& buffer) {
 	BasePacketType type = (BasePacketType)PacketTypeDeserial(buffer);
 	if (BasePacketType::basePacketTypeSocialServer != type)
@@ -63,14 +82,31 @@ void SocialServerHandler::HandlePacket(Buffer& buffer) {
 	PacketTypeSocialServer socialType = (PacketTypeSocialServer)PacketTypeDeserial(buffer);
 	switch (socialType) {
 	case PacketTypeSocialServer::addFriendResponse: {
-		Util::LoggingInfo("", "TTTETST Recv packet");
+		SocialPacketServerAddFriendResponse packet;
+		packet.Deserialize(buffer);
+		auto pplayer = m_gameServer->GetPlayerManager().FindPlayer(packet.m_gpid);
+		this->HandlePacketAddFriendResponse(packet, pplayer);
+		break;
+	}
+	case PacketTypeSocialServer::confirmFriendResponse: {
+		SocialPacketServerConfirmFriendResponse packet;
+		packet.Deserialize(buffer);
+		auto pplayer = m_gameServer->GetPlayerManager().FindPlayer(packet.m_gpid);
+		this->HandlePacketConfirmFriendResponse(packet, pplayer);
+		break;
+	}
+	case PacketTypeSocialServer::acceptFriendResponse: {
+		SocialPacketServerAcceptFriendResponse packet;
+		packet.Deserialize(buffer);
+		auto pplayer = m_gameServer->GetPlayerManager().FindPlayer(packet.m_gpid);
+		this->HandlePacketAcceptFriendResponse(packet, pplayer);
 		break;
 	}
 	default:break;
 	}
 }
 
-void SocialServerHandler::HandlePacketChatNormal(SocialGamePacketChatNormalRequest& packet, std::shared_ptr<Player> player) {
+void SocialServerHandler::HandlePacketChatNormalRequest(SocialGamePacketChatNormalRequest& packet, std::shared_ptr<Player> player) {
 	if (nullptr == player)
 		return;
 	
@@ -98,13 +134,64 @@ void SocialServerHandler::HandlePacketChatNormal(SocialGamePacketChatNormalReque
 
 	}
 }
-void SocialServerHandler::HandlePacketAddFriend(SocialGamePacketAddFriendRequest& packet, std::shared_ptr<Player> player) {
+void SocialServerHandler::HandlePacketAddFriendRequest(SocialGamePacketAddFriendRequest& packet, std::shared_ptr<Player> player) {
 	if (nullptr == player)
 		return;
 	
 	SocialPacketServerAddFriendRequest sendPacket;
-	sendPacket.m_src = player->GetGPID();/*player->GetGPID();*/
+	sendPacket.m_srcGpid = player->GetGPID();/*player->GetGPID();*/
 	sendPacket.m_destName = packet.m_destName;
-	Util::LoggingDebug("", "Send packet to social server [%d] --> [%s]", sendPacket.m_src, sendPacket.m_destName.c_str());
 	this->SendPacketToServer(sendPacket);
+}
+
+void SocialServerHandler::HandlePacketConfirmFriendRequest(std::shared_ptr<Player> player) {
+	if (nullptr == player)
+		return;
+	//Game server to social server
+	SocialPacketServerConfirmFriendRequest sendPacket;
+	sendPacket.m_gpid = player->GetGPID();
+	
+	this->SendPacketToServer(sendPacket);
+}
+
+void SocialServerHandler::HandlePacketAcceptFriendRequest(SocialGamePacketAcceptFriendRequest& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+
+	SocialPacketServerAcceptFriendRequest sendPacket;
+	sendPacket.m_gpid = pplayer->GetGPID();
+	sendPacket.m_isAccept = packet.m_isAccept;
+	sendPacket.m_name = packet.m_name;
+	
+	this->SendPacketToServer(sendPacket);
+}
+///////////////////////////////////////////////////////////////
+void SocialServerHandler::HandlePacketAddFriendResponse(SocialPacketServerAddFriendResponse& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+
+	SocialGamePacketAddFriendResponse responsePacket;
+	responsePacket.m_success = packet.m_success;
+	responsePacket.m_errorCode = responsePacket.m_errorCode;
+
+	pplayer->SendPacket(responsePacket);
+}
+
+void SocialServerHandler::HandlePacketConfirmFriendResponse(SocialPacketServerConfirmFriendResponse& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+	SocialGamePacketConfirmFriendResponse responsePacket;
+	responsePacket.m_names = packet.m_names;
+	
+	pplayer->SendPacket(responsePacket);
+}
+
+void SocialServerHandler::HandlePacketAcceptFriendResponse(SocialPacketServerAcceptFriendResponse& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+	
+	SocialGamePacketAcceptFriendResponse responsePacket;
+	responsePacket.m_errorCode = packet.m_errorCode;
+
+	pplayer->SendPacket(packet);
 }

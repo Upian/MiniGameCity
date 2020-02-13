@@ -21,7 +21,7 @@ public:
 protected:
 	
 private:
-	std::thread m_recvThread;
+	std::thread* m_recvThread;
 	ClntServer m_server;
 	bool m_isConnectionReady = false;
 };

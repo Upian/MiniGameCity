@@ -51,7 +51,7 @@ void GameServer::HandleDisconnectClient(SOCKET clientSocket) {
 	if(nullptr != room)
 		room->PlayerLeaveRoom(player);
 
-	m_playerManager.PlayerDisconnect(clientSocket);
+	m_playerManager.PlayerDisconnect(player);
 	printf("Disconnect client[%d] Total players[%d]\n", clientSocket, m_playerManager.GetPlayerList().size());
 
 
@@ -82,8 +82,11 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 		this->HandleBasePacketGame(bufInfo);
 		break;
 	}
-	default: break;
+	default: {
 		Util::LoggingInfo("GameServer.log", "Recv wrong base packet ID: %d", type);
+		break;
+	}
+		
 	}
 	
 

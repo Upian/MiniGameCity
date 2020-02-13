@@ -1,6 +1,7 @@
 #ifndef __MANAGEMENT_PACKET_H__
 #define __MANAGEMENT_PACKET_H__
-#include "DBCachePacket.h"
+//#include "DBCachePacket.h"
+#include "..\DBCache\DBCachePacket.h"
 
 // must go to ini file 
 #define CHANNEL_SIZE 4 // test
