@@ -4,6 +4,7 @@
 #include <winsock2.h>
 #include <mysql.h>
 #include <string>
+#include "Utf8.h"
 
 #define DB_HOST "127.0.0.1"
 #define DB_USER "root"

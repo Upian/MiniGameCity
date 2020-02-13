@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
 	/*if (0 < argc)
 		pServer->SetPortNum(atoi(argv[1]));
 	else*/
-	pServer->SetPortNum(Util::GetConfigToInt("LoginServer.ini", "Network", "Port", 30000)); // 10001
+	pServer->SetPortNum(Util::GetConfigToInt("LoginServer.ini", "Network", "Port", 10000));
 	pServer->SetServerName("LoginServer");
 
 	pServer->InitializeBaseServer();

@@ -36,7 +36,7 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 	case managementDBCachePacketTypeLoginRequest: {
 		ManagementDBCachePacketTypeLoginRequest packetManagementRequest{};
 		packetManagementRequest.Deserialize(bufInfo->buffer);
-		Util::LoggingInfo("DBCache.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("DBCache.log", "Type : ManagementDBCachePacketTypeLoginRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
 		if ((Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMinSize", 4) > packetManagementRequest.userId.size()) || (packetManagementRequest.userId.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMaxSize", 8))) {
@@ -66,53 +66,60 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			DatabaseAPI db;
 			if (db.Connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT)) {
 				printf("db 立加 己傍\n");
+				Account account = db.LoginAccount(packetManagementRequest.userId, packetManagementRequest.userPw);
+				packetManagementResponse.flag = account.flag;
+				packetManagementResponse.userNick = account.nick;
+				packetManagementResponse.GPID = db.GetId();
+				db.Close();
 			}
 			else {
 				printf("db 立加 角菩\n");
+				packetManagementResponse.flag = false;
+				packetManagementResponse.userNick = nullptr;
+				packetManagementResponse.GPID = 0;
 			}
-			Account account = db.LoginAccount(packetManagementRequest.userId, packetManagementRequest.userPw);
-			packetManagementResponse.flag = account.flag;
-			packetManagementResponse.userNick = account.nick;
-			packetManagementResponse.GPID = db.GetId();
-			db.Close();
 
 			bufInfo->Clear();
 			bufInfo->buffer = packetManagementResponse.Serialize();
 			send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-			Util::LoggingInfo("DBCache.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+			Util::LoggingInfo("DBCache.log", "Type : ManagementDBCachePacketTypeLoginResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+
 		}
 		else {
 			ManagementDBCachePacketTypeLoginResponse packetManagementResponse{};
-			packetManagementResponse.flag = flag;
+			packetManagementResponse.flag = false;
+			packetManagementResponse.userNick = nullptr;
+			packetManagementResponse.GPID = 0;
 			bufInfo->Clear();
 			bufInfo->buffer = packetManagementResponse.Serialize();
 			send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-			Util::LoggingInfo("DBCache.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+			Util::LoggingInfo("DBCache.log", "Type : ManagementDBCachePacketTypeLoginResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+
 		}
 		break;
 	}
 	case managementDBCachePacketTypeLogoutRequest: {
 		ManagementDBCachePacketTypeLogoutRequest packetManagementRequest{};
 		packetManagementRequest.Deserialize(bufInfo->buffer);
-		Util::LoggingInfo("DBCache.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
-		
+		Util::LoggingInfo("DBCache.log", "Type : ManagementDBCachePacketTypeLogoutRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+
 		DatabaseAPI db;
 		db.SetId(packetManagementRequest.GPID);
 		if (db.Connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT)) {
 			printf("db 立加 己傍\n");
+			db.LogoutAccount();
+			db.Close();
 		}
 		else {
 			printf("db 立加 角菩\n");
 		}
-		db.LogoutAccount();
-		db.Close();
 		break;
 	}
 
 	case managementDBCachePacketTypeSignupRequest: {
 		ManagementDBCachePacketTypeSignupRequest packetManagementRequest{};
 		packetManagementRequest.Deserialize(bufInfo->buffer);
-		Util::LoggingInfo("DBCache.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("DBCache.log", "Type : ManagementDBCachePacketTypeSignupRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
 		if ((Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMinSize", 4) > packetManagementRequest.userId.size()) || (packetManagementRequest.userId.size() > Util::GetConfigToInt("DBCache.ini", "Definition", "UserIdMaxSize", 8))) {
@@ -144,24 +151,27 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			DatabaseAPI db;
 			if (db.Connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT)) {
 				printf("db 立加 己傍\n");
+				packetManagementResponse.flag = db.SignUpAccount(packetManagementRequest.userId, packetManagementRequest.userPw, packetManagementRequest.userNick);
+				db.Close();
 			}
 			else {
 				printf("db 立加 角菩\n");
+				packetManagementResponse.flag = false;
 			}
-			packetManagementResponse.flag = db.SignUpAccount(packetManagementRequest.userId, packetManagementRequest.userPw, packetManagementRequest.userNick);
+			
 			bufInfo->Clear();
 			bufInfo->buffer = packetManagementResponse.Serialize();
 			send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-			Util::LoggingInfo("DBCache.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+			Util::LoggingInfo("DBCache.log", "Type : ManagementDBCachePacketTypeSignupResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		}
 		else {
 			ManagementDBCachePacketTypeSignupResponse packetManagementResponse{};
-			packetManagementResponse.flag = flag;
+			packetManagementResponse.flag = false;
 			bufInfo->Clear();
 			bufInfo->buffer = packetManagementResponse.Serialize();
 			send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-			Util::LoggingInfo("DBCache.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+			Util::LoggingInfo("DBCache.log", "Type : ManagementDBCachePacketTypeSignupResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 		}
 		break;
 	}
@@ -169,24 +179,24 @@ void DBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 	case managementDBCachePacketTypeDeleteRequest: {
 		ManagementDBCachePacketTypeDeleteRequest packetManagementRequest{};
 		packetManagementRequest.Deserialize(bufInfo->buffer);
-		Util::LoggingInfo("DBCache.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("DBCache.log", "Type : ManagementDBCachePacketTypeDeleteRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		ManagementDBCachePacketTypeDeleteResponse packetManagementResponse{};
 		DatabaseAPI db;
 		db.SetId(packetManagementRequest.GPID);
 		if (db.Connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT)) {
 			printf("db 立加 己傍\n");
+			packetManagementResponse.flag = db.StopAccount();
+			db.Close();
 		}
 		else {
 			printf("db 立加 角菩\n");
+			packetManagementResponse.flag = false;
 		}
-		packetManagementResponse.flag = db.StopAccount();
-		db.Close();
-
 		bufInfo->Clear();
 		bufInfo->buffer = packetManagementResponse.Serialize();
 		send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-		Util::LoggingInfo("DBCache.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("DBCache.log", "Type : ManagementDBCachePacketTypeDeleteResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		break;
 	}

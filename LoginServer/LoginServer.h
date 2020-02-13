@@ -11,13 +11,15 @@ public:
 
 private:
 	MAKE_SERVER(LoginServer)
-	void HandlePacketLogin(BufferInfo* bufInfo);
+		void HandlePacketLogin(BufferInfo* bufInfo);
 
 	void ConnectToManagementServer();
 
 	SOCKET managementServer = 0;
 
 	PlayerManager playerManager;
+	unsigned __int32 GPIDtmp = 0;
+
 };
 
-#endif
+#endif // __LOGIN_SERVER_H__

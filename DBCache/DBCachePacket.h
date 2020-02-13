@@ -42,11 +42,13 @@ public:
 	virtual Buffer& Serialize() override {
 		buffer << flag;
 		buffer << userNick;
+		buffer << GPID;
 		return buffer;
 	};
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> flag;
 		_buf >> userNick;
+		_buf >> GPID;
 	};
 
 	bool flag = true;
@@ -101,7 +103,7 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		buffer >> flag;
+		_buf >> flag;
 	}
 
 	bool flag = true;
@@ -115,6 +117,7 @@ public:
 	virtual Buffer& Serialize() override {
 		buffer << userId;
 		buffer << userPw;
+		buffer << userNick;
 
 		return buffer;
 	}

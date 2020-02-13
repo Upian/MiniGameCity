@@ -32,6 +32,7 @@ Account DatabaseAPI::LoginAccount(const std::string& userId, const std::string& 
 	if (mysql_query(conn, sql.c_str())) {
 		printf("검색 실패\n");
 		account.flag = false;
+		account.nick = { 0, };
 		return account;
 	}
 
@@ -39,24 +40,26 @@ Account DatabaseAPI::LoginAccount(const std::string& userId, const std::string& 
 	row = mysql_fetch_row(res);
 
 	if (row != nullptr) {
+		Util::Conversion con;
 		GPID = atoi(row[0]);
 		account.flag = true;
-		account.nick = row[3];
+		account.nick = con.ToAnsi(row[3]);
+
+		mysql_free_result(res);
+		sql = "UPDATE ";
+		sql += DB_NAME;
+		sql += ".login SET date_login=now() WHERE GPID=" + std::to_string(GPID);
+		if (mysql_query(conn, sql.c_str())) {
+			printf("로그인업데이트 실패\n");
+			account.flag = false;
+			return account;
+		}
 	}
 	else {
 		account.flag = false;
-		printf("해당 아이디 없음\n");
+		account.nick = { 0, };
+		printf("검색 결과 없음\n");
 	}
-	mysql_free_result(res);
-	sql = "UPDATE ";
-	sql += DB_NAME;
-	sql += ".login SET date_login=now() WHERE GPID=" + std::to_string(GPID);
-	if (mysql_query(conn, sql.c_str())) {
-		printf("로그인업데이트 실패\n");
-		account.flag = false;
-		return account;
-	}
-
 	return account;
 }
 
@@ -71,10 +74,11 @@ void DatabaseAPI::LogoutAccount() {
 }
 
 bool DatabaseAPI::SignUpAccount(const std::string& userId, const std::string& userPw, const std::string& userNick) {
+	Util::Conversion con;
 	std::string sql = "INSERT INTO ";
 	sql += DB_NAME;
 	sql += ".login (user_id, user_pw, user_nick) VALUES ";
-	sql += "('" + userId + "', '" + userPw + "', '" + userNick + "')";
+	sql += "('" + userId + "', '" + userPw + "', '" + con.ToUTF8(userNick.c_str()) + "')";
 
 	if (mysql_query(conn, sql.c_str())) {
 		printf("중복된 계정\n");
