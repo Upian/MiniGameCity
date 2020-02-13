@@ -41,7 +41,11 @@ void PlayerManager::PlayerDisconnect(SOCKET key) {
 		return;
 	m_playerList.remove(pPlayer);
 }
-
+void PlayerManager::PlayerDisconnect(std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+	m_playerList.remove(pplayer);
+}
 
 void PlayerManager::SendToAllPlayers(BasePacket& packet) {
 	Buffer buffer = packet.Serialize();

@@ -18,6 +18,7 @@ public:
 	void RemovePlayer(GPID key);
 	
 	void PlayerDisconnect(SOCKET key);
+	void PlayerDisconnect(std::shared_ptr<Player> pplayer);
 	void SendToAllPlayers(BasePacket& packet);
 	void SendToLobbyPlayers(BasePacket& packet);
 	void SendToGuildPlayers(BasePacket& packet);
