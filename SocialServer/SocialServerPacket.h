@@ -15,8 +15,8 @@ enum class PacketTypeSocialServer : char {
 	//Friend
 	addFriendRequest,			//src player to server (Client -> Server)
 	addFriendResponse,			
-	confirmAddFriendRequest,	//dest player to server (client -> server)
-	confirmAddFriendResponse,	
+	confirmFriendRequest,	//dest player to server (client -> server)
+	confirmFriendResponse,	
 
 
 	//Guild
@@ -113,8 +113,8 @@ struct SocialPacketServerAddFriendResponse : public BaseSocialServerPacket {
 	}
 };
 
-struct SocialPacketServerConfirmAddFriendRequest : public BaseSocialServerPacket {
-	SocialPacketServerConfirmAddFriendRequest() : BaseSocialServerPacket(PacketTypeSocialServer::confirmAddFriendRequest) {}
+struct SocialPacketServerConfirmFriendRequest : public BaseSocialServerPacket {
+	SocialPacketServerConfirmFriendRequest() : BaseSocialServerPacket(PacketTypeSocialServer::confirmFriendRequest) {}
 
 	GPID m_gpid = 0;
 
@@ -128,15 +128,17 @@ struct SocialPacketServerConfirmAddFriendRequest : public BaseSocialServerPacket
 		return;
 	}
 };
-struct SocialPacketServerConfirmAddFriendResponse : public BaseSocialServerPacket {
-	SocialPacketServerConfirmAddFriendResponse() : BaseSocialServerPacket(PacketTypeSocialServer::confirmAddFriendResponse) {}
+struct SocialPacketServerConfirmFriendResponse : public BaseSocialServerPacket {
+	SocialPacketServerConfirmFriendResponse() : BaseSocialServerPacket(PacketTypeSocialServer::confirmFriendResponse) {}
 	
+	GPID m_gpid = 0;
 	__int16 m_size = 0;
 	std::list<std::string> m_names;
 	
 	virtual Buffer& Serialize() {
 		m_size = static_cast<__int16>(m_names.size());
 
+		buffer << m_gpid;
 		buffer << m_size;
 		for (std::string name : m_names) {
 			buffer << name;
@@ -147,6 +149,7 @@ struct SocialPacketServerConfirmAddFriendResponse : public BaseSocialServerPacke
 	virtual void Deserialize(Buffer& buf) {
 		std::string tempName;
 
+		buf >> m_gpid;
 		buf >> m_size;
 		for (int i = 0; i < m_size; ++i) {
 			buf >> tempName;

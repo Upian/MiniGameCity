@@ -5,8 +5,11 @@
 enum class ErrorTypeAddFriend : char {
 	none = 0,
 
-	srcFriendListIsfull,
-	destFriendListIsfull,
+	notExistPlayer,
+	srcFriendListIsFull, 
+	destFriendListIsFull,
+	destFriendRequestListIsFull,
+	alreadySendRequest,
 
 	count,
 };

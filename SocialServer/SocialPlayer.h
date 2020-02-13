@@ -4,11 +4,15 @@
 
 #include <list>
 #include <memory>
-#include <queue>
+
+#include "ErrorType.h"
+
 using GPID = unsigned __int32; //Unique ID for each player (Game Player ID)
 
 class Guild;
 class ClntServer;
+class BasePacket;
+
 
 class SocialPlayer {
 public:
@@ -18,6 +22,8 @@ public:
 
 	void Initialize();
 
+	void SendPacket(BasePacket& packet);
+
 	GPID GetGPID() const { return m_gpid; }
 	std::string GetName() const { return m_name; }
 
@@ -25,9 +31,9 @@ public:
 	std::shared_ptr<Guild> GetGuild() const { return m_guild; }
 
 	//Friend
-	bool IsFriendRequestEmpty() const { return m_friendRequestQueue.empty(); }
-	std::shared_ptr<SocialPlayer> GetFriendRequest() { m_friendRequestQueue.front(); m_friendRequestQueue.pop(); }
-	void AddFriendRequest(std::shared_ptr<SocialPlayer> pplayer) { m_friendRequestQueue.push(pplayer); }
+	bool IsFriendRequestEmpty() const { return m_friendRequestList.empty(); }
+	std::list<std::shared_ptr<SocialPlayer> >& GetFriendRequestList() { return m_friendRequestList; }
+	ErrorTypeAddFriend AddFriendRequest(std::shared_ptr<SocialPlayer> pplayer);
 
 	void SetName(std::string na) { m_name = na; } //#Test
 
@@ -38,7 +44,9 @@ private:
 	std::string m_name;
 
 	//Friend
-	std::queue<std::shared_ptr<SocialPlayer> > m_friendRequestQueue;
+	int m_maxFriendRequestSize = 5; //#DesignData
+	int m_maxFriendListSize = 10; //#DesignData
+	std::list<std::shared_ptr<SocialPlayer> > m_friendRequestList;
 	std::list<std::shared_ptr<SocialPlayer> > m_friendList;
 	
 	//Guild

@@ -82,11 +82,6 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 		this->HandleBasePacketGame(bufInfo);
 		break;
 	}
-	case BasePacketType::basePacketTypeSocialServer: {
-		printf("RECV from SocialServer\n"); //#Test
-
-		break;
-	}
 	default: {
 		Util::LoggingInfo("GameServer.log", "Recv wrong base packet ID: %d", type);
 		break;

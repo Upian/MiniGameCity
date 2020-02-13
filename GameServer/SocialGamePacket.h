@@ -1,6 +1,7 @@
 #pragma once
 #ifndef __GAMESERVER_SOCIAL_PACKET_H__
 #define __GAMESERVER_SOCIAL_PACKET_H__
+#include <list>
 
 #include "BasePacket.h"
 #include "ErrorType.h"
@@ -14,10 +15,12 @@ enum class PacketTypeSocialClient : char{
 	packetTypeSocialChatGuildRequest, //Client -> Game server
 	packetTypeSocialChatGuildResponse, //Game server -> All guild clients
 	//Friend
-	packetTypeSocialAddFriendRequest,
+	packetTypeSocialAddFriendRequest, //친추 요청
 	packetTypeSocialAddFriendResponse,
-	packetTypeSocialConfirmFriendRequest,
+	packetTypeSocialConfirmFriendRequest, //받은 친추 목록
 	packetTypeSocialConfirmFriendResponse,
+	packetTypeSocialFriendListRequest, //친구 리스트
+	packetTypeSocialFriendListResponse,
 
 	packetTypeSocialCount,
 };
@@ -87,7 +90,6 @@ struct SocialGamePacketAddFriendRequest : public BaseSocialGamePacket {
 		return;
 	}
 };
-
 struct SocialGamePacketAddFriendResponse : public BaseSocialGamePacket {
 	SocialGamePacketAddFriendResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialAddFriendResponse) {}
 
@@ -106,5 +108,47 @@ struct SocialGamePacketAddFriendResponse : public BaseSocialGamePacket {
 		return;
 	}
 
+};
+
+struct SocialGamePacketConfirmFriendRequest : public BaseSocialGamePacket {
+	SocialGamePacketConfirmFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialConfirmFriendRequest) {}
+
+	virtual Buffer& Serialize() {
+	
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+	
+
+		return;
+	}
+};
+struct SocialGamePacketConfirmFriendResponse : public BaseSocialGamePacket {
+	SocialGamePacketConfirmFriendResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialConfirmFriendResponse) {}
+
+	__int16 m_size = 0;
+	std::list<std::string> m_names;
+	
+	virtual Buffer& Serialize() {
+		m_size = static_cast<__int16>(m_names.size());
+
+		buffer << m_size;
+		for (std::string name : m_names) {
+			buffer << name;
+		}
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		std::string tempName;
+
+		buf >> m_size;
+		for (int i = 0; i < m_size; ++i) {
+			buf >> tempName;
+			m_names.emplace_back(tempName);
+		}
+		return;
+	}
 };
 #endif // !__GAMESERVER_SOCIAL_PACKET_H__

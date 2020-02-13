@@ -14,11 +14,29 @@ void FriendsManager::HandleAddFriendRequest(std::shared_ptr<SocialPlayer> srcPla
 		return;
 	}
 
-	destPlayer->AddFriendRequest(srcPlayer);
-
+	
 	SocialPacketServerAddFriendResponse packet;
 	packet.m_gpid = srcPlayer->GetGPID();
-	packet.m_success = true;
+	packet.m_errorType = destPlayer->AddFriendRequest(srcPlayer);
+	if (ErrorTypeAddFriend::none != packet.m_errorType) //Fail
+		packet.m_success = false;
+	else 
+		packet.m_success = true;
+
 	srcPlayer->GetServer()->SendPacket(packet);
-	Util::LoggingDebug("", "Send packet to game server");
+}
+
+void FriendsManager::HandleConfirmFriendRequest(std::shared_ptr<SocialPlayer> pplayer) {
+	if (nullptr == pplayer)
+		return;
+	if (true == pplayer->IsFriendRequestEmpty())
+		return;
+
+	SocialPacketServerConfirmFriendResponse packet;
+	packet.m_gpid = pplayer->GetGPID();
+	for (auto p : pplayer->GetFriendRequestList()) {
+		packet.m_names.emplace_back(p->GetName());
+	}
+
+	pplayer->GetServer()->SendPacket(packet);
 }

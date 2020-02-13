@@ -64,6 +64,13 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		m_friendManager.HandleAddFriendRequest(srcPlayer, destPlayer);
 		break;
 	}
+	case PacketTypeSocialServer::confirmFriendRequest: {
+		SocialPacketServerConfirmFriendRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		auto pplayer = m_socialPlayerManager.FindSocialPlayer(packet.m_gpid);
+		m_friendManager.HandleConfirmFriendRequest(pplayer);
+		break;
+	}
 	default: {
 		Util::LoggingInfo("SocialServer.log", "Recv wrong soical server packet ID: %d", type);
 		break;
