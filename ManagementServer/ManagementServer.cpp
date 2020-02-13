@@ -74,10 +74,10 @@ void ManagementServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("ManagementServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
-		if ((Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserIdMinSize") > packetLoginRequest.userId.size()) || (packetLoginRequest.userId.size() > Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserIdMaxSize"))) {
+		if ((Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserIdMinSize", 4) > packetLoginRequest.userId.size()) || (packetLoginRequest.userId.size() > Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserIdMaxSize", 8))) {
 			flag = false;
 		}
-		if ((flag == true) && (Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserPwMinSize") > packetLoginRequest.userPw.size()) || (packetLoginRequest.userPw.size() > Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserPwMaxSize"))) {
+		if ((flag == true) && (Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserPwMinSize", 8) > packetLoginRequest.userPw.size()) || (packetLoginRequest.userPw.size() > Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserPwMaxSize", 16))) {
 			flag = false;
 		}
 		if (flag == true) {
@@ -145,13 +145,13 @@ void ManagementServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("ManagementServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
-		if ((Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserIdMinSize") > packetLoginRequest.userId.size()) || (packetLoginRequest.userId.size() > Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserIdMaxSize"))) {
+		if ((Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserIdMinSize", 4) > packetLoginRequest.userId.size()) || (packetLoginRequest.userId.size() > Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserIdMaxSize", 8))) {
 			flag = false;
 		}
-		if ((flag == true) && (Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserPwMinSize") > packetLoginRequest.userPw.size()) || (packetLoginRequest.userPw.size() > Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserPwMaxSize"))) {
+		if ((flag == true) && (Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserPwMinSize", 8) > packetLoginRequest.userPw.size()) || (packetLoginRequest.userPw.size() > Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserPwMaxSize", 16))) {
 			flag = false;
 		}
-		if ((flag == true) && (packetLoginRequest.userNick.size() > Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserNickMaxSize"))) {
+		if ((flag == true) && (packetLoginRequest.userNick.size() > Util::GetConfigToInt("ManagementServer.ini", "Definition", "UserNickMaxSize", 24))) {
 			flag = false;
 		}
 		if (flag == true) {
@@ -289,9 +289,8 @@ void ManagementServer::ConnectToDBCache() {
 	SOCKADDR_IN address;
 	ZeroMemory(&address, sizeof(address));
 	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = inet_addr(Util::GetConfigToString("ManagementServer.ini", "Network", "DBCacheIP", "127.0.0.1").c_str()); // 10.255.252.95
-	address.sin_port = htons(Util::GetConfigToInt("ManagementServer.ini", "Network", "DBCachePort", 10005)); // 10002
-
+	address.sin_addr.s_addr = inet_addr(Util::GetConfigToString("ManagementServer.ini", "Network", "DBCacheIP", "127.0.0.1").c_str());
+	address.sin_port = htons(Util::GetConfigToInt("ManagementServer.ini", "Network", "DBCachePort", 20000));
 	if (SOCKET_ERROR == connect(dbCache, (SOCKADDR*)&address, sizeof(address))) {
 		Util::LoggingFatal("ManagementServer.log", "ERROR - Can not connect to db server");
 		_exit(0);

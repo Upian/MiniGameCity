@@ -12,6 +12,7 @@
 
 class ManagementServer : public BaseServer<ManagementServer> {
 public:
+
 	void InitializeManagmentServer();
 
 private:
