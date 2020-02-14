@@ -137,7 +137,7 @@ void Room::UpdateRoomInfoToAllPlayers() {
 			p->GetIsReady()
 		);
 	}
-
+	
 	m_roomPlayerManager.SendToAllPlayers(packet);
 }
 

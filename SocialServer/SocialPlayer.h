@@ -4,6 +4,7 @@
 
 #include <list>
 #include <memory>
+#include <utility>
 
 #include "ErrorType.h"
 
@@ -18,7 +19,7 @@ class SocialPlayer {
 public:
 	SocialPlayer() {}
 	SocialPlayer(GPID gpid, std::shared_ptr<ClntServer> server);
-	~SocialPlayer() {}
+	~SocialPlayer() {} //#DatabaseSave
 
 	void Initialize();
 
@@ -32,14 +33,15 @@ public:
 
 	//Friend
 	bool IsFriendRequestEmpty() const { return m_friendRequestList.empty(); }
-	std::list<std::shared_ptr<SocialPlayer> >& GetFriendRequestList() { return m_friendRequestList; }
-	std::list<std::shared_ptr<SocialPlayer> >& GetFriendList() { return m_friendList; }
-	ErrorTypeAddFriend AddFriendRequest(std::shared_ptr<SocialPlayer> pplayer);
+	std::list<std::pair<GPID, std::string> >& GetFriendRequestList() { return m_friendRequestList; }
+	std::list<std::pair<GPID, std::string> >& GetFriendList() { return m_friendList; }
+	ErrorTypeAddFriend AddFriendRequest(std::shared_ptr<SocialPlayer> srcPlayer); //Only login player can add friend request
 	bool IsExistFriendRequestList(std::shared_ptr<SocialPlayer>);
 	bool AddFriendList(std::shared_ptr<SocialPlayer>);
 	bool IsAddFriendAvailable() { return m_maxFriendListSize > m_friendList.size(); }
-	void DeleteFriendList(std::shared_ptr<SocialPlayer> player) { m_friendList.remove(player); }
-	
+
+	void DeleteFriendList(GPID);
+	void DeleteFriendRequestList(GPID);
 
 	void SetName(std::string na) { m_name = na; } //#Test
 
@@ -52,8 +54,8 @@ private:
 	//Friend
 	int m_maxFriendRequestSize = 5; //#DesignData
 	int m_maxFriendListSize = 10; //#DesignData
-	std::list<std::shared_ptr<SocialPlayer> > m_friendRequestList;
-	std::list<std::shared_ptr<SocialPlayer> > m_friendList;
+	std::list<std::pair<GPID, std::string> > m_friendRequestList;
+	std::list<std::pair<GPID, std::string> > m_friendList;
 	
 	//Guild
 	std::shared_ptr<Guild> m_guild = nullptr;

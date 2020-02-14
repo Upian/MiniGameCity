@@ -18,22 +18,24 @@ void SocialPlayer::SendPacket(BasePacket & packet) {
 	this->GetServer()->SendPacket(packet); 
 }
 
-ErrorTypeAddFriend SocialPlayer::AddFriendRequest(std::shared_ptr<SocialPlayer> pplayer) {
-	if (nullptr == pplayer)
+ErrorTypeAddFriend SocialPlayer::AddFriendRequest(std::shared_ptr<SocialPlayer> srcPlayer) {
+	if (nullptr == srcPlayer)
 		return ErrorTypeAddFriend::notExistPlayer;
 	if (m_maxFriendListSize <= m_friendList.size())
 		return ErrorTypeAddFriend::destFriendListIsFull;
 	if (m_maxFriendRequestSize <= m_friendRequestList.size())
 		return ErrorTypeAddFriend::destFriendRequestListIsFull;
+	if (true == this->IsExistFriendRequestList(srcPlayer))
+		return ErrorTypeAddFriend::alreadySendRequest;
 
 
-	m_friendRequestList.push_back(pplayer);
+	m_friendRequestList.emplace_back(srcPlayer->GetGPID(), srcPlayer->GetName());
 	return ErrorTypeAddFriend::none;
 }
 
 bool SocialPlayer::IsExistFriendRequestList(std::shared_ptr<SocialPlayer> player) {
 	for (auto p : m_friendRequestList) {
-		if (player == p)
+		if (player->GetGPID() == p.first)
 			return true;
 	}
 	return false;
@@ -45,10 +47,21 @@ bool SocialPlayer::AddFriendList(std::shared_ptr<SocialPlayer> player) {
 	if (nullptr == player)
 		return false;
 
-	m_friendRequestList.remove(player);
-
-	m_friendList.push_back(player);
+	this->DeleteFriendRequestList(player->GetGPID());
+	m_friendList.emplace_back(player->GetGPID(), player->GetName());
 	return true;
+}
+
+void SocialPlayer::DeleteFriendList(GPID gpid) {
+	m_friendList.remove_if([&gpid](std::pair<GPID, std::string> p)->bool {
+		return (gpid == p.first);
+	});
+}
+
+void SocialPlayer::DeleteFriendRequestList(GPID gpid) {
+	m_friendRequestList.remove_if([&gpid](std::pair<GPID, std::string> p)->bool {
+		return (gpid == p.first);
+	});
 }
 
 

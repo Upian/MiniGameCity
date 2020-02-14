@@ -223,4 +223,26 @@ struct SocialGamePacketFriendListResponse : public BaseSocialGamePacket {
 		return;
 	}
 };
+
+struct SocialGamePacketChatFriendRequest : public BaseSocialGamePacket {
+	SocialGamePacketChatFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialChatFriendRequest) {}
+	
+	std::string m_destName;
+	std::string m_message;
+
+	virtual Buffer& Serialize() {
+		buffer << m_destName;
+		buffer << m_message;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buffer >> m_destName;
+		buffer >> m_message;
+		return;
+	}
+};
+struct SocialGamePacketChatFriendResponse : public BaseSocialGamePacket {
+
+};
 #endif // !__GAMESERVER_SOCIAL_PACKET_H__
