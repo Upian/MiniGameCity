@@ -39,4 +39,14 @@ enum class ErrorTypeEnterRoom : char {
 	errorTypeCount,
 };
 
+enum class ErrorTypeStartGame : char {
+	errorTypeStartGameNone = 0,
+
+	errorTypeStartGameReady, //Someone do not press ready buddon
+	errorTypeStartGameNotHaveGame,
+	errorTypeStartGameAlreadyStartGame,
+	errorTypeStartGameRoomIsNotWaitingGame,
+
+	errorTypeStartGameCount,
+};
 #endif // !__BASELIB_ERROR_TYPE_H__

@@ -20,14 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp" />
-    <ClCompile Include="InGame.cpp" />
+    <ClCompile Include="InGameLibrary.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="SocialServerHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameServer.h" />
-    <ClInclude Include="InGame.h" />
+    <ClInclude Include="InGameLibrary.h" />
     <ClInclude Include="InGamePacket.h" />
     <ClInclude Include="ManagementServerHandler.h" />
     <ClInclude Include="PreLoadPacket.h" />

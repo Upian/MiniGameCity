@@ -34,11 +34,11 @@
     <ClCompile Include="RoomManager.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="InGame.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="SocialServerHandler.cpp">
       <Filter>Social</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameLibrary.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -54,9 +54,6 @@
     <ClInclude Include="RoomPacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="InGame.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="InGamePacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
@@ -71,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="ManagementServerHandler.h">
       <Filter>Management</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameLibrary.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

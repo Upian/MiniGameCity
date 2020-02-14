@@ -6,15 +6,15 @@
 #include "InGamePacket.h"
 #include "PlayerManager.h"
 
-class InGame {
+class InGameLibrary {
 
 public:
 
 	//게임시작 함수
 	void TwentyQuestionGame(PlayerManager&);			//스무고개
-	void RelayNovelGame(PlayerManager&);			//릴레이소설
-	void BanKeywordGame(PlayerManager&);			//금칙어 게임
-	void CatchMindGame(PlayerManager&);			//캐치마인드
+	void RelayNovelGame(PlayerManager&) {}				//릴레이소설
+	void BanKeywordGame(PlayerManager&) {}				//금칙어 게임
+	void CatchMindGame(PlayerManager&) {}				//캐치마인드
 
 private:
 

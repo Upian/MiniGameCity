@@ -2,12 +2,15 @@
 #include "Room.h"
 #include "Player.h"
 #include "Log.h"
-Room::Room(int roomNumber, std::string roomName, std::shared_ptr<Player> master, int maxPlayer) :
+#include "InGameLibrary.h"
+#include "ErrorType.h"
+Room::Room(int roomNumber, std::string roomName, std::shared_ptr<Player> master, int maxPlayer, RoomGameType gameType) :
 	m_roomName(roomName),
 	m_maximumPlayer(maxPlayer),
 	m_roomMaster(master),
 	m_roomNumber(roomNumber),
-	m_roomState(RoomState::roomStateWait){
+	m_roomState(RoomState::roomStateWait),
+	m_gameType(gameType) {
 	m_createdTime = time(NULL);
 }
 
@@ -25,27 +28,37 @@ void Room::Initialize() {
 	for (int i = m_maximumPlayer; i > 0; --i) 
 		m_playerPosionStack.push(i);
 	
+	m_game = this->SetGame();
+
 	m_roomMaster->SetIsRoomMaster(true);
 	this->PlayerEnterRoom(m_roomMaster);
 }
 
-void Room::StartGame(std::function<void(void)> game) {
-//	if (nullptr == game)
-//		return;
-	if (RoomState::roomStateWait != m_roomState)
-		return;
-	if (nullptr != m_inGameThread)
-		return;
+void Room::StartGame() {
+	RoomPacketStartGameResponse packet;
+	packet.m_isSuccess = false;
+	packet.m_errorCode == ErrorTypeStartGame::errorTypeStartGameNone;
 
+	if (nullptr == m_game)
+		packet.m_errorCode = ErrorTypeStartGame::errorTypeStartGameNotHaveGame;
+	else if (RoomState::roomStateWait != m_roomState)
+		packet.m_errorCode = ErrorTypeStartGame::errorTypeStartGameRoomIsNotWaitingGame;
+	else if (nullptr != m_inGameThread)
+		packet.m_errorCode = ErrorTypeStartGame::errorTypeStartGameAlreadyStartGame;
+	else if (false == this->CheckAllPlayerIsReady())//Check all player ready
+		packet.m_errorCode = ErrorTypeStartGame::errorTypeStartGameReady;
+
+	if (packet.m_errorCode == ErrorTypeStartGame::errorTypeStartGameNone)
+		packet.m_isSuccess = true;
+
+	m_roomPlayerManager.SendToAllPlayers(packet);
 
 	m_inGameThread = new std::thread([this]()->void {
 		m_roomState = RoomState::roomStateGaming;
 		m_roomPlayerManager.SetAllPlayerState(PlayerState::playerStatePlayGame);
-		for (int i = 0; i < 10; ++i) {
-			Sleep(500);
-			Util::LoggingInfo("0_Test.log", "RoomNumber: %d  -  %d", this->GetRoomNumber(), i);
-		}
-		Util::LoggingInfo("0_Test.log", "RoomNumber: %d  -  Game END", this->GetRoomNumber());
+		
+		m_game(m_roomPlayerManager);
+
 		m_roomState = RoomState::roomStateNone;
 		return;
 	});
@@ -169,6 +182,37 @@ bool Room::CheckPassword(__int16 password) {
 		return true;
 
 	return password == m_password;
+}
+bool Room::CheckAllPlayerIsReady() {
+	for (auto player : m_roomPlayerManager.GetPlayerList()) {
+		if (m_roomMaster == player)
+			continue;
+
+		if (false == player->GetIsReady())
+			return false;
+	}
+	return true;
+}
+std::function<void(PlayerManager&)> Room::SetGame() {
+	switch (m_gameType) {
+	case RoomGameType::GameTypeTwentyQuestion: {
+		return [this](PlayerManager& players)->void {this->m_gameLib.TwentyQuestionGame(players); };
+	}
+	case RoomGameType::GameTypeRelayNovel: {
+		return [this](PlayerManager& players)->void {this->m_gameLib.RelayNovelGame(players); };
+	}
+	case RoomGameType::GameTypeBanKeyword: {
+		return [this](PlayerManager& players)->void {this->m_gameLib.BanKeywordGame(players); };
+	}
+	case RoomGameType::GameTypeCatchMind: {
+		return [this](PlayerManager& players)->void {this->m_gameLib.CatchMindGame(players); };
+	}
+	case RoomGameType::GameTypeNone: break;
+	default: {
+		Util::LoggingError("Room.h", "Game type error: %d", m_gameType);
+	}
+	}
+	return nullptr;
 }
 #pragma region operator
 

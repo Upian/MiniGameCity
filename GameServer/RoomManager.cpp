@@ -45,6 +45,10 @@ void RoomManager::HandleRoomPacket(Buffer & buffer, std::shared_ptr<Player> play
 		this->HaldlePacketToggleReady(player);
 		break;
 	}
+	case PacketTypeRoom::packetTypeRoomStartGameRequest: {
+		this->HandlePacketStartGame(player);
+		break;
+	}
 	default:
 		Util::LoggingInfo("GameServer.log", "Recv wrong room packet ID: %d", type);
 	}
@@ -94,7 +98,7 @@ void RoomManager::HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::s
 			int roomNumber = m_roomNumberList.top();
 			m_roomNumberList.pop();
 
-			tempRoom = std::make_shared<Room>(roomNumber, packet.m_roomName, master, packet.m_maximumPlayer);
+			tempRoom = std::make_shared<Room>(roomNumber, packet.m_roomName, master, packet.m_maximumPlayer, packet.m_gameType);
 			tempRoom->Initialize();
 
 			if (0 < packet.m_password && packet.m_password < 10000) 
@@ -226,6 +230,21 @@ void RoomManager::HaldlePacketToggleReady(std::shared_ptr<Player> player) {
 
 	player->toggleReady();
 	room->UpdateRoomInfoToAllPlayers();
+}
+
+void RoomManager::HandlePacketStartGame(std::shared_ptr<Player> player) {
+	if (nullptr == player)
+		return;
+	auto room = player->GetRoom();
+	if (nullptr == room)
+		return;
+
+	if (false == player->GetIsRoomMaster()) //Check room master
+		return;
+	if (room->GetRoomMaster() != player) //Check room master
+		return;
+
+	room->StartGame();
 }
 
 void RoomManager::RemoveRoom(std::shared_ptr<Room> room) {

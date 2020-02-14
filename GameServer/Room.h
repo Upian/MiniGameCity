@@ -8,6 +8,7 @@
 #include <stack>
 
 #include "PlayerManager.h"
+#include "InGameLibrary.h"
 
 class Player;
 class RoomManager;
@@ -23,6 +24,7 @@ enum class RoomState {
 };
 enum class RoomGameType : char {
 	GameTypeNone = 0,
+
 	GameTypeTwentyQuestion,
 	GameTypeRelayNovel,
 	GameTypeBanKeyword,
@@ -31,16 +33,16 @@ enum class RoomGameType : char {
 	GameTypeCount,
 };
 
-class InGame;
+class InGameLibrary;
 
 class Room : public std::enable_shared_from_this<Room>{
 public:
-	Room(int roomNumber, std::string roomName, std::shared_ptr<Player> master, int maxPlayer);
+	Room(int roomNumber, std::string roomName, std::shared_ptr<Player> master, int maxPlayer, RoomGameType gameType);
 	~Room();
 
 	void Initialize();
 
-	void StartGame(std::function<void(void)> game);
+	void StartGame();
 
 	ErrorTypeEnterRoom PlayerEnterRoom(std::shared_ptr<Player> player, __int16 password = 0);
 	void PlayerLeaveRoom(std::shared_ptr<Player> player);
@@ -65,6 +67,7 @@ public:
 	bool GetIsUsePassword() const { return m_isUsePassword; }
 	bool CheckPassword(__int16 password);
 	bool CheckIsRoomIsFull() { return m_maximumPlayer <= m_roomPlayerManager.GetPlayerCount(); }
+	bool CheckAllPlayerIsReady();
 
 	std::string& GetRoomName() { return m_roomName; }
 
@@ -72,6 +75,8 @@ public:
 	//operator
 	bool operator==(const Room& other) const { return m_roomNumber == other.GetRoomNumber(); }
 private:
+	std::function<void(PlayerManager&)> SetGame();
+
 	PlayerManager						m_roomPlayerManager;
 	std::shared_ptr<Player>				m_roomMaster = nullptr;
 	std::stack<__int16>					m_playerPosionStack;
@@ -86,6 +91,9 @@ private:
 	time_t								m_createdTime = 0;
 	bool								m_isUsePassword = false;
 	__int16								m_password = 0;
+
+	InGameLibrary						m_gameLib;
+	std::function<void(PlayerManager&)>	m_game;
 	
 };
 #endif // !__GAMESERVER_LOBBY_H__

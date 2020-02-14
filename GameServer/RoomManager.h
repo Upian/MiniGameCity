@@ -33,6 +33,7 @@ private:
 	void HandlePacketLeaveRoom(std::shared_ptr<Player> player);
 	void HandlePacketRoomInfo(std::shared_ptr<Player> player);
 	void HaldlePacketToggleReady(std::shared_ptr<Player> player);
+	void HandlePacketStartGame(std::shared_ptr<Player> player);
 
 	void ClearDeactivatedRoom();
 	std::thread* m_roomWatcher = nullptr;
@@ -45,6 +46,7 @@ private:
 	int m_maximumRoomOnePage = 5; //#DesignData
 	size_t m_minimumPlayer = 2;	//#DesignData
 	size_t m_maximumPlayer = 6;	//#DesignData
+
 };
 
 #endif // !__GAMESERVER_ROOM_MANAGER_H__

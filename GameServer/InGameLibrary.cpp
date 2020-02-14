@@ -3,7 +3,7 @@
 #include <random>
 #include <algorithm>
 
-#include "InGame.h"
+#include "InGameLibrary.h"
 
 /*
 1. 스무고개
@@ -17,7 +17,7 @@ bool CompareScore(const std::shared_ptr<Player> x, const std::shared_ptr<Player>
 	return x->GetGameScore() > y->GetGameScore();
 }
 
-void InGame::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
+void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 
 	//게임 준비 파트 변수 생성
 	this->InGamePlayerManager = _InGamePlayerManager;
@@ -329,7 +329,7 @@ void InGame::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 }
 
 //다음 질문자를 가리킴
-void InGame::Next_Asker_Point()
+void InGameLibrary::Next_Asker_Point()
 {
 	++Asker;
 	if (Asker == AskerGroup.end())
@@ -338,7 +338,7 @@ void InGame::Next_Asker_Point()
 	}
 }
 
-void InGame::Connect_Check_In_Wait_time(int setTime)
+void InGameLibrary::Connect_Check_In_Wait_time(int setTime)
 {
 	if (Quiz_Provide_Player == nullptr)
 	{
@@ -346,7 +346,7 @@ void InGame::Connect_Check_In_Wait_time(int setTime)
 	}
 }
 
-void InGame::Game_Setting_On()
+void InGameLibrary::Game_Setting_On()
 {
 	Quiz_Provide_Player = *(InGamePlayer.begin() + GameRound);
 
@@ -368,7 +368,7 @@ void InGame::Game_Setting_On()
 	}
 }
 
-TwentyProviderSelectAnswer InGame::SelectFiveAnswer(TwentyProviderSelectAnswer packet)
+TwentyProviderSelectAnswer InGameLibrary::SelectFiveAnswer(TwentyProviderSelectAnswer packet)
 {
 	std::random_device rn;
 	std::mt19937_64 rnd(rn());
@@ -384,7 +384,7 @@ TwentyProviderSelectAnswer InGame::SelectFiveAnswer(TwentyProviderSelectAnswer p
 	return packet;
 }
 
-void InGame::SetPlayerPosition()
+void InGameLibrary::SetPlayerPosition()
 {
 	std::random_device rd;
 	std::mt19937 g(rd());
@@ -392,7 +392,7 @@ void InGame::SetPlayerPosition()
 	std::shuffle(InGamePlayer.begin(), InGamePlayer.end(), g);
 }
 
-void InGame::AllPlayerReadyCheck()
+void InGameLibrary::AllPlayerReadyCheck()
 {
 	TwentyPlayerReadyCompletePacket packet;
 
@@ -407,7 +407,7 @@ void InGame::AllPlayerReadyCheck()
 	}
 }
 
-void InGame::LoadingTime()
+void InGameLibrary::LoadingTime()
 {
 	time_t loading = time(NULL) + 1;
 	while (loading != time(NULL))
@@ -416,7 +416,7 @@ void InGame::LoadingTime()
 	}
 }
 
-void InGame::TimerErrorProcess() {
+void InGameLibrary::TimerErrorProcess() {
 	if (ActionTime != 0 && ActionTime + 2 <= time(NULL))
 	{
 		time_t range = time(NULL) - ActionTime;

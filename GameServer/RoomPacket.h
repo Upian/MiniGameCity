@@ -7,6 +7,7 @@
 #include "BasePacket.h"
 #include "Player.h"
 #include "ErrorType.h"
+#include "Room.h"
 
 //1byte
 enum class PacketTypeRoom : char {
@@ -30,6 +31,8 @@ enum class PacketTypeRoom : char {
 	packetTypeRoomToggleReadyRequest, //Client -> GameServer
 	packetTypeRoomToggleReadyResponse, //GameServer -> Client (To tell)
 
+	packetTypeRoomStartGameRequest,
+	packetTypeRoomStartGameResponse,
 	packetTypeRoomCount,
 };
 
@@ -49,12 +52,14 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 	std::string		m_roomName;
 	int16			m_maximumPlayer = 0;
 	int16			m_password = 0;
+	RoomGameType m_gameType = RoomGameType::GameTypeNone;
 
 	virtual Buffer& Serialize() override {
 
 		buffer << m_roomName;
 		buffer << m_maximumPlayer;
 		buffer << m_password;
+		buffer << m_gameType;
 
 		return buffer;
 	}
@@ -63,6 +68,7 @@ struct RoomPacketMakeRoomRequest : public BaseRoomPacket {
 		buf >> m_roomName;
 		buf >> m_maximumPlayer;
 		buf >> m_password;
+		buf >> m_gameType;
 	}
 };
 struct RoomPacketMakeRoomResponse : public BaseRoomPacket {
@@ -331,6 +337,33 @@ struct RoomPacketToggleReadyResponse : public BaseRoomPacket {
 	}
 	virtual void  Deserialize(Buffer& buf) override {
 		buf >> m_isReady;
+	}
+};
+struct RoomPacketStartGameRequest : public BaseRoomPacket {
+	RoomPacketStartGameRequest() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomStartGameRequest) {}
+
+	virtual Buffer& Serialize() override {
+		return buffer;
+	}
+	virtual void  Deserialize(Buffer& buf) override {
+		return;
+	}
+};
+struct RoomPacketStartGameResponse : public BaseRoomPacket {
+	RoomPacketStartGameResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomStartGameResponse) {}
+
+	bool m_isSuccess = false;
+	ErrorTypeStartGame m_errorCode = ErrorTypeStartGame::errorTypeStartGameNone;
+
+	virtual Buffer& Serialize() override {
+		buffer << m_isSuccess;
+		buffer << m_errorCode;
+		return buffer;
+	}
+	virtual void  Deserialize(Buffer& buf) override {
+		buf >> m_isSuccess;
+		buf >> m_errorCode;
+		return;
 	}
 };
 //
