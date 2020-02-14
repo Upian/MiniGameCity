@@ -42,15 +42,17 @@ public:
 	virtual Buffer& Serialize() override {
 		buffer << flag;
 		buffer << userNick;
+		buffer << GPID;
 		return buffer;
 	};
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> flag;
 		_buf >> userNick;
+		_buf >> GPID;
 	};
 
 	bool flag = true;
-	std::string userNick{};
+	std::string userNick;
 	uint32 GPID = 0;
 };
 
@@ -70,8 +72,8 @@ public:
 		_buf >> userPw;
 	};
 
-	std::string userId{};
-	std::string userPw{};
+	std::string userId;
+	std::string userPw;
 };
 
 class ManagementDBCachePacketTypeLogoutRequest : public DBCachePacket {
@@ -101,7 +103,7 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		buffer >> flag;
+		_buf >> flag;
 	}
 
 	bool flag = true;
@@ -115,6 +117,7 @@ public:
 	virtual Buffer& Serialize() override {
 		buffer << userId;
 		buffer << userPw;
+		buffer << userNick;
 
 		return buffer;
 	}

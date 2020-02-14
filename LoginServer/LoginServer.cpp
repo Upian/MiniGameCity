@@ -46,7 +46,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 	case clientLoginPacketTypeLoginRequest: {
 		ClientLoginPacketTypeLoginRequest packetClientRequest{};
 		packetClientRequest.Deserialize(bufInfo->buffer);
-		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeLoginRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
 		if ((Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMinSize", 4) > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMaxSize", 8))) {
@@ -77,11 +77,16 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 			bufInfo->Clear();
 			bufInfo->buffer = packetLoginRequest.Serialize();
 			send(managementServer, bufInfo->buffer, BUFFER_SIZE, 0);
+			Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeLoginRequest || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
-			recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0); // 수정
+			bufInfo->Clear();
+			bufInfo->buffer.SetLength(recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0)); // 수정
+			PacketTypeDeserial(bufInfo->buffer);
+			PacketTypeDeserial(bufInfo->buffer);
 			LoginManagementPacketTypeLoginResponse packetLoginResponse{};
+			Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeLoginResponse || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 			packetLoginResponse.Deserialize(bufInfo->buffer);
-			packetLoginResponse.GPID = 10; // GPID;
+			this->GPIDtmp = packetLoginResponse.GPID; // GPID;
 
 			ClientLoginPacketTypeLoginResponse packetClientResponse{};
 			packetClientResponse.flag = packetLoginResponse.flag;
@@ -89,7 +94,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 			bufInfo->Clear();
 			bufInfo->buffer = packetClientResponse.Serialize();
 			send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-			Util::LoggingInfo("LoginServer.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+			Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeLoginResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 		}
 		else {
 			ClientLoginPacketTypeLoginResponse packetClientResponse{};
@@ -97,20 +102,21 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 			bufInfo->Clear();
 			bufInfo->buffer = packetClientResponse.Serialize();
 			send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-			Util::LoggingInfo("LoginServer.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+			Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeLoginResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 		}
 		break;
 	}
 	case clientLoginPacketTypeLogoutRequest: {
 		ClientLoginPacketTypeLogoutRequest packetClientRequest{};
 		packetClientRequest.Deserialize(bufInfo->buffer);
-		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeLogoutRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+
 		LoginManagementPacketTypeLogoutRequest packetLoginRequest{};
-		packetLoginRequest.GPID = 10; // serialnumber;
+		packetLoginRequest.GPID = GPIDtmp;
 		bufInfo->Clear();
 		bufInfo->buffer = packetLoginRequest.Serialize();
 		send(managementServer, bufInfo->buffer, BUFFER_SIZE, 0);
-		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeLogoutRequest || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		break;
 	}
@@ -118,7 +124,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 	case clientLoginPacketTypeSignupRequest: {
 		ClientLoginPacketTypeSignupRequest packetClientRequest{};
 		packetClientRequest.Deserialize(bufInfo->buffer);
-		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeSignupRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		bool flag = true;
 		if ((Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMinSize", 4) > packetClientRequest.userId.size()) || (packetClientRequest.userId.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserIdMaxSize", 8))) {
@@ -152,9 +158,15 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 			bufInfo->Clear();
 			bufInfo->buffer = packetLoginRequest.Serialize();
 			send(managementServer, bufInfo->buffer, BUFFER_SIZE, 0);
+			Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeSignupRequest || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
-			recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0); // 수정
+			bufInfo->Clear();
+			bufInfo->buffer.SetLength(recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0)); // 수정
+			PacketTypeDeserial(bufInfo->buffer);
+			PacketTypeDeserial(bufInfo->buffer);
 			LoginManagementPacketTypeSignupResponse packetLoginResponse{};
+			Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeSignupResponse || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+
 			packetLoginResponse.Deserialize(bufInfo->buffer);
 
 			ClientLoginPacketTypeSignupResponse packetClientResponse{};
@@ -162,8 +174,7 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 			bufInfo->Clear();
 			bufInfo->buffer = packetClientResponse.Serialize();
 			send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-			Util::LoggingInfo("LoginServer.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
-
+			Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeSignupResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 		}
 		else {
 			ClientLoginPacketTypeSignupResponse packetClientResponse{};
@@ -171,7 +182,8 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 			bufInfo->Clear();
 			bufInfo->buffer = packetClientResponse.Serialize();
 			send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-			Util::LoggingInfo("LoginServer.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+			Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeSignupResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+
 		}
 		break;
 	}
@@ -179,16 +191,22 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 	case clientLoginPacketTypeDeleteRequest: {
 		ClientLoginPacketTypeDeleteRequest packetClientRequest{};
 		packetClientRequest.Deserialize(bufInfo->buffer);
-		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeDeleteRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		LoginManagementPacketTypeDeleteRequest packetLoginRequest{};
-		packetLoginRequest.GPID = 10; // player GPID;
+		packetLoginRequest.GPID = GPIDtmp; // player GPID;
 		bufInfo->Clear();
 		bufInfo->buffer = packetLoginRequest.Serialize();
 		send(managementServer, bufInfo->buffer, BUFFER_SIZE, 0);
+		Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeDeleteRequest || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
-		recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0); // 수정
+		bufInfo->Clear();
+		bufInfo->buffer.SetLength(recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0)); // 수정
+		PacketTypeDeserial(bufInfo->buffer);
+		PacketTypeDeserial(bufInfo->buffer);
 		LoginManagementPacketTypeDeleteResponse packetLoginResponse{};
+		Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeDeleteResponse || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+
 		packetLoginResponse.Deserialize(bufInfo->buffer);
 
 		ClientLoginPacketTypeDeleteResponse packetClientResponse{};
@@ -197,53 +215,77 @@ void LoginServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		bufInfo->Clear();
 		bufInfo->buffer = packetClientResponse.Serialize();
 		send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeDeleteResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		break;
 	}
 
 	case clientLoginPacketTypeShowChannelRequest: {
-		ClientLoginPacketTypeShowChannelRequest packetRequest{};
-		packetRequest.Deserialize(bufInfo->buffer);
-		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		ClientLoginPacketTypeShowChannelRequest packetClientRequest{};
+		packetClientRequest.Deserialize(bufInfo->buffer);
+		Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeShowChannelRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
-		LoginManagementPacketTypeShowChannelResponse packetLoginRequest{};
+
+		LoginManagementPacketTypeShowChannelRequest packetLoginRequest{};
+		
 		bufInfo->Clear();
 		bufInfo->buffer = packetLoginRequest.Serialize();
 		send(managementServer, bufInfo->buffer, BUFFER_SIZE, 0);
+		Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeShowChannelResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
-		recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0);
+
+		bufInfo->Clear();
+		bufInfo->buffer.SetLength(recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0)); // 수정
+		PacketTypeDeserial(bufInfo->buffer);
+		PacketTypeDeserial(bufInfo->buffer);
 		LoginManagementPacketTypeShowChannelResponse packetLoginResponse{};
+		Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeShowChannelResponse || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+
 		packetLoginResponse.Deserialize(bufInfo->buffer);
 
 		ClientLoginPacketTypeShowChannelResponse packetClientResponse{};
+		packetClientResponse.channel[0] = packetLoginResponse.channel[0];
+		packetClientResponse.channel[1] = packetLoginResponse.channel[1];
+		packetClientResponse.channel[2] = packetLoginResponse.channel[2];
+		packetClientResponse.channel[3] = packetLoginResponse.channel[3];
+
 		bufInfo->Clear();
 		bufInfo->buffer = packetClientResponse.Serialize();
 		send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeShowChannelResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		break;
 	}
 
 	case clientLoginPacketTypeChannelInRequest: {
-		ClientLoginPacketTypeChannelInRequest packetRequest{};
-		packetRequest.Deserialize(bufInfo->buffer);
-		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Recv packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		ClientLoginPacketTypeChannelInRequest packetClientRequest{};
+		packetClientRequest.Deserialize(bufInfo->buffer);
+		Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeChannelInRequest || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
-		LoginManagementPacketTypeChannelInResponse packetLoginRequest{};
+		LoginManagementPacketTypeChannelInRequest packetLoginRequest{};
+		packetLoginRequest.channelName = packetClientRequest.channelName;
 		bufInfo->Clear();
 		bufInfo->buffer = packetLoginRequest.Serialize();
 		send(managementServer, bufInfo->buffer, BUFFER_SIZE, 0);
+		Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeChannelInResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
-		recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0);
+		bufInfo->Clear();
+		bufInfo->buffer.SetLength(recv(managementServer, bufInfo->buffer, BUFFER_SIZE, 0)); // 수정
+		PacketTypeDeserial(bufInfo->buffer);
+		PacketTypeDeserial(bufInfo->buffer);
 		LoginManagementPacketTypeChannelInResponse packetLoginResponse{};
 		packetLoginResponse.Deserialize(bufInfo->buffer);
+		Util::LoggingInfo("LoginServer.log", "Type : LoginManagementPacketTypeChannelInResponse || Recv packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+
 
 		ClientLoginPacketTypeChannelInResponse packetClientResponse{};
+		packetClientResponse.flag = packetLoginResponse.flag;
+		packetClientResponse.ip = packetLoginResponse.ip;
+		packetClientResponse.port = packetLoginResponse.port;
 		bufInfo->Clear();
 		bufInfo->buffer = packetClientResponse.Serialize();
 		send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-		Util::LoggingInfo("LoginServer.log", "Type : %d%d || Send packet : %s || size: %d || from %d", bufInfo->buffer[0], bufInfo->buffer[1], bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+		Util::LoggingInfo("LoginServer.log", "Type : ClientLoginPacketTypeChannelInResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
 
 		break;
 	}
@@ -269,7 +311,7 @@ void LoginServer::ConnectToManagementServer() {
 	ZeroMemory(&address, sizeof(address));
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = inet_addr(Util::GetConfigToString("LoginServer.ini", "Network", "ManagementServerIP", "127.0.0.1").c_str()); // 10.255.252.95
-	address.sin_port = htons(Util::GetConfigToInt("LoginServer.ini", "Network", "ManagementServerPort", 19999)); // 19999
+	address.sin_port = htons(Util::GetConfigToInt("LoginServer.ini", "Network", "ManagementServerPort", 19999));
 
 	if (SOCKET_ERROR == connect(managementServer, (SOCKADDR*)&address, sizeof(address))) {
 		Util::LoggingFatal("LoginServer.log", "ERROR - Can not connect to management server");

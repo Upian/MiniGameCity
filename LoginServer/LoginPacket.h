@@ -56,7 +56,7 @@ public:
 	};
 
 	bool flag = true;
-	std::string userNick{};
+	std::string userNick;
 };
 
 class ClientLoginPacketTypeLoginRequest : public LoginPacket {
@@ -75,8 +75,8 @@ public:
 		_buf >> userPw;
 	};
 
-	std::string userId{};
-	std::string userPw{};
+	std::string userId;
+	std::string userPw;
 };
 
 class ClientLoginPacketTypeLogoutRequest : public LoginPacket {
@@ -85,14 +85,11 @@ public:
 	~ClientLoginPacketTypeLogoutRequest() {}
 
 	virtual Buffer& Serialize() override {
-		buffer << GPID;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> GPID;
 	}
-	uint32 GPID = 0;
 };
 
 class ClientLoginPacketTypeSignupResponse : public LoginPacket {
@@ -106,7 +103,7 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		buffer >> flag;
+		_buf >> flag;
 	}
 
 	bool flag = true;
@@ -158,14 +155,12 @@ public:
 	~ClientLoginPacketTypeDeleteRequest() {}
 
 	virtual Buffer& Serialize() override {
-		buffer << GPID;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> GPID;
+
 	}
-	uint32 GPID = 0;
 };
 
 class ClientLoginPacketTypeShowChannelResponse : public LoginPacket {

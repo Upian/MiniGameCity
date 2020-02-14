@@ -10,7 +10,7 @@
 
 #include <bitset>
 #include <iostream>
-//#include "Utf8.h" // UTF 실험해봐야함
+#include "Utf8.h" // UTF 실험해봐야함
 
 /*
 *	Enum type operator
@@ -173,44 +173,50 @@ public:
 		}
 		return *this;
 	}
-	//string
+// 	//string
+// 	Buffer& operator<<(std::string& rhs) {
+// 		for (int i = 0; i < rhs.size(); ++i) {
+// 			m_buffer[m_index] = rhs[i];
+// 			++m_index;
+// 			++m_length;
+// 		}
+// 		m_buffer[m_index] = '\n';
+// 		++m_length;
+// 		++m_index;
+// 		return *this;
+// 	}
+// 	Buffer& operator<<(const char* rhs) {
+// 		for (int i = 0; i < strlen(rhs); ++i) {
+// 			m_buffer[m_index] = rhs[i];
+// 			++m_index;
+// 			++m_length;
+// 		}
+// 		m_buffer[m_index] = '\n';
+// 		++m_length;
+// 		++m_index;
+// 		return *this;
+// 	}
+	//Utf8 version
 	Buffer& operator<<(std::string& rhs) {
-		for (int i = 0; i < rhs.size(); ++i) {
-			m_buffer[m_index] = rhs[i];
-			++m_index;
+		if (rhs.size() == 0) {
+			m_buffer[m_index] = '\n';
 			++m_length;
-		}
-		m_buffer[m_index] = '\n';
-		++m_length;
-		++m_index;
-		return *this;
-	}
-	Buffer& operator<<(const char* rhs) {
-		for (int i = 0; i < strlen(rhs); ++i) {
-			m_buffer[m_index] = rhs[i];
 			++m_index;
-			++m_length;
+			return *this;
 		}
-		m_buffer[m_index] = '\n';
-		++m_length;
-		++m_index;
-		return *this;
-	}
-	// Utf8 version
-	//Buffer& operator<<(const char* rhs) {
-	//	Util::Conversion conv;
-	//	char* buf = conv.ToUTF8(rhs);
 
-	//	for (int i = 0; i < strlen(buf); ++i) {
-	//		m_buffer[m_index] = buf[i];
-	//		++m_index;
-	//		++m_length;
-	//	}
-	//	m_buffer[m_index] = '\n';
-	//	++m_length;
-	//	++m_index;
-	//	return *this;
-	//}
+		Util::Conversion conv;
+		char* buf = conv.ToUTF8(rhs.c_str());
+		for (int i = 0; i < strlen(buf); ++i) {
+			m_buffer[m_index] = buf[i];
+			++m_index;
+			++m_length;
+		}
+		m_buffer[m_index] = '\n';
+		++m_length;
+		++m_index;
+		return *this;
+	}
 #pragma endregion
 #pragma region operator >>
 	Buffer & operator>>(bool& type) {
@@ -227,34 +233,37 @@ public:
 		++m_index;
 		return *this;
 	}
+// 	Buffer& operator>>(std::string& str) {
+// 		if (m_length <= m_index)
+// 			return *this;
+// 		str.clear();
+// 		while ('\n' != m_buffer[m_index]) {
+// 			str += m_buffer[m_index];
+// 			++m_index;
+// 		}
+// 		++m_index;
+// 		return *this;
+// 	}
+	// UTF8 version
 	Buffer& operator>>(std::string& str) {
 		if (m_length <= m_index)
 			return *this;
-		str.clear();
-		while ('\n' != m_buffer[m_index]) {
-			str += m_buffer[m_index];
-			++m_index;
-		}
-		++m_index;
-		return *this;
-	}
-	// UTF8 version
-	/*Buffer& operator>>(const char* rhs) {
-		if (m_length <= m_index)
-			return *this;
 
-		std::string str;
+		str.clear();
+		std::string tmp;
 		while ('\n' != m_buffer[m_index]) {
-			str += m_buffer[m_index];
+			tmp += m_buffer[m_index];
 			++m_index;
 		}
 		++m_index;
 
 		Util::Conversion conv;
-		rhs = conv.ToAnsi(str.c_str());
+		if (tmp.size() == 0)
+			return *this;
+		str = conv.ToAnsi(tmp.c_str());
 
 		return *this;
-	}*/
+	}
 
 	Buffer& operator>>(__int16& integer) {
 		if (m_length <= m_index)
