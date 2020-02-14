@@ -258,6 +258,8 @@ public:
 		++m_index;
 
 		Util::Conversion conv;
+		if (tmp.size() == 0)
+			return *this;
 		str = conv.ToAnsi(tmp.c_str());
 
 		return *this;
