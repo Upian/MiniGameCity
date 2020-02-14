@@ -260,8 +260,6 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
-		buf >> twenty_packet;
 		buf >> Question;
 	}
 };
@@ -284,8 +282,6 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
-		buf >> twenty_packet;
 		buf >> PlayerName;
 		buf >> Question;
 
@@ -304,8 +300,7 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
-		buf >> twenty_packet;
+
 		buf >> ReplyOX;
 	}
 };
@@ -345,8 +340,7 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
-		buf >> twenty_packet;
+
 		buf >> AskerAnswer;
 	}
 };
