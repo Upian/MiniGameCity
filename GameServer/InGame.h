@@ -6,14 +6,6 @@
 #include "InGamePacket.h"
 #include "PlayerManager.h"
 
-
-class InGame;
-
-struct simpleTypePacket; //다른 정보 없는 패킷
-struct intTypePacket; // int 변수 추가 패킷
-struct charTypePacket; // char 배열 추가 패킷
-struct boolTypePacket; //bool 변수 추가 패킷
-
 class InGame {
 
 public:
@@ -39,29 +31,23 @@ private:
 	std::string	TwentyAnswer;			//스무고개 정답 변수
 
 	//플레이어 정보를 담을 포인터
+	PlayerManager InGamePlayerManager;
 	std::list<std::shared_ptr<Player>> InGamePlayerList;
-	std::vector<std::shared_ptr<Player>> InGamePlayer;
+	std::vector<std::shared_ptr<Player>> InGamePlayer;	
 	std::vector<std::shared_ptr<Player>> AskerGroup;
+	std::list<std::string> PlayerNameList;
 
 	//출제자와 질문자를 가리킬 iterator
-	std::vector<std::shared_ptr<Player>>::iterator Quiz_Provide_Player;
 	std::vector<std::shared_ptr<Player>>::iterator Asker;
+	std::shared_ptr<Player> Quiz_Provide_Player;
 
 	//키워드와 시작 문장을 저장하는 리스트
 	std::vector<std::string> Words;
 	std::vector<std::string> Sentens;
 
-	//기본 함수
-	InGame();
-	~InGame()
-	{
-	}
-
-	
-
 	//스무고개 함수
 	void Next_Asker_Point();						//다음 질문자를 가리킴
-	void Connect_Check_In_Wait_time();				//대기 시간동안 플레이어들의 연결이 끊겼는지 확인
+	void Connect_Check_In_Wait_time(int setTime);	//대기 시간동안 플레이어들의 연결이 끊겼는지 확인
 	void Game_Setting_On();							//게임 시작하기 전에 출제자와 질문자 그룹을 생성하는 동작
 	void SetPlayerPosition();						//플레이어의 정보가 담긴 벡터를 셔플
 	void AllPlayerReadyCheck();						//모든 플레이어가 준비가 되었는지 확인하는 과정

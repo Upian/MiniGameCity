@@ -12,19 +12,27 @@
 4. 캐치 마인드
 */
 
-bool CompareScore(const std::shared_ptr<Player>& x, const std::shared_ptr<Player>& y)
+bool CompareScore(const std::shared_ptr<Player> x, const std::shared_ptr<Player> y)
 {
 	return x->GetGameScore() > y->GetGameScore();
 }
 
-void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
+void InGame::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 
 	//게임 준비 파트 변수 생성
+	this->InGamePlayerManager = _InGamePlayerManager;
 	InGamePlayerList = InGamePlayerManager.GetPlayerList();
 	for (auto player : InGamePlayerList)
 	{
 		InGamePlayer.push_back(player);
 	}
+	for (auto player : InGamePlayerList)
+	{
+		PlayerNameList.push_back(player->GetPlayerName());
+	}
+	InGamePlayer.reserve(5);
+	AskerGroup.reserve(4);
+
 	//플레이어들의 정보를 이용하여 무작위 자리배치를 함
 	SetPlayerPosition();
 
@@ -54,7 +62,7 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 
 			TwentyProviderSelectAnswer selectpacket;
 			selectpacket = SelectFiveAnswer(selectpacket);
-			(*Quiz_Provide_Player)->SendPacket(selectpacket);
+			(Quiz_Provide_Player)->SendPacket(selectpacket);
 
 			TwentyCountDownEnd endpacket;
 			InGamePlayerManager.SendToAllPlayers(endpacket);
@@ -68,14 +76,14 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 			{
 				TwentySelectAnswer SelectedAnswer;
 				RecvBuf = nullptr;
-				RecvBuf = (*Quiz_Provide_Player)->GetGamePacket();
-				if (SelectedAnswer.AnswerCheck(RecvBuf->buffer))
+				RecvBuf = (Quiz_Provide_Player)->GetGamePacket();
+				if (RecvBuf != nullptr)
 				{
+					SelectedAnswer.Deserialize(RecvBuf->buffer);
 					TwentyAnswer = SelectedAnswer.Answer;
 					break;
 				}
 			}
-			break;
 		}
 
 		//인게임 내에서 사용할 변수 셋팅
@@ -97,14 +105,14 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 				InGamePacketType GameType;
 				GameType = (InGamePacketType)PacketTypeDeserial(RecvBuf->buffer);
 
-				if (GameType != Twenty_Question_Game) break;
+				if (GameType != InGamePacketType::Twenty_Question_Game) break;
 
 				Twenty_Packet_Type PacketType;
 				PacketType = (Twenty_Packet_Type)PacketTypeDeserial(RecvBuf->buffer);
 
 				switch (PacketType)
 				{
-				case Twenty_Asker_Question:
+				case Twenty_Packet_Type::Twenty_Asker_Question:
 				{
 					if ((*Asker)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
 
@@ -124,9 +132,9 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 					ActionTime = time(NULL);
 					break;
 				}
-				case Twenty_Provider_Reply:
+				case Twenty_Packet_Type::Twenty_Provider_Reply:
 				{
-					if ((*Quiz_Provide_Player)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
+					if (Quiz_Provide_Player->GetGPID() != InGamePlayer[i]->GetGPID()) break;
 
 					//받은 답변을 뿌려줌
 					TwentyProviderReply ReplyPacket;
@@ -154,7 +162,7 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 
 					break;
 				}
-				case Twenty_Asker_Answer:
+				case Twenty_Packet_Type::Twenty_Asker_Answer:
 				{
 					if ((*Asker)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
 
@@ -169,10 +177,10 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 						AnswerBroadCastPacket.AnswerResult = 1;
 						InGamePlayerManager.SendToAllPlayers(AnswerBroadCastPacket);
 						
-						(*Quiz_Provide_Player)->UpdateGameScore(QuestionCount * 2);
+						(Quiz_Provide_Player)->UpdateGameScore(QuestionCount * 2);
 						(*Asker)->UpdateGameScore(QuestionCount * 5);
 
-						TwentyUpdateScore providerScorePacket((*Quiz_Provide_Player)->GetPlayerName(),(*Quiz_Provide_Player)->GetGameScore());
+						TwentyUpdateScore providerScorePacket((Quiz_Provide_Player)->GetPlayerName(),(Quiz_Provide_Player)->GetGameScore());
 						TwentyUpdateScore askerScorerPacker((*Asker)->GetPlayerName(), (*Asker)->GetGameScore());
 
 						InGamePlayerManager.SendToAllPlayers(providerScorePacket);
@@ -210,7 +218,7 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 
 					break;
 				}
-				case Twenty_Exit_Reservation:
+				case Twenty_Packet_Type::Twenty_Exit_Reservation:
 				{
 					TwentyExitReservation exitReservationPacket;
 					exitReservationPacket.Deserialize(RecvBuf->buffer);
@@ -271,8 +279,8 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 
 					if (ProviderTimer <= 0)
 					{
-						(*Quiz_Provide_Player)->UpdateGameScore(-15);
-						TwentyUpdateScore ProviderScorePacket((*Quiz_Provide_Player)->GetPlayerName(),(*Quiz_Provide_Player)->GetGameScore());
+						(Quiz_Provide_Player)->UpdateGameScore(-15);
+						TwentyUpdateScore ProviderScorePacket((Quiz_Provide_Player)->GetPlayerName(),(Quiz_Provide_Player)->GetGameScore());
 						InGamePlayerManager.SendToAllPlayers(ProviderScorePacket);
 
 						Next_Asker_Point();
@@ -282,7 +290,7 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 						ProviderTimer = 16;
 						AskerTurn = true;
 					}
-					ProviderTimer -= 1;
+					--ProviderTimer;
 				}
 			}
 
@@ -301,7 +309,7 @@ void InGame::TwentyQuestionGame(PlayerManager& InGamePlayerManager) {
 		}
 		++GameRound;
 		Game_Setting_On();
-		TwentyRoundEnd roundendPacket((*Quiz_Provide_Player)->GetPlayerName(),(*Asker)->GetPlayerName(),GameRound);
+		TwentyRoundEnd roundendPacket((Quiz_Provide_Player)->GetPlayerName(),(*Asker)->GetPlayerName(),GameRound);
 		InGamePlayerManager.SendToAllPlayers(roundendPacket);
 		//다음 질문자에 대한 정보를 보냄.
 	}
@@ -330,18 +338,21 @@ void InGame::Next_Asker_Point()
 	}
 }
 
-void InGame::Connect_Check_In_Wait_time()
+void InGame::Connect_Check_In_Wait_time(int setTime)
 {
-	//패킷 작성 후 데이터 대입
+	if (Quiz_Provide_Player == nullptr)
+	{
+
+	}
 }
 
 void InGame::Game_Setting_On()
 {
-	Quiz_Provide_Player = InGamePlayer.begin() + GameRound;
+	Quiz_Provide_Player = *(InGamePlayer.begin() + GameRound);
 
 	for (int i = 0; i < InGamePlayer.size(); ++i)
 	{
-		if (InGamePlayer[i]->GetGPID() == (*Quiz_Provide_Player)->GetGPID())
+		if (InGamePlayer[i]->GetGPID() == Quiz_Provide_Player->GetGPID())
 		{
 			if (InGamePlayer[i]->GetGPID() == InGamePlayer.back()->GetGPID())
 			{
@@ -389,9 +400,10 @@ void InGame::AllPlayerReadyCheck()
 	{
 		do
 		{
-			RecvBuf = nullptr;
 			RecvBuf = (*check).GetGamePacket();
-		} while (packet.PlayerReadyCheck(RecvBuf->buffer));
+			if(RecvBuf == nullptr) continue;
+			packet.Deserialize(RecvBuf->buffer);
+		} while (packet.getTwentyPacket() == Twenty_Packet_Type::Twenty_Player_Ready_Complete);
 	}
 }
 

@@ -45,6 +45,8 @@ void GameServer::HandleDisconnectClient(SOCKET clientSocket) {
 	if (nullptr == player)
 		return;
 
+	player->SetPlayerState(PlayerState::playerStateNone);
+
 	m_socialServerHandler.UpdatePlayerInfoAtLogout(player);
 
 	auto room = player->GetRoom();//m_roomManager.FindRoomByPlayer(player);

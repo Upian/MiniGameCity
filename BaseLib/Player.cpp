@@ -12,6 +12,7 @@ void Player::Initialize() {
 
 void Player::SetGamePacket(BufferInfo* buffer)
 {
+	if (buffer == nullptr) return;
 	InGameBuf = buffer;
 }
 
