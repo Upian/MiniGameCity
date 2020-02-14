@@ -31,11 +31,13 @@ private:
 	void HandlePacketAddFriendRequest(SocialGamePacketAddFriendRequest& packet, std::shared_ptr<Player> player);
 	void HandlePacketConfirmFriendRequest(std::shared_ptr<Player> player);
 	void HandlePacketAcceptFriendRequest(SocialGamePacketAcceptFriendRequest&, std::shared_ptr<Player>);
+	void HandlePacketFriendListRequest(std::shared_ptr<Player>);
 
 	//Social server to Game server
 	void HandlePacketAddFriendResponse(SocialPacketServerAddFriendResponse& packet, std::shared_ptr<Player> pplayer);
 	void HandlePacketConfirmFriendResponse(SocialPacketServerConfirmFriendResponse& packet, std::shared_ptr<Player> pplayer);
 	void HandlePacketAcceptFriendResponse(SocialPacketServerAcceptFriendResponse& packet, std::shared_ptr<Player> pplayer);
+	void HandlePacketFriendListResponse(SocialPacketServerFriendListResponse& packet, std::shared_ptr<Player> pplayer);
 	GameServer* m_gameServer;
 };
 

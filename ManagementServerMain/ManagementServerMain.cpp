@@ -1,6 +1,7 @@
 #include "ManagementServer.h"
 
 int main(int argc, char* argv[]) {
+	getchar();
 	ManagementServer* pServer = ManagementServer::CreateServer();
 
 	if (1 < argc) //set config file

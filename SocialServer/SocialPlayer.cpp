@@ -42,9 +42,10 @@ bool SocialPlayer::IsExistFriendRequestList(std::shared_ptr<SocialPlayer> player
 bool SocialPlayer::AddFriendList(std::shared_ptr<SocialPlayer> player) {
 	if (m_maxFriendListSize <= m_friendList.size())
 		return false;
-
 	if (nullptr == player)
 		return false;
+
+	m_friendRequestList.remove(player);
 
 	m_friendList.push_back(player);
 	return true;

@@ -18,6 +18,7 @@ enum class ErrorTypeAddFriend : char {
 enum class ErrorTypeAcceptFriend : char {
 	none = 0,
 
+	notHaveFriendRequestList,
 	srcFriendListIsFull,
 	destFriendListIsFull,
 

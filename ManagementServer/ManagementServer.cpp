@@ -318,7 +318,7 @@ void ManagementServer::ConnectToDBCache() {
 	address.sin_port = htons(Util::GetConfigToInt("ManagementServer.ini", "Network", "DBCachePort", 30000));
 	if (SOCKET_ERROR == connect(dbCache, (SOCKADDR*)&address, sizeof(address))) {
 		Util::LoggingFatal("ManagementServer.log", "ERROR - Can not connect to db server");
-		_exit(0);
+		return;
 	}
 
 	Util::LoggingInfo("ManagementServer.log", "Success - connect to db server.");

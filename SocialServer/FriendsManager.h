@@ -12,7 +12,7 @@ public:
 	void HandleAddFriendRequest(std::shared_ptr<SocialPlayer> srcPlayer, std::shared_ptr<SocialPlayer> destPlayer);
 	void HandleConfirmFriendRequest(std::shared_ptr<SocialPlayer> pplayer);
 	void HandleAcceptFriendReequest(std::shared_ptr<SocialPlayer>, std::shared_ptr<SocialPlayer>);
-
+	void HandleFriendListRequest(std::shared_ptr<SocialPlayer>);
 private:
 
 	unsigned int m_friendTicketNum;

@@ -33,11 +33,13 @@ public:
 	//Friend
 	bool IsFriendRequestEmpty() const { return m_friendRequestList.empty(); }
 	std::list<std::shared_ptr<SocialPlayer> >& GetFriendRequestList() { return m_friendRequestList; }
+	std::list<std::shared_ptr<SocialPlayer> >& GetFriendList() { return m_friendList; }
 	ErrorTypeAddFriend AddFriendRequest(std::shared_ptr<SocialPlayer> pplayer);
 	bool IsExistFriendRequestList(std::shared_ptr<SocialPlayer>);
 	bool AddFriendList(std::shared_ptr<SocialPlayer>);
 	bool IsAddFriendAvailable() { return m_maxFriendListSize > m_friendList.size(); }
 	void DeleteFriendList(std::shared_ptr<SocialPlayer> player) { m_friendList.remove(player); }
+	
 
 	void SetName(std::string na) { m_name = na; } //#Test
 
