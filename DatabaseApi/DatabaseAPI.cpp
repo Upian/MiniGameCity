@@ -26,6 +26,7 @@ void DatabaseAPI::Close() {
 Account DatabaseAPI::LoginAccount(const std::string& userId, const std::string& userPw) {
 	Account account{};
 	try {
+		// user_id, user_pw, user_status = 1이면 로그인.
 		std::string sql = "SELECT * FROM ";
 		sql += dbName;
 		sql += ".login WHERE ";
@@ -50,6 +51,7 @@ Account DatabaseAPI::LoginAccount(const std::string& userId, const std::string& 
 			account.nick = con.ToAnsi(row[3]);
 			mysql_free_result(res);
 
+			// date_login을 업데이트.
 			sql = "UPDATE ";
 			sql += dbName;
 			sql += ".login SET date_login=now() WHERE GPID=" + std::to_string(gpid);
@@ -88,8 +90,28 @@ void DatabaseAPI::LogoutAccount() {
 
 bool DatabaseAPI::SignUpAccount(const std::string& userId, const std::string& userPw, const std::string& userNick) {
 	try {
+		// user_id, user_status=1인 row가 있으면 중복
+		std::string sql = "SELECT * FROM ";
+		sql += dbName;
+		sql += ".login WHERE ";
+		sql += "user_id='" + userId + "' and user_status='1'";
+
+		if (mysql_query(conn, sql.c_str())) {
+			printf("%s\n", mysql_error(conn)); // 검색 실패
+			return false;
+		}
+
+		res = mysql_use_result(conn);
+		row = mysql_fetch_row(res);
+
+		if (row != nullptr) {
+			return false;
+		}
+		mysql_free_result(res);
+
+		// user_id, user_pw, user_nick을 삽입
 		Util::Conversion con;
-		std::string sql = "INSERT INTO ";
+		sql = "INSERT INTO ";
 		sql += dbName;
 		sql += ".login (user_id, user_pw, user_nick) VALUES ";
 		sql += "('" + userId + "', '" + userPw + "', '" + con.ToUTF8(userNick.c_str()) + "')";
@@ -98,9 +120,9 @@ bool DatabaseAPI::SignUpAccount(const std::string& userId, const std::string& us
 			printf("%s\n", mysql_error(conn)); // 중복된 계정
 			return false;
 		}
-		mysql_free_result(res);
 
-		sql = "SELECT login.GPID FROM login WHERE user_id='" + userId + "'";
+		// 해당 gpid를 검색하여 다른 테이블에도 추가한다.
+		sql = "SELECT login.GPID FROM login WHERE user_id='" + userId + "' and user_status='1'";
 		if (mysql_query(conn, sql.c_str())) {
 			printf("%s\n", mysql_error(conn)); // gpid가져오기 실패
 			return false;

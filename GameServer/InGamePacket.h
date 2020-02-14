@@ -7,7 +7,7 @@
 #include "BasePacket.h"
 #include "Player.h"
 
-enum InGamePacketType
+enum class InGamePacketType : char
 {
 	InGame_Packet_None,
 	Twenty_Question_Game,
@@ -16,7 +16,7 @@ enum InGamePacketType
 	Catch_Mind_Game
 };
 
-enum Twenty_Packet_Type
+enum class Twenty_Packet_Type : char
 {
 	//수정중
 	Twenty_None,
@@ -47,7 +47,7 @@ enum Twenty_Packet_Type
 	Twenty_Exit_Notification,
 	Twenty_Remain_Question
 };
-enum Relay_Packet_Type
+enum class Relay_Packet_Type : char
 {
 	//제작중
 	Relay_None,
@@ -58,7 +58,7 @@ enum Relay_Packet_Type
 	Relay_Next_Response,
 	Relay_Timer
 };
-enum Ban_Packet_Type
+enum class Ban_Packet_Type : char
 {
 	//제작중
 	Ban_None,
@@ -70,7 +70,7 @@ enum Ban_Packet_Type
 	Ban_End_Game_Responce,
 	Ban_Timer
 };
-enum Catch_Pakcet_Type
+enum class Catch_Pakcet_Type : char
 {
 	//제작중
 	Catch_None,
@@ -90,11 +90,10 @@ public:
 	{
 		this->PacketTypeSerial(ingame_packet_type);
 	}
-	~InGamePacket() {}
 	InGamePacketType GetInGamePacketType() { return ingame_packet_type; }
 	void SetInGamePacketType(InGamePacketType _ingame_packet_type) { ingame_packet_type = _ingame_packet_type; }
 protected:
-	InGamePacketType ingame_packet_type = InGame_Packet_None;
+	InGamePacketType ingame_packet_type = InGamePacketType::InGame_Packet_None;
 };
 
 //Twenty Base Packet
@@ -102,38 +101,36 @@ class TwentyQuestionGamePacket : public InGamePacket {
 public:
 	TwentyQuestionGamePacket(Twenty_Packet_Type _twenty_packet) : InGamePacket(InGamePacketType::Twenty_Question_Game), twenty_packet(_twenty_packet)
 	{
-		this->TypeSerial(_twenty_packet);
+		this->PacketTypeSerial(_twenty_packet);
 	}
-	~TwentyQuestionGamePacket();
 protected:
-	Twenty_Packet_Type twenty_packet = Twenty_None;
+	Twenty_Packet_Type twenty_packet = Twenty_Packet_Type::Twenty_None;
 };
 
 class TwentyPlayerLocationSettingPacket : public TwentyQuestionGamePacket {
 public:
 	TwentyPlayerLocationSettingPacket() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Player_Location_Setting) {}
-	~TwentyPlayerLocationSettingPacket();
 
 	std::string PlayerName[5] = { NULL, };
 	int PlayerCount = 0;
 
 	virtual Buffer& Serialize() override {
-		buffer << PlayerName[0];
-		buffer << PlayerName[1];
-		buffer << PlayerName[2];
-		buffer << PlayerName[3];
-		buffer << PlayerName[4];
+
+		for (std::string s : PlayerName)
+		{
+			buffer << s;
+		}
+
 		buffer << PlayerCount;
 
 		return buffer;
 	}
 
 	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> PlayerName[0];
-		_buf >> PlayerName[1];
-		_buf >> PlayerName[2];
-		_buf >> PlayerName[3];
-		_buf >> PlayerName[4];
+		for (int i = 0; i < PlayerName->size(); ++i)
+		{
+			_buf >> PlayerName[i];
+		}
 		_buf >> PlayerCount;
 	}
 private:
@@ -142,28 +139,16 @@ private:
 class TwentyPlayerReadyCompletePacket : public TwentyQuestionGamePacket {
 public:
 	TwentyPlayerReadyCompletePacket() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Player_Ready_Complete){}
-	~TwentyPlayerReadyCompletePacket() {};
 
 	virtual Buffer& Serialize() override {
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 	}
 
-	bool PlayerReadyCheck(Buffer& buf)
-	{
-		InGamePacketType InGameType;
-		Twenty_Packet_Type CheckType;
-
-		buf >> InGameType;
-		buf >> CheckType;
-		
-		if (CheckType == Twenty_Player_Ready_Complete)
-			return true;
-		else
-			return false;
-	}
+	Twenty_Packet_Type getTwentyPacket() { return twenty_packet; }
 };
 class TwentyCountDownStart : public TwentyQuestionGamePacket {
 public:
@@ -173,7 +158,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 	}
 
 };
@@ -186,7 +172,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 	}
 };
 class TwentyProviderSelectAnswer : public TwentyQuestionGamePacket
@@ -224,24 +211,10 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> Answer;
-	}
-
-	bool AnswerCheck(Buffer& buf)
-	{
-		InGamePacketType InGameType;
-		Twenty_Packet_Type packetType;
-
-		buf >> InGameType;
-		buf >> packetType;
 		
-		if (packetType == Twenty_Provider_Select_Answer)
-		{
-			buf >> Answer;
-			return true;
-		}
-		else
-			return false;
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
+		buf >> Answer;
 	}
 };
 class TwentyGameStart :public TwentyQuestionGamePacket {
@@ -252,7 +225,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 	}
 };
 class TwentyInGameTimer : public TwentyQuestionGamePacket {
@@ -268,7 +242,9 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
+		buf >> Remaintime;
 	}
 };
 class TwentyAskerQuestion : public TwentyQuestionGamePacket {
@@ -284,6 +260,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> Question;
 	}
 };
@@ -306,7 +284,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> PlayerName;
 		buf >> Question;
 
@@ -325,7 +304,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> ReplyOX;
 	}
 };
@@ -365,9 +345,9 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> AskerAnswer;
-
 	}
 };
 class TwentyAskerAnswerBroadCast : public TwentyQuestionGamePacket {
@@ -392,6 +372,9 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> AskerAnswer;
 		buf >> AskerName;
 		buf >> AnswerResult;
@@ -414,6 +397,9 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 
 		buf >> PlayerName;
 		buf >> NoticeStatus;
@@ -441,6 +427,9 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 
 		buf >> Provider;
 		buf >> Asker;
@@ -465,6 +454,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> PlayerName;
 		buf >> Score;
 	}
@@ -481,6 +472,9 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> Answer;
 	}
 };
@@ -493,6 +487,8 @@ public:
 	}
 	virtual void Deserialize(Buffer& buf) override {
 
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 	}
 };
 class TwentyGameEnd : public TwentyQuestionGamePacket {
@@ -514,11 +510,13 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> RankSortPlayer[0];
-		buf >> RankSortPlayer[1];
-		buf >> RankSortPlayer[2];
-		buf >> RankSortPlayer[3];
-		buf >> RankSortPlayer[4];
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
+		//배열 하나는 size가 되고 다른 하나는 안됨, 문제 발생 가능성 높음
+		for (int i = 0; i < RankSortPlayer->size(); ++i)
+		{
+			buf >> RankSortPlayer[i];
+		}
 
 		buf >> RankScore[0];
 		buf >> RankScore[1];
@@ -529,7 +527,10 @@ public:
 };
 class TwentyEscapeQuizProvider : public TwentyQuestionGamePacket {
 public:
-	TwentyEscapeQuizProvider() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escpse_Quiz_Provider){}
+	TwentyEscapeQuizProvider(std::string name) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escpse_Quiz_Provider)
+	{
+		PlayerName = name;
+	}
 
 	std::string PlayerName;
 	int RemainMember = 0;	//남은 멤버가 한명일 경우 1을 설정
@@ -542,13 +543,18 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> PlayerName;
 		buf >> RemainMember;
 	}
 };
 class TwentyEscapeAnotherPlayer : public TwentyQuestionGamePacket {
 public:
-	TwentyEscapeAnotherPlayer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escape_Another_Player){}
+	TwentyEscapeAnotherPlayer(std::string name) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escape_Another_Player)
+	{
+		PlayerName = name;
+	}
 
 	std::string PlayerName;
 	int RemainMember = 0;	//남은 멤버가 한명일 경우 1을 설정
@@ -561,6 +567,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> PlayerName;
 		buf >> RemainMember;
 		buf >> AskerOrWaiter;
@@ -577,6 +585,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> ReservationType;
 	}
 };
@@ -588,7 +598,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 	}
 };
 class TwentyExitNotification : public TwentyQuestionGamePacket {
@@ -606,7 +617,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 	}
 };
 class TwentyRemainQuestion : public TwentyQuestionGamePacket {
@@ -623,6 +635,8 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		buf >> ingame_packet_type;
+		buf >> twenty_packet;
 		buf >> RemainQuestionCount;
 	}
 };
