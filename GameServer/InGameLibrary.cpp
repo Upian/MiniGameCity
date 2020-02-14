@@ -26,10 +26,6 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 	{
 		InGamePlayer.push_back(player);
 	}
-	for (auto player : InGamePlayerList)
-	{
-		PlayerNameList.push_back(player->GetPlayerName());
-	}
 	InGamePlayer.reserve(5);
 	AskerGroup.reserve(4);
 
@@ -99,13 +95,13 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 			for (int i = 0; i < InGamePlayer.size(); ++i)
 			{
 				RecvBuf = InGamePlayer[i]->GetGamePacket();
-				if (RecvBuf == nullptr) break;
+				if (RecvBuf == nullptr) continue;
 
 				// 받은 패킷 세분화 과정
 				InGamePacketType GameType;
 				GameType = (InGamePacketType)PacketTypeDeserial(RecvBuf->buffer);
 
-				if (GameType != InGamePacketType::Twenty_Question_Game) break;
+				if (GameType != InGamePacketType::Twenty_Question_Game) continue;
 
 				Twenty_Packet_Type PacketType;
 				PacketType = (Twenty_Packet_Type)PacketTypeDeserial(RecvBuf->buffer);
@@ -114,7 +110,7 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				{
 				case Twenty_Packet_Type::Twenty_Asker_Question:
 				{
-					if ((*Asker)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
+					if ((*Asker)->GetGPID() != InGamePlayer[i]->GetGPID()) continue;
 
 					//받은 질문을 다시 뿌려줌
 					TwentyAskerQuestion QuestionPacket;
@@ -134,7 +130,7 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				}
 				case Twenty_Packet_Type::Twenty_Provider_Reply:
 				{
-					if (Quiz_Provide_Player->GetGPID() != InGamePlayer[i]->GetGPID()) break;
+					if (Quiz_Provide_Player->GetGPID() != InGamePlayer[i]->GetGPID()) continue;
 
 					//받은 답변을 뿌려줌
 					TwentyProviderReply ReplyPacket;
@@ -164,7 +160,7 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				}
 				case Twenty_Packet_Type::Twenty_Asker_Answer:
 				{
-					if ((*Asker)->GetGPID() != InGamePlayer[i]->GetGPID()) break;
+					if ((*Asker)->GetGPID() != InGamePlayer[i]->GetGPID()) continue;
 
 					TwentyAskerAnswer AnswerPacket;
 					AnswerPacket.Deserialize(RecvBuf->buffer);
@@ -372,13 +368,14 @@ TwentyProviderSelectAnswer InGameLibrary::SelectFiveAnswer(TwentyProviderSelectA
 {
 	std::random_device rn;
 	std::mt19937_64 rnd(rn());
-	std::shuffle(Words.begin(), Words.end(), rnd);
+	/*std::shuffle(Words.begin(), Words.end(), rnd);*/
 
 	for (int i = 0; i < 5; ++i)
 	{
-		packet.AnswerChoice[i] = *(Words.begin());
-		Words.erase(Words.begin());
-		Words.push_back(packet.AnswerChoice[i]);
+// 		packet.AnswerChoice[i] = *(Words.begin());
+// 		Words.erase(Words.begin());
+// 		Words.push_back(packet.AnswerChoice[i]);
+		packet.AnswerChoice[i] = "정답";
 	}
 
 	return packet;

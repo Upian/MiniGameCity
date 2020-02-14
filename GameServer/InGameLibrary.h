@@ -35,7 +35,6 @@ private:
 	std::list<std::shared_ptr<Player>> InGamePlayerList;
 	std::vector<std::shared_ptr<Player>> InGamePlayer;	
 	std::vector<std::shared_ptr<Player>> AskerGroup;
-	std::list<std::string> PlayerNameList;
 
 	//출제자와 질문자를 가리킬 iterator
 	std::vector<std::shared_ptr<Player>>::iterator Asker;
