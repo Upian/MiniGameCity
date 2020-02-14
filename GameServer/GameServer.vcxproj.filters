@@ -20,6 +20,9 @@
     <Filter Include="Social">
       <UniqueIdentifier>{50754af7-7564-4466-8e6f-c52d38368251}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Management">
+      <UniqueIdentifier>{511ee561-9045-4e6a-bb9d-8c82351f1f49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp">
@@ -60,12 +63,14 @@
     <ClInclude Include="SocialServerHandler.h">
       <Filter>Social</Filter>
     </ClInclude>
-    <ClInclude Include="ManagementServerHandler.h" />
     <ClInclude Include="SocialGamePacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="PreLoadPacket.h">
       <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagementServerHandler.h">
+      <Filter>Management</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

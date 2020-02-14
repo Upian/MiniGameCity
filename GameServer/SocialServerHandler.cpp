@@ -44,7 +44,8 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 		break;
 	}
 	case PacketTypeSocialClient::packetTypeSocialFriendListRequest: {
-		
+		SocialGamePacketFriendListRequest packet;
+		this->HandlePacketFriendListRequest(player);
 		break;
 	}
 	default:
@@ -100,6 +101,13 @@ void SocialServerHandler::HandlePacket(Buffer& buffer) {
 		packet.Deserialize(buffer);
 		auto pplayer = m_gameServer->GetPlayerManager().FindPlayer(packet.m_gpid);
 		this->HandlePacketAcceptFriendResponse(packet, pplayer);
+		break;
+	}
+	case PacketTypeSocialServer::friendListResponse: {
+		SocialPacketServerFriendListResponse packet;
+		packet.Deserialize(buffer);
+		auto pplayer = m_gameServer->GetPlayerManager().FindPlayer(packet.m_gpid);
+		this->HandlePacketFriendListResponse(packet, pplayer);
 		break;
 	}
 	default:break;
@@ -165,6 +173,12 @@ void SocialServerHandler::HandlePacketAcceptFriendRequest(SocialGamePacketAccept
 	
 	this->SendPacketToServer(sendPacket);
 }
+void SocialServerHandler::HandlePacketFriendListRequest(std::shared_ptr<Player> player) {
+	SocialPacketServerFriendListRequest packet;
+	packet.m_gpid = player->GetGPID();
+
+	this->SendPacketToServer(packet);
+}
 ///////////////////////////////////////////////////////////////
 void SocialServerHandler::HandlePacketAddFriendResponse(SocialPacketServerAddFriendResponse& packet, std::shared_ptr<Player> pplayer) {
 	if (nullptr == pplayer)
@@ -194,4 +208,13 @@ void SocialServerHandler::HandlePacketAcceptFriendResponse(SocialPacketServerAcc
 	responsePacket.m_errorCode = packet.m_errorCode;
 
 	pplayer->SendPacket(packet);
+}
+
+void SocialServerHandler::HandlePacketFriendListResponse(SocialPacketServerFriendListResponse& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+	SocialGamePacketFriendListResponse responsePacket;
+	responsePacket.m_friends.merge(packet.m_names);
+
+	pplayer->SendPacket(responsePacket);
 }

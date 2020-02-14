@@ -186,7 +186,7 @@ struct SocialPacketServerAcceptFriendRequest : public BaseSocialServerPacket {
 struct SocialPacketServerAcceptFriendResponse : public BaseSocialServerPacket {
 	SocialPacketServerAcceptFriendResponse() : BaseSocialServerPacket(PacketTypeSocialServer::acceptFriendResponse) {}
 
-	GPID m_gpid;
+	GPID m_gpid = 0;
 	ErrorTypeAcceptFriend m_errorCode = ErrorTypeAcceptFriend::none;
 
 	virtual Buffer& Serialize() {
@@ -199,6 +199,51 @@ struct SocialPacketServerAcceptFriendResponse : public BaseSocialServerPacket {
 		buf >> m_gpid;
 		buf >> m_errorCode;
 
+		return;
+	}
+};
+
+struct SocialPacketServerFriendListRequest : public BaseSocialServerPacket {
+	SocialPacketServerFriendListRequest() : BaseSocialServerPacket(PacketTypeSocialServer::friendListRequest) {}
+	
+	GPID m_gpid = 0;
+
+	virtual Buffer& Serialize() {
+		buffer << m_gpid;
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_gpid;
+		return;
+	}
+};
+struct SocialPacketServerFriendListResponse : public BaseSocialServerPacket {
+	SocialPacketServerFriendListResponse() : BaseSocialServerPacket(PacketTypeSocialServer::friendListResponse) {}
+
+	GPID m_gpid = 0;
+	__int16 m_size = 0;
+	std::list<std::string> m_names;
+
+	virtual Buffer& Serialize() {
+		m_size = m_names.size();
+
+		buffer << m_gpid;
+		buffer << m_size;
+		for (auto s : m_names) {
+			buffer << s;
+		}
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_gpid;
+		buf >> m_size;
+
+		std::string tempName;
+		for (int i = 0; i < m_size; ++i) {
+			buf >> tempName;
+			m_names.emplace_back(tempName);
+		}
 		return;
 	}
 };
