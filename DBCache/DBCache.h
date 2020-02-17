@@ -8,11 +8,11 @@
 
 class DBCache : public BaseServer<DBCache> {
 public:
-	
+
 
 private:
 	MAKE_SERVER(DBCache)
-	void HandlePacketLogin(BufferInfo* bufInfo);
+		void HandlePacketLogin(BufferInfo* bufInfo);
 
 };
 
