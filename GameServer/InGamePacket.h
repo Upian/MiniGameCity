@@ -111,7 +111,7 @@ class TwentyPlayerLocationSettingPacket : public TwentyQuestionGamePacket {
 public:
 	TwentyPlayerLocationSettingPacket() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Player_Location_Setting) {}
 
-	std::string PlayerName[5] = { NULL, };
+	std::string PlayerName[5];
 	int PlayerCount = 0;
 
 	virtual Buffer& Serialize() override {
