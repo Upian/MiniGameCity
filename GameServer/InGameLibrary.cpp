@@ -19,6 +19,11 @@ bool CompareScore(const std::shared_ptr<Player> x, const std::shared_ptr<Player>
 
 void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 
+	if (_InGamePlayerManager.GetPlayerCount() <= 0)
+	{
+		return;
+	}
+
 	//게임 준비 파트 변수 생성
 	this->InGamePlayerManager = _InGamePlayerManager;
 	InGamePlayerList = InGamePlayerManager.GetPlayerList();
