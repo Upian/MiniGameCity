@@ -17,6 +17,8 @@ enum class PacketTypeSocialClient : char{
 	//Friend
 	packetTypeSocialAddFriendRequest, //친추 요청
 	packetTypeSocialAddFriendResponse,
+	packetTypeSocialDeleteFriendRequest,
+	packetTypeSocialDeleteFriendResponse,
 	packetTypeSocialConfirmFriendRequest, //받은 친추 목록
 	packetTypeSocialConfirmFriendResponse,
 	packetTypeSocialAcceptFriendRequest, //친구 요청 수락
@@ -112,6 +114,35 @@ struct SocialGamePacketAddFriendResponse : public BaseSocialGamePacket {
 
 };
 
+struct SocialGamePacketDeleteFriendRequest : public BaseSocialGamePacket {
+	SocialGamePacketDeleteFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialDeleteFriendRequest) {}
+
+	std::string m_name;
+
+	virtual Buffer& Serialize() {
+		buffer << m_name;
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_name;
+		return;
+	}
+};
+struct SocialGamePacketDeleteFriendResponse : public BaseSocialGamePacket {
+	SocialGamePacketDeleteFriendResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialDeleteFriendResponse) {}
+
+	bool m_isSuccess = false;
+
+	virtual Buffer& Serialize() {
+		buffer << m_isSuccess;
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buffer >> m_isSuccess;
+		return;
+	}
+};
+
 struct SocialGamePacketConfirmFriendRequest : public BaseSocialGamePacket {
 	SocialGamePacketConfirmFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialConfirmFriendRequest) {}
 
@@ -205,6 +236,7 @@ struct SocialGamePacketFriendListResponse : public BaseSocialGamePacket {
 	virtual Buffer& Serialize() {
 		m_size = m_friends.size();
 
+		buffer << m_size;
 		for (auto k : m_friends) {
 			buffer << k;
 		}

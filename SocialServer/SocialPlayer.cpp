@@ -41,6 +41,15 @@ bool SocialPlayer::IsExistFriendRequestList(std::shared_ptr<SocialPlayer> player
 	return false;
 }
 
+bool SocialPlayer::IsExistFriendRequestList(std::string name)
+{
+	for (auto p : m_friendRequestList) {
+		if (name == p.second)
+			return true;
+	}
+	return false;
+}
+
 bool SocialPlayer::AddFriendList(std::shared_ptr<SocialPlayer> player) {
 	if (m_maxFriendListSize <= m_friendList.size())
 		return false;
@@ -61,6 +70,12 @@ void SocialPlayer::DeleteFriendList(GPID gpid) {
 void SocialPlayer::DeleteFriendRequestList(GPID gpid) {
 	m_friendRequestList.remove_if([&gpid](std::pair<GPID, std::string> p)->bool {
 		return (gpid == p.first);
+	});
+}
+
+void SocialPlayer::DeleteFriendRequestList(std::string name) {
+	m_friendRequestList.remove_if([&name](std::pair<GPID, std::string> p)->bool {
+		return (name == p.second);
 	});
 }
 

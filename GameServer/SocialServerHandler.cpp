@@ -48,6 +48,12 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 		this->HandlePacketFriendListRequest(player);
 		break;
 	}
+	case PacketTypeSocialClient::packetTypeSocialDeleteFriendRequest: {
+		SocialGamePacketDeleteFriendRequest packet;
+		packet.Deserialize(buffer);
+		this->HandlePacketDeleteFriendRequest(packet, player);
+		break;
+	}
 	default:
 		Util::LoggingError("Social.log", "Un defined packet error. packet type[%d]", type);
 	}
@@ -179,6 +185,13 @@ void SocialServerHandler::HandlePacketFriendListRequest(std::shared_ptr<Player> 
 
 	this->SendPacketToServer(packet);
 }
+void SocialServerHandler::HandlePacketDeleteFriendRequest(SocialGamePacketDeleteFriendRequest& packet, std::shared_ptr<Player> player) {
+	SocialPacketServerDeleteFriendRequest sendPacket;
+	sendPacket.m_gpid = player->GetGPID();
+	sendPacket.m_name = packet.m_name;
+
+	this->SendPacketToServer(sendPacket);
+}
 ///////////////////////////////////////////////////////////////
 void SocialServerHandler::HandlePacketAddFriendResponse(SocialPacketServerAddFriendResponse& packet, std::shared_ptr<Player> pplayer) {
 	if (nullptr == pplayer)
@@ -207,7 +220,7 @@ void SocialServerHandler::HandlePacketAcceptFriendResponse(SocialPacketServerAcc
 	SocialGamePacketAcceptFriendResponse responsePacket;
 	responsePacket.m_errorCode = packet.m_errorCode;
 
-	pplayer->SendPacket(packet);
+	pplayer->SendPacket(responsePacket);
 }
 
 void SocialServerHandler::HandlePacketFriendListResponse(SocialPacketServerFriendListResponse& packet, std::shared_ptr<Player> pplayer) {
