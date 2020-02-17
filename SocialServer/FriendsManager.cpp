@@ -24,27 +24,21 @@ void FriendsManager::HandleAddFriendRequest(std::shared_ptr<SocialPlayer> srcPla
 	packet.m_gpid = srcPlayer->GetGPID();
 	packet.m_success = true;
 	packet.m_errorType = destPlayer->AddFriendRequest(srcPlayer);
-
-	if (true == destPlayer->IsExistFriendRequestList(srcPlayer)) {
-		packet.m_errorType = ErrorTypeAddFriend::alreadySendRequest;
+	
+	if (ErrorTypeAddFriend::none != packet.m_errorType)
 		packet.m_success = false;
-	}
-	else if (srcPlayer->GetGPID() == destPlayer->GetGPID()) {
-		packet.m_errorType = ErrorTypeAddFriend::samePlayer;
-		packet.m_success = false;
-	}
-
+	
 	Util::LoggingDebug("Friends.log", "srcPlayer[%d, %s] wants to friends with destPlayer[%d, %s] is %s",
 		srcPlayer->GetGPID(), srcPlayer->GetName().c_str(),
 		destPlayer->GetGPID(), destPlayer->GetName().c_str(),
-		[&packet]()->std::string{
+		[&packet]()->const char*{
 			if (ErrorTypeAddFriend::none == packet.m_errorType)
 				return "Success";
 			else if (ErrorTypeAddFriend::alreadySendRequest == packet.m_errorType)
 				return "already send request";
 			else if (ErrorTypeAddFriend::samePlayer == packet.m_errorType)
 				return "request same player";
-	});
+	}());
 	srcPlayer->GetServer()->SendPacket(packet);
 }
 
@@ -120,6 +114,15 @@ void FriendsManager::HandleFriendListRequest(std::shared_ptr<SocialPlayer> playe
 void FriendsManager::HandleDeleteFriendRequest(std::shared_ptr<SocialPlayer> srcPlayer, std::string deleteFriend) {
 	if (nullptr == srcPlayer)
 		return;
+	if (srcPlayer->GetName() == deleteFriend)
+		return;
 
+	auto deletePlayer = SocialServer::GetServer()->GetSocialPlayerManager().FindSocialPlayer(deleteFriend);
+	if (nullptr == deletePlayer) {
+		//#DatabaseLoad Handle
+		Util::LoggingDebug("Friends.log", "DeleteFriendRequest-> DestPlayer is not logged in, So check database and handle it");
+	}
 
+	srcPlayer->DeleteFriendList(deletePlayer->GetGPID());
+	deletePlayer->DeleteFriendList(deletePlayer->GetGPID());
 }

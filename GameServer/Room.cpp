@@ -30,8 +30,8 @@ void Room::Initialize() {
 	
 	m_game = this->SetGame();
 
-	m_roomMaster->SetIsRoomMaster(true);
 	this->PlayerEnterRoom(m_roomMaster);
+	m_roomMaster->SetIsRoomMaster(true);
 }
 
 void Room::StartGame() {

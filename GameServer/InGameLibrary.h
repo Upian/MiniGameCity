@@ -17,6 +17,7 @@ public:
 	void BanKeywordGame(PlayerManager&) {}				//금칙어 게임
 	void CatchMindGame(PlayerManager&) {}				//캐치마인드
 
+	void HandleGameTwentyPacket();
 private:
 
 	//사용할 변수

@@ -30,6 +30,8 @@ public:
 
 	void Initialize();
 
+	void HandleGamePacket(Buffer& packet);
+
 	SOCKET GetSocket() const { return m_socket; }
 	GPID GetGPID() const { return m_gamePlayerId; }
 	void SetGPID(int i) { m_gamePlayerId = i; } //#Test
@@ -49,7 +51,7 @@ public:
 	void SetPositionIndex(__int16 position) { m_potionIndex = position; }
 	__int16 GetPositionIndex() const { return m_potionIndex; }
 
-	void SetIsRoomMaster(bool master) { m_isRoomMaster = master; m_isReady = true; }
+	void SetIsRoomMaster(bool master) { m_isRoomMaster = master; master ? m_isReady = true : m_isReady = false; }
 	bool GetIsRoomMaster() const { return m_isRoomMaster; }
 
 	void toggleReady() { m_isReady = !m_isReady; }
@@ -89,7 +91,7 @@ private:
 
 	int				InGameScore = 0;			//인게임 점수
 	bool			ExitReservation = false;	//게임 나가기 예약
-	BufferInfo*		InGameBuf;					//인게임에 사용할 버퍼
+	BufferInfo*		InGameBuf = nullptr;					//인게임에 사용할 버퍼
 
 #pragma endregion for using game room
 };

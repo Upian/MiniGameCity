@@ -49,6 +49,7 @@ void RoomManager::HandleRoomPacket(Buffer & buffer, std::shared_ptr<Player> play
 		this->HandlePacketStartGame(player);
 		break;
 	}
+
 	default:
 		Util::LoggingInfo("GameServer.log", "Recv wrong room packet ID: %d", type);
 	}
@@ -127,7 +128,7 @@ void RoomManager::HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::s
 					case RoomGameType::GameTypeCatchMind:
 						return "Catch mind";
 				}
-			});
+			}());
 	}
 	//Alreade have room
 	else{
@@ -217,7 +218,7 @@ void RoomManager::HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std:
 	}
 		
 
-	Util::LoggingDebug("Room.log", "Room status[%d]-[%s], players: %d\n",
+	Util::LoggingDebug("Room.log", "Enter Room status[%d]-[%s], players: %d",
 		tempRoom->GetRoomNumber(), tempRoom->GetRoomName().c_str(), tempRoom->GetPlayerCount()); //#Test
 	player->SendPacket(responsePacket);
 

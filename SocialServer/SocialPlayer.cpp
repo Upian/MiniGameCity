@@ -27,7 +27,10 @@ ErrorTypeAddFriend SocialPlayer::AddFriendRequest(std::shared_ptr<SocialPlayer> 
 		return ErrorTypeAddFriend::destFriendRequestListIsFull;
 	if (true == this->IsExistFriendRequestList(srcPlayer))
 		return ErrorTypeAddFriend::alreadySendRequest;
-
+	if (m_gpid == srcPlayer->GetGPID())
+		return ErrorTypeAddFriend::samePlayer;
+	if (true == this->IsExistFriendRequestList(srcPlayer))
+		return ErrorTypeAddFriend::alreadySendRequest;
 
 	m_friendRequestList.emplace_back(srcPlayer->GetGPID(), srcPlayer->GetName());
 	return ErrorTypeAddFriend::none;
