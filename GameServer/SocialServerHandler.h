@@ -28,6 +28,8 @@ public:
 private:
 	//Client to Game server
 	void HandlePacketChatNormalRequest(SocialGamePacketChatNormalRequest& packet, std::shared_ptr<Player> player);
+	void HandlePacketChatFriendRequest(SocialGamePacketChatFriendRequest&, std::shared_ptr<Player>);
+	void HandlePacketChatGuildRequest();
 	void HandlePacketAddFriendRequest(SocialGamePacketAddFriendRequest& packet, std::shared_ptr<Player> player);
 	void HandlePacketConfirmFriendRequest(std::shared_ptr<Player> player);
 	void HandlePacketAcceptFriendRequest(SocialGamePacketAcceptFriendRequest&, std::shared_ptr<Player>);
@@ -40,6 +42,8 @@ private:
 	void HandlePacketConfirmFriendResponse(SocialPacketServerConfirmFriendResponse& packet, std::shared_ptr<Player> pplayer);
 	void HandlePacketAcceptFriendResponse(SocialPacketServerAcceptFriendResponse& packet, std::shared_ptr<Player> pplayer);
 	void HandlePacketFriendListResponse(SocialPacketServerFriendListResponse& packet, std::shared_ptr<Player> pplayer);
+	void HandlePacketChatFriendResponse(SocialPacketServerChatFriendResponse& packet, std::shared_ptr<Player> pplayer);
+
 
 	std::shared_ptr<Player> GetPlayer(GPID gpid);
 	GameServer* m_gameServer = nullptr;

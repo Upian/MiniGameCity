@@ -23,6 +23,8 @@ enum class PacketTypeSocialServer : char {
 	acceptFriendResponse, //accept friend request
 	friendListRequest, //Get players friends list
 	friendListResponse,
+	chatFriendRequest,
+	chatFriendResponse,
 	//Guild
 
 
@@ -288,4 +290,49 @@ struct SocialPacketServerFriendListResponse : public BaseSocialServerPacket {
 		return;
 	}
 };
+
+struct SocialPacketServerChatFriendRequest : public BaseSocialServerPacket {
+	SocialPacketServerChatFriendRequest() : BaseSocialServerPacket(PacketTypeSocialServer::chatFriendRequest) {}
+
+	GPID m_srcGpid;
+	std::string m_destName;
+	std::string m_message;
+
+	virtual Buffer& Serialize() {
+		buffer << m_srcGpid;
+		buffer << m_destName;
+		buffer << m_message;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_srcGpid;
+		buf >> m_destName;
+		buf >> m_message;
+		return;
+	}
+};
+struct SocialPacketServerChatFriendResponse : public BaseSocialServerPacket {
+	SocialPacketServerChatFriendResponse() : BaseSocialServerPacket(PacketTypeSocialServer::chatFriendResponse) {}
+
+	GPID m_gpid = 0;
+	std::string m_name;
+	std::string m_message;
+
+	virtual Buffer& Serialize() {
+		buffer << m_gpid;
+		buffer << m_name;
+		buffer << m_message;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_gpid;
+		buf >> m_name;
+		buf >> m_message;
+
+		return;
+	}
+};
+
 #endif // !__SOCIALSERVER_SOCIAL_SERVER_PACKET_H__

@@ -25,6 +25,16 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 		this->HandlePacketChatNormalRequest(packet, player);
 		break;
 	}
+	case PacketTypeSocialClient::packetTypeSocialChatFriendRequest: {
+		SocialGamePacketChatFriendRequest packet;
+		packet.Deserialize(buffer);
+		this->HandlePacketChatFriendRequest(packet, player);
+		break;
+	}
+	case PacketTypeSocialClient::packetTypeSocialChatGuildRequest: {
+
+		break;
+	}
 	case PacketTypeSocialClient::packetTypeSocialAddFriendRequest: {
 		SocialGamePacketAddFriendRequest packet;
 		packet.Deserialize(buffer);
@@ -95,6 +105,13 @@ void SocialServerHandler::HandlePacket(Buffer& buffer) {
 		this->HandlePacketAddFriendResponse(packet, pplayer);
 		break;
 	}
+	case PacketTypeSocialServer::deleteFriendResponse: {
+		SocialPacketServerDeleteFriendResponse packet;
+		packet.Deserialize(buffer);
+		auto pplayer = this->GetPlayer(packet.m_gpid);
+		this->HandlePacketDeleteFriendResponse(packet, pplayer);
+		break;
+	}
 	case PacketTypeSocialServer::confirmFriendResponse: {
 		SocialPacketServerConfirmFriendResponse packet;
 		packet.Deserialize(buffer);
@@ -116,12 +133,11 @@ void SocialServerHandler::HandlePacket(Buffer& buffer) {
 		this->HandlePacketFriendListResponse(packet, pplayer);
 		break;
 	}
-	case PacketTypeSocialServer::deleteFriendResponse: {
-		SocialPacketServerDeleteFriendResponse packet;
+	case PacketTypeSocialServer::chatFriendResponse: {
+		SocialPacketServerChatFriendResponse packet;
 		packet.Deserialize(buffer);
 		auto pplayer = this->GetPlayer(packet.m_gpid);
-
-		break;
+		this->HandlePacketChatFriendResponse(packet, pplayer);
 	}
 	default:break;
 	}
@@ -154,6 +170,16 @@ void SocialServerHandler::HandlePacketChatNormalRequest(SocialGamePacketChatNorm
 		break;
 
 	}
+}
+void SocialServerHandler::HandlePacketChatFriendRequest(SocialGamePacketChatFriendRequest& packet, std::shared_ptr<Player> player) {
+	if (nullptr == player)
+		return;
+
+	SocialPacketServerChatFriendRequest sendPacket;
+	sendPacket.m_srcGpid = player->GetGPID();
+	sendPacket.m_destName = packet.m_destName;
+	sendPacket.m_message = packet.m_message;
+	this->SendPacketToServer(sendPacket);
 }
 void SocialServerHandler::HandlePacketAddFriendRequest(SocialGamePacketAddFriendRequest& packet, std::shared_ptr<Player> player) {
 	if (nullptr == player)
@@ -206,7 +232,7 @@ void SocialServerHandler::HandlePacketAddFriendResponse(SocialPacketServerAddFri
 
 	SocialGamePacketAddFriendResponse responsePacket;
 	responsePacket.m_success = packet.m_success;
-	responsePacket.m_errorCode = responsePacket.m_errorCode;
+	responsePacket.m_errorCode = packet.m_errorType;
 
 	pplayer->SendPacket(responsePacket);
 }
@@ -241,7 +267,19 @@ void SocialServerHandler::HandlePacketFriendListResponse(SocialPacketServerFrien
 	if (nullptr == pplayer)
 		return;
 	SocialGamePacketFriendListResponse responsePacket;
-	responsePacket.m_friends.merge(packet.m_names);
+
+	responsePacket.m_friends.swap(packet.m_names);
+
+	pplayer->SendPacket(responsePacket);
+}
+
+void SocialServerHandler::HandlePacketChatFriendResponse(SocialPacketServerChatFriendResponse& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+	SocialGamePacketChatFriendResponse responsePacket;
+
+	responsePacket.m_srcName = packet.m_name;
+	responsePacket.m_message = packet.m_message;
 
 	pplayer->SendPacket(responsePacket);
 }

@@ -91,6 +91,12 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		m_friendManager.HandleDeleteFriendRequest(player, packet.m_name);
 		break;
 	}
+	case PacketTypeSocialServer::chatFriendRequest: {
+		SocialPacketServerChatFriendRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		auto player = m_socialPlayerManager.FindSocialPlayer(packet.m_srcGpid);
+		m_friendManager.HandleChatFriendRequest(player, packet.m_destName, packet.m_message);
+	}
 	default: {
 		Util::LoggingInfo("SocialServer.log", "Recv wrong soical server packet ID: %d", type);
 		break;

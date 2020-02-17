@@ -72,8 +72,44 @@ struct SocialGamePacketChatNormalResponse : public BaseSocialGamePacket {
 		return;
 	}
 };
-
 //Friend chat
+struct SocialGamePacketChatFriendRequest : public BaseSocialGamePacket {
+	SocialGamePacketChatFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialChatFriendRequest) {}
+
+	std::string m_destName;
+	std::string m_message;
+
+	virtual Buffer& Serialize() {
+		buffer << m_destName;
+		buffer << m_message;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_destName;
+		buf >> m_message;
+		return;
+	}
+};
+struct SocialGamePacketChatFriendResponse : public BaseSocialGamePacket {
+	SocialGamePacketChatFriendResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialChatFriendResponse) {}
+	
+	std::string m_srcName;
+	std::string m_message;
+
+	virtual Buffer& Serialize() {
+		buffer << m_srcName;
+		buffer << m_message;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_srcName;
+		buf >> m_message;
+		return;
+	}
+};
+
 
 //Guild chat
 
@@ -256,25 +292,5 @@ struct SocialGamePacketFriendListResponse : public BaseSocialGamePacket {
 	}
 };
 
-struct SocialGamePacketChatFriendRequest : public BaseSocialGamePacket {
-	SocialGamePacketChatFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialChatFriendRequest) {}
-	
-	std::string m_destName;
-	std::string m_message;
 
-	virtual Buffer& Serialize() {
-		buffer << m_destName;
-		buffer << m_message;
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& buf) {
-		buffer >> m_destName;
-		buffer >> m_message;
-		return;
-	}
-};
-struct SocialGamePacketChatFriendResponse : public BaseSocialGamePacket {
-
-};
 #endif // !__GAMESERVER_SOCIAL_PACKET_H__

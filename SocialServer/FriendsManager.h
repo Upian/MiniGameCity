@@ -14,6 +14,7 @@ public:
 	void HandleAcceptFriendReequest(std::shared_ptr<SocialPlayer>, std::string, bool);
 	void HandleFriendListRequest(std::shared_ptr<SocialPlayer>);
 	void HandleDeleteFriendRequest(std::shared_ptr<SocialPlayer>, std::string);
+	void HandleChatFriendRequest(std::shared_ptr<SocialPlayer>, const std::string& destName, const std::string& message);
 
 private:
 

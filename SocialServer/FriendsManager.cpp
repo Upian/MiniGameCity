@@ -15,7 +15,7 @@ void FriendsManager::HandleAddFriendRequest(std::shared_ptr<SocialPlayer> srcPla
 		//#DatabaseLoad
 		//Handle database
 		//make destplayer pointer and set GPID and name
-		Util::LoggingDebug("Friends.log", "AddFriendRequest-> DestPlayer is not logged in, So check database and handle it");
+		Util::LoggingInfo("Friends.log", "AddFriendRequest-> DestPlayer is not logged in, So check database and handle it");
 		return;
 	}
 
@@ -32,12 +32,22 @@ void FriendsManager::HandleAddFriendRequest(std::shared_ptr<SocialPlayer> srcPla
 		srcPlayer->GetGPID(), srcPlayer->GetName().c_str(),
 		destPlayer->GetGPID(), destPlayer->GetName().c_str(),
 		[&packet]()->const char*{
-			if (ErrorTypeAddFriend::none == packet.m_errorType)
-				return "Success";
-			else if (ErrorTypeAddFriend::alreadySendRequest == packet.m_errorType)
-				return "already send request";
-			else if (ErrorTypeAddFriend::samePlayer == packet.m_errorType)
-				return "request same player";
+		switch (packet.m_errorType) {
+		case ErrorTypeAddFriend::none: 
+			return "Success";
+		case ErrorTypeAddFriend::alreadySendRequest:
+			return "already send request";
+		case ErrorTypeAddFriend::samePlayer:
+			return "request same player";
+		case ErrorTypeAddFriend::alreadyFriends: {
+			return "already friend";
+		case ErrorTypeAddFriend::destFriendListIsFull: 
+		case ErrorTypeAddFriend::srcFriendListIsFull:
+			return "friendList is full";
+		default:
+			return "UNKNOWN error";
+		}
+		}
 	}());
 	srcPlayer->GetServer()->SendPacket(packet);
 }
@@ -74,7 +84,7 @@ void FriendsManager::HandleAcceptFriendReequest(std::shared_ptr<SocialPlayer> sr
 	auto destPlayer = SocialServer::GetServer()->GetSocialPlayerManager().FindSocialPlayer(dest);
 	if (nullptr == destPlayer) {
 		//#DatabaseLoad Handle
-		Util::LoggingDebug("Friends.log", "AcceptFriendRequest-> DestPlayer is not logged in, So check database and handle it");
+		Util::LoggingInfo("Friends.log", "AcceptFriendRequest-> DestPlayer is not logged in, So check database and handle it");
 		return;
 	}
 
@@ -120,14 +130,46 @@ void FriendsManager::HandleDeleteFriendRequest(std::shared_ptr<SocialPlayer> src
 	auto deletePlayer = SocialServer::GetServer()->GetSocialPlayerManager().FindSocialPlayer(deleteFriend);
 	if (nullptr == deletePlayer) {
 		//#DatabaseLoad Handle
-		Util::LoggingDebug("Friends.log", "DeleteFriendRequest-> DestPlayer is not logged in, So check database and handle it");
+		Util::LoggingInfo("Friends.log", "DeleteFriendRequest-> DestPlayer is not logged in, So check database and handle it");
+		return;
 	}
 
 	SocialPacketServerDeleteFriendResponse responsePacket;
 	srcPlayer->DeleteFriendList(deletePlayer->GetGPID());
-	deletePlayer->DeleteFriendList(deletePlayer->GetGPID());
-
+	deletePlayer->DeleteFriendList(srcPlayer->GetGPID());
+	
+	responsePacket.m_gpid = srcPlayer->GetGPID();
 	responsePacket.m_isSuccess = true;
 
 	srcPlayer->GetServer()->SendPacket(responsePacket);
+}
+
+void FriendsManager::HandleChatFriendRequest(std::shared_ptr<SocialPlayer> srcPlayer, const std::string& destName, const std::string& message) {
+	if (nullptr == srcPlayer)
+		return;
+
+	auto destPlayer = SocialServer::GetServer()->GetSocialPlayerManager().FindSocialPlayer(destName);
+	if (nullptr == destPlayer) {
+		//#DatabaseLoad Handle
+		Util::LoggingInfo("Friends.log", "ChatFriendRequest-> DestPlayer is not logged in, So check database and handle it");
+		return;
+	}
+
+	SocialPacketServerChatFriendResponse responseSrc;
+	SocialPacketServerChatFriendResponse responseDest;
+	responseSrc.m_gpid = srcPlayer->GetGPID();
+	responseSrc.m_name = srcPlayer->GetName();
+	responseSrc.m_message = message;
+
+	responseDest.m_gpid = destPlayer->GetGPID();
+	responseDest.m_name = destPlayer->GetName();
+	responseDest.m_message = message;
+
+	Util::LoggingDebug("Friends.log", "%s[%d] send message to %s[%d], Message: %s",
+		srcPlayer->GetName().c_str(), srcPlayer->GetGPID(),
+		destPlayer->GetName().c_str(), destPlayer->GetGPID(),
+		message.c_str());
+
+	srcPlayer->GetServer()->SendPacket(responseDest);
+	destPlayer->GetServer()->SendPacket(responseSrc);
 }

@@ -81,7 +81,7 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 		break;
 	}
 	case BasePacketType::basePacketTypeGame: {
-		this->HandleBasePacketGame(bufInfo);
+//		this->HandleBasePacketGame(bufInfo);
 		break;
 	}
 	default: {
