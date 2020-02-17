@@ -33,7 +33,6 @@ std::shared_ptr<SocialPlayer> SocialPlayerManager::FindSocialPlayer(GPID gpid) {
 
 std::shared_ptr<SocialPlayer> SocialPlayerManager::FindSocialPlayer(std::string name) {
 	for (auto p : m_socialPlayers) {
-		printf("%s, ", p->GetName().c_str());
 		if (name == p->GetName()) 
 			return p;
 	}

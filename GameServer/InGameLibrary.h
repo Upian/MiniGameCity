@@ -5,6 +5,7 @@
 #include <vector>
 #include "InGamePacket.h"
 #include "PlayerManager.h"
+#include "UTF8.h"
 
 class InGameLibrary {
 
@@ -16,6 +17,7 @@ public:
 	void BanKeywordGame(PlayerManager&) {}				//금칙어 게임
 	void CatchMindGame(PlayerManager&) {}				//캐치마인드
 
+	void HandleGameTwentyPacket();
 private:
 
 	//사용할 변수
@@ -44,15 +46,18 @@ private:
 	std::vector<std::string> Words;
 	std::vector<std::string> Sentens;
 
+	//UTF 적용하기 위한 클래스
+	Util::Conversion conversion;
+
 	//스무고개 함수
 	void Next_Asker_Point();						//다음 질문자를 가리킴
 	void Connect_Check_In_Wait_time(int setTime);	//대기 시간동안 플레이어들의 연결이 끊겼는지 확인
 	void Game_Setting_On();							//게임 시작하기 전에 출제자와 질문자 그룹을 생성하는 동작
 	void SetPlayerPosition();						//플레이어의 정보가 담긴 벡터를 셔플
 	void AllPlayerReadyCheck();						//모든 플레이어가 준비가 되었는지 확인하는 과정
-	void LoadingTime();
-	void TimerErrorProcess();
-	TwentyProviderSelectAnswer SelectFiveAnswer(TwentyProviderSelectAnswer packet);
+	void LoadingTime();								//시간을 맞추기 위한 1초 버리기 동작
+	void TimerErrorProcess();						//타이머 동작이 문제가 생겼을 경우 동작
+	TwentyProviderSelectAnswer SelectFiveAnswer(TwentyProviderSelectAnswer packet);		//5개의 문제를 선택
 
 	//기타 함수
 	void Read_File();								//파일 읽는 함수

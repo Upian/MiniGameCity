@@ -37,11 +37,15 @@ public:
 	std::list<std::pair<GPID, std::string> >& GetFriendList() { return m_friendList; }
 	ErrorTypeAddFriend AddFriendRequest(std::shared_ptr<SocialPlayer> srcPlayer); //Only login player can add friend request
 	bool IsExistFriendRequestList(std::shared_ptr<SocialPlayer>);
+	bool IsExistFriendRequestList(std::string);
+	bool IsExistFriendList(std::shared_ptr<SocialPlayer>);
+	bool IsExistFriendList(std::string);
 	bool AddFriendList(std::shared_ptr<SocialPlayer>);
 	bool IsAddFriendAvailable() { return m_maxFriendListSize > m_friendList.size(); }
 
 	void DeleteFriendList(GPID);
 	void DeleteFriendRequestList(GPID);
+	void DeleteFriendRequestList(std::string);
 
 	void SetName(std::string na) { m_name = na; } //#Test
 

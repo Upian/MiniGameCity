@@ -59,9 +59,8 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		SocialPacketServerAddFriendRequest packet;
 		packet.Deserialize(bufInfo->buffer);
 		auto srcPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_srcGpid);
-		auto destPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_destName);
-		Util::LoggingDebug("", "%s wants to friends with %s", srcPlayer->GetName().c_str(), destPlayer->GetName().c_str());//#Test
-		m_friendManager.HandleAddFriendRequest(srcPlayer, destPlayer);
+//		auto destPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_destName);
+		m_friendManager.HandleAddFriendRequest(srcPlayer, packet.m_destName);
 		break;
 	}
 	case PacketTypeSocialServer::confirmFriendRequest: {
@@ -75,8 +74,7 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		SocialPacketServerAcceptFriendRequest packet;
 		packet.Deserialize(bufInfo->buffer);
 		auto srcPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_gpid);
-		auto destPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_name);
-		m_friendManager.HandleAcceptFriendReequest(srcPlayer, destPlayer);
+		m_friendManager.HandleAcceptFriendReequest(srcPlayer, packet.m_name, packet.m_isAccept);
 		break;
 	}
 	case PacketTypeSocialServer::friendListRequest: {
@@ -84,6 +82,13 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		packet.Deserialize(bufInfo->buffer);
 		auto player = m_socialPlayerManager.FindSocialPlayer(packet.m_gpid);
 		m_friendManager.HandleFriendListRequest(player);
+		break;
+	}
+	case PacketTypeSocialServer::deleteFriendRequest: {
+		SocialPacketServerDeleteFriendRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		auto player = m_socialPlayerManager.FindSocialPlayer(packet.m_gpid);
+		m_friendManager.HandleDeleteFriendRequest(player, packet.m_name);
 		break;
 	}
 	default: {
@@ -102,11 +107,6 @@ void SocialServer::HandleUpdatePlayerLogin(SocialPacketServerUpdatePlayerLogin& 
 		return;
 
 	pplayer->SetName(packet.m_name); //#Test
-	Util::LoggingDebug("", "---------------------------------------------");
-	for (auto k : m_socialPlayerManager.GetSocialPlayerList()) {
-		Util::LoggingDebug("", "%s[%u]", k->GetName().c_str(), k->GetGPID());
-	}
-	Util::LoggingDebug("", "---------------------------------------------");
 	//#DatabaseLoad
 	this->LoadPlayerSocialData(pplayer);
 }
@@ -114,11 +114,6 @@ void SocialServer::HandleUpdatePlayerLogin(SocialPacketServerUpdatePlayerLogin& 
 void SocialServer::HandleUpdatePlayerLogout(SocialPacketServerUpdatePlayerLogout& packet, std::shared_ptr<ClntServer> server) {
 	m_socialPlayerManager.RemovePlayer(packet.m_gpid);
 	//#DatabaseSave
-	Util::LoggingDebug("", "---------------------------------------------");
-	for (auto k : m_socialPlayerManager.GetSocialPlayerList()) {
-		Util::LoggingDebug("", "%s[%u]", k->GetName().c_str(), k->GetGPID());
-	}
-	Util::LoggingDebug("", "---------------------------------------------");
 }
 
 void SocialServer::LoadPlayerSocialData(std::shared_ptr<SocialPlayer> pplayer) {

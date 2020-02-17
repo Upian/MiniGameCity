@@ -49,6 +49,7 @@ void RoomManager::HandleRoomPacket(Buffer & buffer, std::shared_ptr<Player> play
 		this->HandlePacketStartGame(player);
 		break;
 	}
+
 	default:
 		Util::LoggingInfo("GameServer.log", "Recv wrong room packet ID: %d", type);
 	}
@@ -93,7 +94,11 @@ void RoomManager::HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::s
 		responsePacket.m_success = false;
 		Util::LoggingInfo("", "Fail Make room");
 	}	
-	//Success Make ROom
+	else if (RoomGameType::GameTypeNone == packet.m_gameType) {
+		responsePacket.m_success = false;
+		Util::LoggingInfo("Room.log", "Player[%d, %s] Does not check game type", master->GetGPID(), master->GetPlayerName().c_str());
+	}
+	//Success Make Room
 	else if (nullptr == master->GetRoom()) {
 			int roomNumber = m_roomNumberList.top();
 			m_roomNumberList.pop();
@@ -109,9 +114,21 @@ void RoomManager::HandlePacketMakeRoom(RoomPacketMakeRoomRequest& packet, std::s
 			responsePacket.m_success = true;
 			responsePacket.m_roomNumber = roomNumber;
 
-			Util::LoggingInfo("0_test.log", "Room [%s] number: %d, max: %d, password %s[%hd]\n",
+			Util::LoggingDebug("Room.log", "Room [%s] number: %d, max: %d, password %s[%hd], game: %s",
 				responsePacket.m_success ? "Success" : "Fail", responsePacket.m_roomNumber, packet.m_maximumPlayer,
-				tempRoom->GetIsUsePassword() ? "True" : "False", tempRoom->GetPassword());	
+				tempRoom->GetIsUsePassword() ? "True" : "False", tempRoom->GetPassword(),
+				[&packet]()->const char*{
+					switch (packet.m_gameType) {
+					case RoomGameType::GameTypeTwentyQuestion:
+						return "Twenty question";
+					case RoomGameType::GameTypeBanKeyword:
+						return "Ban keyword";
+					case RoomGameType::GameTypeRelayNovel:
+						return "Relay novel";
+					case RoomGameType::GameTypeCatchMind:
+						return "Catch mind";
+				}
+			}());
 	}
 	//Alreade have room
 	else{
@@ -163,7 +180,9 @@ void RoomManager::HandlePacketRoomList(RoomPacketRoomListRequest& packet, std::s
 			room->GetMaxPlayerCount(), 
 			(RoomState::roomStateGaming == room->GetRoomState()),
 			room->GetIsUsePassword(), 
-			room->GetRoomName());
+			room->GetRoomName(),
+			room->GetRoomGameType());
+			
 		++count;
 	}
 
@@ -199,7 +218,7 @@ void RoomManager::HandlePacketEnterRoom(RoomPacketEnterRoomRequest& packet, std:
 	}
 		
 
-	Util::LoggingDebug("Room.log", "Room status[%d]-[%s], players: %d\n",
+	Util::LoggingDebug("Room.log", "Enter Room status[%d]-[%s], players: %d",
 		tempRoom->GetRoomNumber(), tempRoom->GetRoomName().c_str(), tempRoom->GetPlayerCount()); //#Test
 	player->SendPacket(responsePacket);
 

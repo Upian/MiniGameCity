@@ -30,8 +30,8 @@ void Room::Initialize() {
 	
 	m_game = this->SetGame();
 
-	m_roomMaster->SetIsRoomMaster(true);
 	this->PlayerEnterRoom(m_roomMaster);
+	m_roomMaster->SetIsRoomMaster(true);
 }
 
 void Room::StartGame() {
@@ -52,13 +52,20 @@ void Room::StartGame() {
 		packet.m_isSuccess = true;
 
 	m_roomPlayerManager.SendToAllPlayers(packet);
-
+	if (false == packet.m_isSuccess) {
+		Util::LoggingInfo("Room.log", "Can not start room[%d, %s] errorCode: %d", m_roomNumber, m_roomName.c_str(), packet.m_errorCode);
+		return;
+	}
+		
+	Util::LoggingInfo("Room.log", "---Room[%d]is successfully start---", m_roomNumber);
+	for (auto p : m_roomPlayerManager.GetPlayerList()) {
+		Util::LoggingInfo("Room.log", "player[%d, %s], %s", p->GetGPID(), p->GetPlayerName().c_str(), p->GetIsRoomMaster() ? "is RoomMaster" : "Player");
+	}
+	
 	m_inGameThread = new std::thread([this]()->void {
 		m_roomState = RoomState::roomStateGaming;
 		m_roomPlayerManager.SetAllPlayerState(PlayerState::playerStatePlayGame);
-		
 		m_game(m_roomPlayerManager);
-
 		m_roomState = RoomState::roomStateNone;
 		return;
 	});
@@ -185,9 +192,6 @@ bool Room::CheckPassword(__int16 password) {
 }
 bool Room::CheckAllPlayerIsReady() {
 	for (auto player : m_roomPlayerManager.GetPlayerList()) {
-		if (m_roomMaster == player)
-			continue;
-
 		if (false == player->GetIsReady())
 			return false;
 	}

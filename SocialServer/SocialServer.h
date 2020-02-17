@@ -11,6 +11,8 @@ class SocialServer : public BaseServer<SocialServer> {
 public:
 	void InitializeSocialServer();
 
+	SocialPlayerManager& GetSocialPlayerManager() { return m_socialPlayerManager; }
+	FriendsManager& GetFriendManager() { return m_friendManager; }
 private:
 	MAKE_SERVER(SocialServer);
 
