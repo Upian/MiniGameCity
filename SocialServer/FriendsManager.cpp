@@ -148,6 +148,9 @@ void FriendsManager::HandleChatFriendRequest(std::shared_ptr<SocialPlayer> srcPl
 	if (nullptr == srcPlayer)
 		return;
 
+	if (false == srcPlayer->IsExistFriendList(destName)) //Not a friend, Fail
+		return;
+
 	auto destPlayer = SocialServer::GetServer()->GetSocialPlayerManager().FindSocialPlayer(destName);
 	if (nullptr == destPlayer) {
 		//#DatabaseLoad Handle
@@ -158,12 +161,14 @@ void FriendsManager::HandleChatFriendRequest(std::shared_ptr<SocialPlayer> srcPl
 	SocialPacketServerChatFriendResponse responseSrc;
 	SocialPacketServerChatFriendResponse responseDest;
 	responseSrc.m_gpid = srcPlayer->GetGPID();
-	responseSrc.m_name = srcPlayer->GetName();
+	responseSrc.m_name = destPlayer->GetName();
 	responseSrc.m_message = message;
+	responseSrc.m_isSender = true;
 
 	responseDest.m_gpid = destPlayer->GetGPID();
-	responseDest.m_name = destPlayer->GetName();
+	responseDest.m_name = srcPlayer->GetName();
 	responseDest.m_message = message;
+	responseDest.m_isSender = false;
 
 	Util::LoggingDebug("Friends.log", "%s[%d] send message to %s[%d], Message: %s",
 		srcPlayer->GetName().c_str(), srcPlayer->GetGPID(),

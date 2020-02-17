@@ -318,11 +318,13 @@ struct SocialPacketServerChatFriendResponse : public BaseSocialServerPacket {
 	GPID m_gpid = 0;
 	std::string m_name;
 	std::string m_message;
+	bool m_isSender = false;
 
 	virtual Buffer& Serialize() {
 		buffer << m_gpid;
 		buffer << m_name;
 		buffer << m_message;
+		buffer << m_isSender;
 
 		return buffer;
 	}
@@ -330,7 +332,7 @@ struct SocialPacketServerChatFriendResponse : public BaseSocialServerPacket {
 		buf >> m_gpid;
 		buf >> m_name;
 		buf >> m_message;
-
+		buf >> m_isSender;
 		return;
 	}
 };

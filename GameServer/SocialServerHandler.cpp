@@ -278,8 +278,9 @@ void SocialServerHandler::HandlePacketChatFriendResponse(SocialPacketServerChatF
 		return;
 	SocialGamePacketChatFriendResponse responsePacket;
 
-	responsePacket.m_srcName = packet.m_name;
+	responsePacket.m_name = packet.m_name;
 	responsePacket.m_message = packet.m_message;
+	responsePacket.m_isSender = packet.m_isSender;
 
 	pplayer->SendPacket(responsePacket);
 }

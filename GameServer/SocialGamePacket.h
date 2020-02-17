@@ -94,18 +94,22 @@ struct SocialGamePacketChatFriendRequest : public BaseSocialGamePacket {
 struct SocialGamePacketChatFriendResponse : public BaseSocialGamePacket {
 	SocialGamePacketChatFriendResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialChatFriendResponse) {}
 	
-	std::string m_srcName;
+	std::string m_name;
 	std::string m_message;
+	bool m_isSender = false;
 
 	virtual Buffer& Serialize() {
-		buffer << m_srcName;
+		buffer << m_name;
 		buffer << m_message;
+		buffer << m_isSender;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
-		buf >> m_srcName;
+		buf >> m_name;
 		buf >> m_message;
+		buf >> m_isSender;
+
 		return;
 	}
 };
