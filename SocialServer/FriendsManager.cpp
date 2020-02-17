@@ -84,11 +84,11 @@ void FriendsManager::HandleAcceptFriendReequest(std::shared_ptr<SocialPlayer> sr
 	packet.m_isSuccess = true;
 	packet.m_errorCode = ErrorTypeAcceptFriend::none;
 
-	if (false == src->AddFriendList(src)) {
+	if (false == src->AddFriendList(destPlayer)) {
 		packet.m_errorCode = ErrorTypeAcceptFriend::srcFriendListIsFull;
 		packet.m_isSuccess = false;
 	}
-	else if (false == destPlayer->AddFriendList(destPlayer)) {
+	else if (false == destPlayer->AddFriendList(src)) {
 		packet.m_errorCode = ErrorTypeAcceptFriend::destFriendListIsFull;
 		packet.m_isSuccess = false;
 	}
@@ -123,6 +123,11 @@ void FriendsManager::HandleDeleteFriendRequest(std::shared_ptr<SocialPlayer> src
 		Util::LoggingDebug("Friends.log", "DeleteFriendRequest-> DestPlayer is not logged in, So check database and handle it");
 	}
 
+	SocialPacketServerDeleteFriendResponse responsePacket;
 	srcPlayer->DeleteFriendList(deletePlayer->GetGPID());
 	deletePlayer->DeleteFriendList(deletePlayer->GetGPID());
+
+	responsePacket.m_isSuccess = true;
+
+	srcPlayer->GetServer()->SendPacket(responsePacket);
 }

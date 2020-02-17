@@ -21,6 +21,8 @@ void SocialPlayer::SendPacket(BasePacket & packet) {
 ErrorTypeAddFriend SocialPlayer::AddFriendRequest(std::shared_ptr<SocialPlayer> srcPlayer) {
 	if (nullptr == srcPlayer)
 		return ErrorTypeAddFriend::notExistPlayer;
+	if (true == this->IsExistFriendList(srcPlayer))
+		return ErrorTypeAddFriend::alreadyFriends;
 	if (m_maxFriendListSize <= m_friendList.size())
 		return ErrorTypeAddFriend::destFriendListIsFull;
 	if (m_maxFriendRequestSize <= m_friendRequestList.size())
@@ -44,9 +46,24 @@ bool SocialPlayer::IsExistFriendRequestList(std::shared_ptr<SocialPlayer> player
 	return false;
 }
 
-bool SocialPlayer::IsExistFriendRequestList(std::string name)
-{
+bool SocialPlayer::IsExistFriendRequestList(std::string name) {
 	for (auto p : m_friendRequestList) {
+		if (name == p.second)
+			return true;
+	}
+	return false;
+}
+
+bool SocialPlayer::IsExistFriendList(std::shared_ptr<SocialPlayer> player) {
+	for (auto p : m_friendList) {
+		if (player->GetGPID() == p.first)
+			return true;
+	}
+	return false;
+}
+
+bool SocialPlayer::IsExistFriendList(std::string name) {
+	for (auto p : m_friendList) {
 		if (name == p.second)
 			return true;
 	}

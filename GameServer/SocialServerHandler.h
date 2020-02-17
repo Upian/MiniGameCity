@@ -36,10 +36,13 @@ private:
 
 	//Social server to Game server
 	void HandlePacketAddFriendResponse(SocialPacketServerAddFriendResponse& packet, std::shared_ptr<Player> pplayer);
+	void HandlePacketDeleteFriendResponse(SocialPacketServerDeleteFriendResponse& packet, std::shared_ptr<Player> pplayer);
 	void HandlePacketConfirmFriendResponse(SocialPacketServerConfirmFriendResponse& packet, std::shared_ptr<Player> pplayer);
 	void HandlePacketAcceptFriendResponse(SocialPacketServerAcceptFriendResponse& packet, std::shared_ptr<Player> pplayer);
 	void HandlePacketFriendListResponse(SocialPacketServerFriendListResponse& packet, std::shared_ptr<Player> pplayer);
-	GameServer* m_gameServer;
+
+	std::shared_ptr<Player> GetPlayer(GPID gpid);
+	GameServer* m_gameServer = nullptr;
 };
 
 #endif // !__GAMESERVER_SOCIAL_SERVER_HANDLER_H__

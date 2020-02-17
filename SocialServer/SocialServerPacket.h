@@ -139,12 +139,16 @@ struct SocialPacketServerDeleteFriendResponse : public BaseSocialServerPacket {
 	SocialPacketServerDeleteFriendResponse() : BaseSocialServerPacket(PacketTypeSocialServer::deleteFriendResponse) {}
 
 	bool m_isSuccess = false;
+	GPID m_gpid = 0;
+
 	virtual Buffer& Serialize() {
 		buffer << m_isSuccess;
+		buffer << m_gpid;
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
 		buf >> m_isSuccess;
+		buf >> m_gpid;
 		return;
 	}
 };
