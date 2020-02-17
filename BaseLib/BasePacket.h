@@ -49,8 +49,8 @@ enum class BasePacketType : char {
 	// server to server packet
 	loginPacketTypeManagement,
 
-	// server to db cache packet
-	managementPacketTypeDBCache,
+	// login server to db cache packet
+	loginPacketTypeDBCache,
 
 	basePacketTypeCount
 };

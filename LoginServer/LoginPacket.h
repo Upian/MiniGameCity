@@ -1,6 +1,6 @@
-#ifndef LOGIN_PACKET_H
-#define LOGIN_PACKET_H
-#include "ManagementPacket.h"
+#ifndef __LOGIN_PACKET_H__
+#define __LOGIN_PACKET_H__
+#include "BasePacket.h"
 
 #define CHANNEL_SIZE 4
 
@@ -22,6 +22,12 @@ enum LoginPacketType : char {
 
 	loginPacketTypeSize,
 
+};
+
+struct Channel {
+	std::string channelName;
+	int32 numberOfPeople = 0;
+	int32 limitOfPeople = 0;
 };
 
 /*
@@ -178,7 +184,7 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		for (int i = 0; i < Util::GetConfigToInt("LoginServer.ini", "Definition", "ChannelSize"); ++i) {
+		for (int i = 0; i < CHANNEL_SIZE; ++i) {
 			_buf >> channel[i].channelName;
 			_buf >> channel[i].numberOfPeople;
 			_buf >> channel[i].limitOfPeople;
@@ -242,4 +248,4 @@ public:
 	std::string channelName;
 };
 
-#endif
+#endif // __LOGIN_PACKET_H__

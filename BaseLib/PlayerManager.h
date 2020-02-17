@@ -31,6 +31,8 @@ public:
 
 	std::shared_ptr<Player> FindPlayer(GPID playerId);
 	std::shared_ptr<Player> FindPlayerBySocket(SOCKET socket);
+	std::shared_ptr<Player> FindPlayerByName(std::string name);
+
 
 private:
 	std::list<std::shared_ptr<Player> > m_playerList;

@@ -2,24 +2,36 @@
 #define __LOGIN_SERVER_H__
 
 #include "BaseServer.h"
-#include "ServerCommon.h"
-#include "PlayerManager.h"
+#include "LoginManagementHandler.h"
+#include "LoginDBCacheHandler.h"
 
 class LoginServer : public BaseServer<LoginServer> {
 public:
 	void InitializeLoginServer();
 
+	PlayerManager& GetPlayerManager() {
+		return m_playerManager;
+	}
+	SOCKET GetManagementServer() {
+		return m_managementServer;
+	}
+	SOCKET GetDBCache() {
+		return m_dbCache;
+	}
+
 private:
 	MAKE_SERVER(LoginServer)
-		void HandlePacketLogin(BufferInfo* bufInfo);
+	void HandlePacketLogin(BufferInfo* bufInfo, LoginPacketType type);
+	void HandlePacketChannel(BufferInfo* bufInfo, LoginPacketType type);
 
-	void ConnectToManagementServer();
+	SOCKET m_managementServer = 0;
+	SOCKET m_dbCache = 0;
 
-	SOCKET managementServer = 0;
+	PlayerManager m_playerManager;
 
-	PlayerManager playerManager;
-	unsigned __int32 GPIDtmp = 0;
-
+	// handler
+	LoginManagementHandler m_loginManagementHandler;
+	LoginDBCacheHandler m_loginDBCacheHandler;
 };
 
 #endif // __LOGIN_SERVER_H__

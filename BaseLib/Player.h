@@ -44,6 +44,12 @@ public:
 
 	/*virtual void HandlePacket(BufferInfo* packet);*/
 
+	void SetName(std::string name) {
+		m_playerName = name;
+	}
+	std::string GetName() {
+		return m_playerName;
+	}
 
 #pragma region Game
 	void PlayerInfoClear();

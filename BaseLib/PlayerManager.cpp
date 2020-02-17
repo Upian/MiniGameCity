@@ -112,3 +112,14 @@ std::shared_ptr<Player> PlayerManager::FindPlayerBySocket(SOCKET socket) {
 	}
 	return nullptr;
 }
+
+std::shared_ptr<Player> PlayerManager::FindPlayerByName(std::string name) {
+	for (std::shared_ptr<Player> ptr : m_playerList) {
+		if (nullptr == ptr)
+			continue;
+
+		if (name == ptr->GetName())
+			return ptr;
+	}
+	return nullptr;
+}

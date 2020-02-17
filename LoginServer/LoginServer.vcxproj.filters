@@ -11,10 +11,19 @@
     <Filter Include="Packet">
       <UniqueIdentifier>{2bf95dbb-af43-456a-aad6-99c85bbaf92b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Login">
+      <UniqueIdentifier>{148b5fa2-e057-4f40-b7ea-a9e00142e2b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LoginServer.cpp">
       <Filter>LoginServer</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginDBCacheHandler.cpp">
+      <Filter>Login</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginManagementHandler.cpp">
+      <Filter>Login</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -23,6 +32,12 @@
     </ClInclude>
     <ClInclude Include="LoginPacket.h">
       <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginDBCacheHandler.h">
+      <Filter>Login</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginManagementHandler.h">
+      <Filter>Login</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

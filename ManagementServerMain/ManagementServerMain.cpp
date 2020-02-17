@@ -8,10 +8,10 @@ int main(int argc, char* argv[]) {
 
 	pServer->SetPortNum(Util::GetConfigToInt("ManagementServer.ini", "Network", "Port", 19999));
 	pServer->SetServerName("ManagementServer");
-	
+
 	pServer->InitializeBaseServer();
 	pServer->InitializeManagmentServer();
-	
+
 	pServer->RunServer();
 
 	getchar();
