@@ -105,14 +105,15 @@ struct RoomPacketRoomListResponse : public BaseRoomPacket {
 	RoomPacketRoomListResponse() : BaseRoomPacket(PacketTypeRoom::packetTypeRoomRoomListResponse) {}
 private:
 	struct RoomInfo {
-		RoomInfo(int num, __int64 time , int plycnt, int maxcount, bool gameStart, bool pass, std::string& str) :
+		RoomInfo(int num, __int64 time , int plycnt, int maxcount, bool gameStart, bool pass, std::string& str, RoomGameType type) :
 		number(num),
 		createdTime(time),
 		playerCount(plycnt),
 		maxPlayerCount(maxcount),
 		isGameStart(gameStart),
 		password(pass),
-		roomName(str)
+		roomName(str),
+		gameType(type)
 		{}
 
 		__int16			number = 0;
@@ -122,6 +123,7 @@ private:
 		bool			isGameStart = false;
 		bool			password = false;
 		std::string		roomName;
+		RoomGameType	gameType = RoomGameType::GameTypeNone;
 	};
 
 public:
@@ -139,6 +141,7 @@ public:
 			buffer << info.isGameStart;
 			buffer << info.password;
 			buffer << info.roomName;
+			buffer << info.gameType;
 		}
 
 		return buffer;
@@ -151,6 +154,7 @@ public:
 		bool			tempIsGameStart = false;
 		bool			tempPassword = false;
 		std::string		tempStr;
+		RoomGameType	tempGameType = RoomGameType::GameTypeNone;
 
 		buf >> m_listCount;
 
@@ -162,6 +166,7 @@ public:
 			buf >> tempIsGameStart;
 			buf >> tempPassword;
 			buf >> tempStr;
+			buf >> tempGameType;
 			m_roomList.emplace_back(
 				tempNumber,
 				tempTime,
@@ -169,7 +174,8 @@ public:
 				tempMaxPlayerCount,
 				tempIsGameStart,
 				tempPassword,
-				tempStr
+				tempStr,
+				tempGameType
 			);
 		}
 	}

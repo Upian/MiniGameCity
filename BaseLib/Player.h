@@ -49,7 +49,7 @@ public:
 	void SetPositionIndex(__int16 position) { m_potionIndex = position; }
 	__int16 GetPositionIndex() const { return m_potionIndex; }
 
-	void SetIsRoomMaster(bool master) { m_isRoomMaster = master; }
+	void SetIsRoomMaster(bool master) { m_isRoomMaster = master; m_isReady = true; }
 	bool GetIsRoomMaster() const { return m_isRoomMaster; }
 
 	void toggleReady() { m_isReady = !m_isReady; }

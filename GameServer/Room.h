@@ -68,7 +68,7 @@ public:
 	bool CheckPassword(__int16 password);
 	bool CheckIsRoomIsFull() { return m_maximumPlayer <= m_roomPlayerManager.GetPlayerCount(); }
 	bool CheckAllPlayerIsReady();
-
+	RoomGameType GetRoomGameType() const { return m_gameType; }
 	std::string& GetRoomName() { return m_roomName; }
 
 	std::shared_ptr<Player> GetRoomMaster() const { return m_roomMaster; }
