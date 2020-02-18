@@ -1,7 +1,8 @@
 #ifndef __MANAGEMENT_PACKET_H__
 #define __MANAGEMENT_PACKET_H__
-#include "LoginPacket.h"
-//#include "..\DBCache\DBCachePacket.h"
+//#include "LoginPacket.h"
+#include "../LoginServer/LoginPacket.h"
+//#include "BasePacket.h"
 
 // must go to ini file 
 #define CHANNEL_SIZE 4 // test
@@ -17,8 +18,6 @@ enum ManagementPacketType : char {
 
 	// game server <-> management server
 	gameManagementPacketTypeCurrentPeopleRequest, // (int32)currentPeople 
-
-	//Game server <-> management server
 	registerServerInfo, //Game -> Management
 	preLoadRequest, //Management -> Game
 	updateServerInfo, //Game -> Management
