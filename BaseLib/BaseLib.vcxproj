@@ -143,6 +143,8 @@
     <ClInclude Include="ClntServerManager.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="BaseServer.h" />
+    <ClInclude Include="Thread.h" />
+    <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="Utf8.h" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +158,7 @@
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="ClntServer.cpp" />
     <ClCompile Include="ClntServerManager.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

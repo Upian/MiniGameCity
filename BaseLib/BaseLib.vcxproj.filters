@@ -76,6 +76,12 @@
     <ClInclude Include="ErrorType.h">
       <Filter>Definition</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>ThreadPool</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>ThreadPool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Log.cpp">
@@ -105,6 +111,9 @@
     </ClCompile>
     <ClCompile Include="ClntServerManager.cpp">
       <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool.cpp">
+      <Filter>ThreadPool</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
