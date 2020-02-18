@@ -1,8 +1,7 @@
 #ifndef __MANAGEMENT_PACKET_H__
 #define __MANAGEMENT_PACKET_H__
-//#include "LoginPacket.h"
-#include "../LoginServer/LoginPacket.h"
-//#include "BasePacket.h"
+
+#include "BasePacket.h"
 
 // must go to ini file 
 #define CHANNEL_SIZE 4 // test
@@ -25,11 +24,11 @@ enum ManagementPacketType : char {
 	managementPacketTypeSize,
 };
 
-//struct Channel {
-//	std::string channelName;
-//	int32 numberOfPeople = 0;
-//	int32 limitOfPeople = 0;
-//};
+struct Channel {
+	std::string channelName;
+	int32 numberOfPeople = 0;
+	int32 limitOfPeople = 0;
+};
 
 /*
 

@@ -1,8 +1,8 @@
 #ifndef __LOGIN_PACKET_H__
 #define __LOGIN_PACKET_H__
-#include "BasePacket.h"
 
-#define CHANNEL_SIZE 4
+#include "ManagementPacket.h"
+#include "LoginDBCachePacket.h"
 
 enum LoginPacketType : char {
 	loginPacketTypeNone = 0,
@@ -22,12 +22,6 @@ enum LoginPacketType : char {
 
 	loginPacketTypeSize,
 
-};
-
-struct Channel {
-	std::string channelName;
-	int32 numberOfPeople = 0;
-	int32 limitOfPeople = 0;
 };
 
 /*

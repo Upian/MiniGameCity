@@ -99,7 +99,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(OutputPath)..\BaseLib\BaseLib.lib;$(OutputPath)..\LoginDBCache\LoginDBCache.lib;$(OutputPath)..\DatabaseApi\DatabaseApi.lib;libmysql.lib;mysqlcppconn.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutputPath)..\BaseLib\BaseLib.lib;$(OutputPath)..\DatabaseApi\DatabaseApi.lib;libmysql.lib;mysqlcppconn.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\DatabaseApi\MySQLlib\LinkerGeneral\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -148,14 +148,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\BaseLib\;..\DatabaseApi\;..\DatabaseApi\MySQLlib\CC++\;..\LoginServer\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BaseLib\;..\DatabaseApi\;..\DatabaseApi\MySQLlib\CC++\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(OutputPath)..\BaseLib\BaseLib.lib;$(OutputPath)..\LoginDBCache\LoginDBCache.lib;$(OutputPath)..\DatabaseApi\DatabaseApi.lib;libmysql.lib;mysqlcppconn.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutputPath)..\BaseLib\BaseLib.lib;$(OutputPath)..\DatabaseApi\DatabaseApi.lib;libmysql.lib;mysqlcppconn.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\DatabaseApi\MySQLlib\LinkerGeneral\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

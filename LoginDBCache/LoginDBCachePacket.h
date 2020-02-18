@@ -1,7 +1,7 @@
 #ifndef __LOGIN_DBCACHE_PACKET_H__
 #define __LOGIN_DBCACHE_PACKET_H__
 
-#include "LoginPacket.h"
+#include "BasePacket.h"
 
 enum DBCachePacketType : char {
 	dbCachePacketTypeNone = 0,

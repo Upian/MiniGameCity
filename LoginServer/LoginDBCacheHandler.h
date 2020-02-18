@@ -2,7 +2,7 @@
 #define __LOGIN_DBCACHE_HANDLER_H__
 
 #include <memory>
-#include "LoginDBCachePacket.h"
+#include "LoginPacket.h"
 #include "BaseServerHandler.h"
 
 class LoginServer;
