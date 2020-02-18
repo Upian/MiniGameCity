@@ -43,8 +43,9 @@ enum class BasePacketType : char {
 
 	//Server packet
 
-	basePacketTypeSocialServer, //Game server <-> Social server
-	basePacketTypeRankingServer,
+	basePacketTypeGameToSocialServer, //Game server <-> Social server
+	basePacketTypeGameToRankingServer, //Game server <-> Ranking server
+	basePacketTypeGameToManagementServer, //Game server <-> Management server
 
 	// server to server packet
 	loginPacketTypeManagement,

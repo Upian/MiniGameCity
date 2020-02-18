@@ -19,13 +19,12 @@ public:
 private:
 	MAKE_SERVER(ManagementServer)
 		void HandlePacketLogin(BufferInfo* bufInfo);
+	void HandlePacketToGameServer(BufferInfo* bufInfo);
 	void ConnectToDBCache();
 
 	Channel channel[CHANNEL_SIZE]{}; // test
 
-	//manager
-	ClntServerManager m_gameServerManager;
-
+	
 	SOCKET dbCache = 0;
 };
 #endif // !__MANAGEMENTSERVER_MANAGEMENT_SERVER_H__

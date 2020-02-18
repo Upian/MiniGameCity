@@ -16,7 +16,7 @@ void SocialPlayerManager::RemovePlayer(GPID gpid) {
 	auto pplayer = this->FindSocialPlayer(gpid);
 	if (nullptr == pplayer)
 		return;
-
+	printf("LOGOUT PLAYER %d - %s\n", gpid, pplayer->GetName().c_str());
 	m_socialPlayers.remove(pplayer);
 	
 }

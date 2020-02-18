@@ -8,7 +8,6 @@ class BaseServerHandler {
 public:
 	void ConnectToServer(std::string ipAddress, short port);
 	virtual void RegisterToServer() = 0;
-
 	void SetConnectionReady() { m_isConnectionReady = true; }
 	bool GetConnectionReady() const { return m_isConnectionReady; }
 

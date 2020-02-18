@@ -1,7 +1,7 @@
 #ifndef __MANAGEMENT_PACKET_H__
 #define __MANAGEMENT_PACKET_H__
-#include "LoginPacket.h"
-//#include "..\DBCache\DBCachePacket.h"
+//#include "LoginPacket.h"
+#include "..\DBCache\DBCachePacket.h"
 
 // must go to ini file 
 #define CHANNEL_SIZE 4 // test
@@ -14,6 +14,11 @@ enum ManagementPacketType : char {
 	loginManagementPacketTypeShowChannelRequest, //nothing.
 	loginManagementPacketTypeChannelInResponse, //(bool)flag, (string)ip, (int)port
 	loginManagementPacketTypeChannelInRequest, //(string)channelName, (unsigned int)GPID
+
+	//Game server <-> management server
+	registerServerInfo, //Game -> Management
+	preLoadRequest, //Management -> Game
+	updateServerInfo, //Game -> Management
 
 	managementPacketTypeSize,
 };
@@ -30,19 +35,19 @@ enum ManagementPacketType : char {
 
 */
 
-class ManagementPacket : public BasePacket {
+class LoginManagementPacket : public BasePacket {
 public:
-	ManagementPacket(ManagementPacketType _managementPacketType) : BasePacket(BasePacketType::loginPacketTypeManagement), managementPacketType(_managementPacketType) {
+	LoginManagementPacket(ManagementPacketType _managementPacketType) : BasePacket(BasePacketType::loginPacketTypeManagement), managementPacketType(_managementPacketType) {
 		this->PacketTypeSerial(managementPacketType);
 	}
-	~ManagementPacket() {}
+	~LoginManagementPacket() {}
 protected:
 	ManagementPacketType managementPacketType = managementPacketTypeNone;
 };
 
-class LoginManagementPacketTypeShowChannelResponse : public ManagementPacket {
+class LoginManagementPacketTypeShowChannelResponse : public LoginManagementPacket {
 public:
-	LoginManagementPacketTypeShowChannelResponse() : ManagementPacket(loginManagementPacketTypeShowChannelResponse) {}
+	LoginManagementPacketTypeShowChannelResponse() : LoginManagementPacket(loginManagementPacketTypeShowChannelResponse) {}
 	~LoginManagementPacketTypeShowChannelResponse() {}
 
 	virtual Buffer& Serialize() override {
@@ -68,9 +73,9 @@ public:
 	uint32 gpid = 0;
 };
 
-class LoginManagementPacketTypeShowChannelRequest : public ManagementPacket {
+class LoginManagementPacketTypeShowChannelRequest : public LoginManagementPacket {
 public:
-	LoginManagementPacketTypeShowChannelRequest() : ManagementPacket(loginManagementPacketTypeShowChannelRequest) {}
+	LoginManagementPacketTypeShowChannelRequest() : LoginManagementPacket(loginManagementPacketTypeShowChannelRequest) {}
 	~LoginManagementPacketTypeShowChannelRequest() {}
 
 	virtual Buffer& Serialize() override {
@@ -82,9 +87,9 @@ public:
 	}
 };
 
-class LoginManagementPacketTypeChannelInResponse : public ManagementPacket {
+class LoginManagementPacketTypeChannelInResponse : public LoginManagementPacket {
 public:
-	LoginManagementPacketTypeChannelInResponse() : ManagementPacket(loginManagementPacketTypeChannelInResponse) {}
+	LoginManagementPacketTypeChannelInResponse() : LoginManagementPacket(loginManagementPacketTypeChannelInResponse) {}
 	~LoginManagementPacketTypeChannelInResponse() {}
 
 	virtual Buffer& Serialize() override {
@@ -108,9 +113,9 @@ public:
 	uint32 gpid = 0;
 };
 
-class LoginManagementPacketTypeChannelInRequest : public ManagementPacket {
+class LoginManagementPacketTypeChannelInRequest : public LoginManagementPacket {
 public:
-	LoginManagementPacketTypeChannelInRequest() : ManagementPacket(loginManagementPacketTypeChannelInRequest) {}
+	LoginManagementPacketTypeChannelInRequest() : LoginManagementPacket(loginManagementPacketTypeChannelInRequest) {}
 	~LoginManagementPacketTypeChannelInRequest() {}
 
 	virtual Buffer& Serialize() override {
@@ -123,6 +128,44 @@ public:
 	}
 
 	std::string channelName;
+};
+
+/////////////////////////////////////////
+struct GameToManagementPacket : public BasePacket {
+	GameToManagementPacket(ManagementPacketType type) : BasePacket(BasePacketType::basePacketTypeGameToManagementServer), m_packetType(type) {
+		this->PacketTypeSerial(m_packetType);
+	}
+protected:
+	ManagementPacketType m_packetType = ManagementPacketType::managementPacketTypeNone;
+};
+
+struct GameToManagementResistarServerInfo : public GameToManagementPacket {
+	GameToManagementResistarServerInfo() : GameToManagementPacket(ManagementPacketType::registerServerInfo) {}
+
+	int m_maxPlayer = 0;
+	
+	virtual Buffer& Serialize() override {
+		buffer << m_maxPlayer;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> m_maxPlayer;
+	}
+};
+
+struct GameToManagementPreLoadRequest : public GameToManagementPacket {
+	GameToManagementPreLoadRequest() : GameToManagementPacket(ManagementPacketType::preLoadRequest) {}
+
+	unsigned __int32 m_gpid;
+
+	virtual Buffer& Serialize() override {
+		buffer << m_gpid;
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> m_gpid;
+	}
 };
 
 #endif

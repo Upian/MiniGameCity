@@ -32,7 +32,7 @@ enum class PacketTypeSocialServer : char {
 };
 
 struct BaseSocialServerPacket : public BasePacket {
-	BaseSocialServerPacket(PacketTypeSocialServer type) : BasePacket(BasePacketType::basePacketTypeSocialServer), m_packetType(type) {
+	BaseSocialServerPacket(PacketTypeSocialServer type) : BasePacket(BasePacketType::basePacketTypeGameToSocialServer), m_packetType(type) {
 		this->PacketTypeSerial(m_packetType);
 	}
 

@@ -43,6 +43,10 @@ void ManagementServer::HandleBasePacket(BufferInfo* bufInfo) {
 		this->HandlePacketLogin(bufInfo);
 		break;
 	}
+	case BasePacketType::basePacketTypeGameToManagementServer: {
+
+		break;
+	}
 													// 	case basePacketTypeRoom: {
 													// 		break;
 													// 	}
@@ -118,6 +122,27 @@ void ManagementServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		Util::LoggingInfo("ManagementServer.log", "Recv wrong login packet ID : %d", type);
 	}
 	}
+}
+
+void ManagementServer::HandlePacketToGameServer(BufferInfo* bufInfo) {
+	ManagementPacketType type = (ManagementPacketType)PacketTypeDeserial(bufInfo->buffer);
+
+	switch (type) {
+	case ManagementPacketType::registerServerInfo: {
+
+		break;
+	}
+	case ManagementPacketType::updateServerInfo: {
+
+		break;
+	}
+	default: {
+		Util::LoggingInfo("ManagementServer.log", "Handle game server packet, packet number: %d", type);
+		break;
+	}
+
+	}
+
 }
 
 void ManagementServer::InitializeManagmentServer() {

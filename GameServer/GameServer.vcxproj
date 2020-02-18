@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="InGameLibrary.cpp" />
+    <ClCompile Include="ManagementServerHandler.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="SocialServerHandler.cpp" />

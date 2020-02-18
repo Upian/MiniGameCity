@@ -27,7 +27,7 @@ void SocialServer::HandleBasePacket(BufferInfo* bufInfo) {
 	BasePacketType type = (BasePacketType)PacketTypeDeserial(bufInfo->buffer);
 
 	switch (type) {
-	case BasePacketType::basePacketTypeSocialServer: {
+	case BasePacketType::basePacketTypeGameToSocialServer: {
 		this->HandleBaseSocialPacket(bufInfo);
 		break;
 	}
@@ -96,6 +96,7 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		packet.Deserialize(bufInfo->buffer);
 		auto player = m_socialPlayerManager.FindSocialPlayer(packet.m_srcGpid);
 		m_friendManager.HandleChatFriendRequest(player, packet.m_destName, packet.m_message);
+		break;
 	}
 	default: {
 		Util::LoggingInfo("SocialServer.log", "Recv wrong soical server packet ID: %d", type);
@@ -107,10 +108,11 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 void SocialServer::HandleUpdatePlayerLogin(SocialPacketServerUpdatePlayerLogin& packet, std::shared_ptr<ClntServer> server) {
 	if (nullptr == server) 
 		return;
-	
+	printf("NEW PLAYER TRY LOGIN %d - %s\n", packet.m_gpid, packet.m_name.c_str());
 	std::shared_ptr<SocialPlayer> pplayer = m_socialPlayerManager.InsertPlayer(packet.m_gpid, server);
 	if (nullptr == pplayer)
 		return;
+	printf("NEW PLAYER LOGIN %d - %s\n", pplayer->GetGPID(), packet.m_name);
 
 	pplayer->SetName(packet.m_name); //#Test
 	//#DatabaseLoad

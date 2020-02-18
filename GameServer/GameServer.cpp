@@ -134,15 +134,9 @@ void GameServer::HandleBasePacketGame(BufferInfo* bufInfo) {
 
 void GameServer::InitializeGameServer() {
 	Sleep(1000);
-	m_managementServerHandler.ConnectToServer(
-		Util::GetConfigToString("GameServer.ini", "Network", "ManagementServerIP", "10.255.252.100").c_str(),
-		Util::GetConfigToInt("GameServer.ini", "Network", "ManagementServerPort", 19999)
-	);
+	m_managementServerHandler.Initialize();
 	m_socialServerHandler.Initialize();
-	m_socialServerHandler.ConnectToServer(
-		Util::GetConfigToString("GameServer.ini", "Network", "SocialServerIP", "10.255.252.100").c_str(),
-		Util::GetConfigToInt("GameServer.ini", "Network", "SocialServerPort", 20100)
-	);
+
 
 
 	m_roomManager.Initialize();

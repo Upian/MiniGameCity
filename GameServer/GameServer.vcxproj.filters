@@ -40,6 +40,9 @@
     <ClCompile Include="InGameLibrary.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="ManagementServerHandler.cpp">
+      <Filter>Management</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameServer.h">

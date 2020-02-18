@@ -9,6 +9,10 @@
 
 void SocialServerHandler::Initialize() {
 	m_gameServer = GameServer::GetServer();
+	this->ConnectToServer(
+		Util::GetConfigToString("GameServer.ini", "Network", "SocialServerIP", "127.0.0.1").c_str(),
+		Util::GetConfigToInt("GameServer.ini", "Network", "SocialServerPort", 20000)
+	);
 }
 
 //Client to game server
@@ -93,7 +97,7 @@ void SocialServerHandler::UpdatePlayerInfoAtLogout(std::shared_ptr<Player> pplay
 //Social server to client
 void SocialServerHandler::HandlePacket(Buffer& buffer) {
 	BasePacketType type = (BasePacketType)PacketTypeDeserial(buffer);
-	if (BasePacketType::basePacketTypeSocialServer != type)
+	if (BasePacketType::basePacketTypeGameToSocialServer != type)
 		return;
 	
 	PacketTypeSocialServer socialType = (PacketTypeSocialServer)PacketTypeDeserial(buffer);

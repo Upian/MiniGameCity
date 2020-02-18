@@ -4,11 +4,16 @@
 
 #include "BaseServerHandler.h"
 
+class GameServer;
+
 class ManagementServerHandler : public BaseServerHandler {
 public:
-	virtual void RegisterToServer() override {}
-	virtual void HandlePacket(Buffer& buffer) override {}
+	void Initialize();
+
+	void RegisterToServer();
+	virtual void HandlePacket(Buffer& buffer) override;
 private:
 
+	GameServer* m_gameServer = nullptr;
 };
 #endif // !__GAMESERVER_MANAGEMENT_SERVER_HANDLER_H__

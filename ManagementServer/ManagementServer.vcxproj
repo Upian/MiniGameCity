@@ -135,6 +135,7 @@
     <ClCompile Include="ManagementServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameServerManager.h" />
     <ClInclude Include="ManagementPacket.h" />
     <ClInclude Include="ManagementServer.h" />
   </ItemGroup>

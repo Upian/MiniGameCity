@@ -11,6 +11,9 @@
     <Filter Include="Packet">
       <UniqueIdentifier>{59bc2577-3adc-40e9-ab15-ea405ac7becd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ManageGameServer">
+      <UniqueIdentifier>{c0b9cfa5-6774-48c4-8547-713b57304013}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ManagementServer.cpp">
@@ -23,6 +26,9 @@
     </ClInclude>
     <ClInclude Include="ManagementPacket.h">
       <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="GameServerManager.h">
+      <Filter>ManageGameServer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

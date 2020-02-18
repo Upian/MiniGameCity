@@ -25,6 +25,7 @@ enum class PacketTypeSocialClient : char{
 	packetTypeSocialAcceptFriendResponse,
 	packetTypeSocialFriendListRequest, //친구 리스트
 	packetTypeSocialFriendListResponse,
+	packetTypeSocialInviteFriendRequest, //친구 게임 초대
 
 	packetTypeSocialCount,
 };
