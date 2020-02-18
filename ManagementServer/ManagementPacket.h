@@ -1,7 +1,7 @@
 #ifndef __MANAGEMENT_PACKET_H__
 #define __MANAGEMENT_PACKET_H__
-//#include "LoginPacket.h"
-#include "..\DBCache\DBCachePacket.h"
+#include "LoginPacket.h"
+//#include "..\DBCache\DBCachePacket.h"
 
 // must go to ini file 
 #define CHANNEL_SIZE 4 // test
@@ -14,6 +14,9 @@ enum ManagementPacketType : char {
 	loginManagementPacketTypeShowChannelRequest, //nothing.
 	loginManagementPacketTypeChannelInResponse, //(bool)flag, (string)ip, (int)port
 	loginManagementPacketTypeChannelInRequest, //(string)channelName, (unsigned int)GPID
+
+	// game server <-> management server
+	gameManagementPacketTypeCurrentPeopleRequest, // (int32)currentPeople 
 
 	//Game server <-> management server
 	registerServerInfo, //Game -> Management
@@ -166,6 +169,38 @@ struct GameToManagementPreLoadRequest : public GameToManagementPacket {
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> m_gpid;
 	}
+};
+
+/*
+
+		  game server <-> management server
+
+*/
+class GameManagementPacket : public BasePacket {
+public:
+	GameManagementPacket(ManagementPacketType _managementPacketType) : BasePacket(BasePacketType::gamePacketTypeManagement), managementPacketType(_managementPacketType) {
+		this->PacketTypeSerial(managementPacketType);
+	}
+	~GameManagementPacket() {}
+protected:
+	ManagementPacketType managementPacketType = managementPacketTypeNone;
+};
+
+class GameManagementPacketTypeCurrentPeopleRequest : public GameManagementPacket {
+public:
+	GameManagementPacketTypeCurrentPeopleRequest() : GameManagementPacket(gameManagementPacketTypeCurrentPeopleRequest) {}
+	~GameManagementPacketTypeCurrentPeopleRequest() {}
+
+	virtual Buffer& Serialize() override {
+		buffer << currentPeople;
+		
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> currentPeople;
+	}
+
+	int32 currentPeople = 0;
 };
 
 #endif
