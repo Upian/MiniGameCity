@@ -4,14 +4,14 @@
 #include "ServerCommon.h"
 #include "BaseServer.h"
 #include "DatabaseAPI.h"
-#include "DBCachePacket.h"
+#include "LoginDBCachePacket.h"
 
-class DBCache : public BaseServer<DBCache> {
+class LoginDBCache : public BaseServer<LoginDBCache> {
 public:
 
 
 private:
-	MAKE_SERVER(DBCache)
+	MAKE_SERVER(LoginDBCache)
 		void HandlePacketLogin(BufferInfo* bufInfo);
 
 };

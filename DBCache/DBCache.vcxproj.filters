@@ -5,19 +5,16 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="DBCache">
-      <UniqueIdentifier>{2bb7e580-428c-4014-bb31-2c8a259266e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Packet">
       <UniqueIdentifier>{4db1055e-09b1-4114-b55b-226f686a54cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DBCache">
+      <UniqueIdentifier>{2bb7e580-428c-4014-bb31-2c8a259266e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DBCachePacket.h">
       <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="DBCache.h">
-      <Filter>DBCache</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

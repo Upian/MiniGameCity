@@ -4,7 +4,7 @@
 
 #include "BaseServer.h"
 #include "ClntServerManager.h"
-#include "DBCachePacket.h"
+#include "LoginDBCachePacket.h"
 #include "ManagementPacket.h"
 
 /*

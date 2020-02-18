@@ -15,6 +15,9 @@ enum ManagementPacketType : char {
 	loginManagementPacketTypeChannelInResponse, //(bool)flag, (string)ip, (int)port
 	loginManagementPacketTypeChannelInRequest, //(string)channelName, (unsigned int)GPID
 
+	// game server <-> management server
+	gameManagementPacketTypeCurrentPeopleRequest, // (int32)currentPeople 
+
 	managementPacketTypeSize,
 };
 
@@ -123,6 +126,38 @@ public:
 	}
 
 	std::string channelName;
+};
+
+/*
+
+		  game server <-> management server
+
+*/
+class GameManagementPacket : public BasePacket {
+public:
+	GameManagementPacket(ManagementPacketType _managementPacketType) : BasePacket(BasePacketType::gamePacketTypeManagement), managementPacketType(_managementPacketType) {
+		this->PacketTypeSerial(managementPacketType);
+	}
+	~GameManagementPacket() {}
+protected:
+	ManagementPacketType managementPacketType = managementPacketTypeNone;
+};
+
+class GameManagementPacketTypeCurrentPeopleRequest : public GameManagementPacket {
+public:
+	GameManagementPacketTypeCurrentPeopleRequest() : GameManagementPacket(gameManagementPacketTypeCurrentPeopleRequest) {}
+	~GameManagementPacketTypeCurrentPeopleRequest() {}
+
+	virtual Buffer& Serialize() override {
+		buffer << currentPeople;
+		
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> currentPeople;
+	}
+
+	int32 currentPeople = 0;
 };
 
 #endif
