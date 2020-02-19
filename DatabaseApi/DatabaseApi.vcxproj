@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DatabaseAPI.cpp" />
+    <ClCompile Include="LoadData.cpp" />
+    <ClCompile Include="SaveData.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DatabaseAPI.h" />
+    <ClInclude Include="LoadData.h" />
+    <ClInclude Include="SaveData.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

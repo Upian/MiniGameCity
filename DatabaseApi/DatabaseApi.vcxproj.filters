@@ -8,15 +8,24 @@
     <Filter Include="SaveDatabase">
       <UniqueIdentifier>{149e7133-dec0-472d-8561-92fb054e5a18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LoadDatabase">
+      <UniqueIdentifier>{488ac070-d4ca-46eb-ae73-3ec6f62c77a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DatabaseAPI.h">
-      <Filter>SaveDatabase</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="DatabaseAPI.cpp">
+    <ClCompile Include="SaveData.cpp">
       <Filter>SaveDatabase</Filter>
     </ClCompile>
+    <ClCompile Include="LoadData.cpp">
+      <Filter>LoadDatabase</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SaveData.h">
+      <Filter>SaveDatabase</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadData.h">
+      <Filter>LoadDatabase</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

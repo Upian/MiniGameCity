@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 	pServer->SetServerName("ManagementServer");
 
 	pServer->InitializeBaseServer();
-	pServer->InitializeManagmentServer();
+	// pServer->InitializeManagmentServer();
 
 	pServer->RunServer();
 
