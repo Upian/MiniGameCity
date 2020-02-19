@@ -96,6 +96,7 @@ protected:
 	InGamePacketType ingame_packet_type = InGamePacketType::InGame_Packet_None;
 };
 
+#pragma region Twenty
 //Twenty Base Packet
 class TwentyQuestionGamePacket : public InGamePacket {
 public:
@@ -103,6 +104,7 @@ public:
 	{
 		this->PacketTypeSerial(_twenty_packet);
 	}
+	Twenty_Packet_Type getTwentyPacket() { return twenty_packet; }
 protected:
 	Twenty_Packet_Type twenty_packet = Twenty_Packet_Type::Twenty_None;
 };
@@ -111,34 +113,28 @@ class TwentyPlayerLocationSettingPacket : public TwentyQuestionGamePacket {
 public:
 	TwentyPlayerLocationSettingPacket() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Player_Location_Setting) {}
 
-	std::string PlayerName[5];
+	char PlayerName[5][31] = { NULL, };
 	int PlayerCount = 0;
 
 	virtual Buffer& Serialize() override {
 
-		for (std::string s : PlayerName)
-		{
-			buffer << s;
+		for (int i = 0; i < 5; ++i) {
+			buffer.SerializeCharArray(PlayerName[i], 31);
 		}
-
 		buffer << PlayerCount;
 
 		return buffer;
 	}
 
 	virtual void Deserialize(Buffer& _buf) override {
-		for (int i = 0; i < PlayerName->size(); ++i)
-		{
-			_buf >> PlayerName[i];
-		}
-		_buf >> PlayerCount;
+
 	}
 private:
 
 };
 class TwentyPlayerReadyCompletePacket : public TwentyQuestionGamePacket {
 public:
-	TwentyPlayerReadyCompletePacket() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Player_Ready_Complete){}
+	TwentyPlayerReadyCompletePacket() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_None){}
 
 	virtual Buffer& Serialize() override {
 		return buffer;
@@ -147,8 +143,6 @@ public:
 		buf >> ingame_packet_type;
 		buf >> twenty_packet;
 	}
-
-	Twenty_Packet_Type getTwentyPacket() { return twenty_packet; }
 };
 class TwentyCountDownStart : public TwentyQuestionGamePacket {
 public:
@@ -181,40 +175,37 @@ class TwentyProviderSelectAnswer : public TwentyQuestionGamePacket
 public:
 	TwentyProviderSelectAnswer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provide_5Answer){}
 
-	std::string AnswerChoice[5];
+	char AnswerChoice[5][31] = { NULL, };
 
 	virtual Buffer& Serialize() override {
-		for (std::string s : AnswerChoice)
+		
+		for (int i = 0; i < 5; ++i)
 		{
-			buffer << s;
+			buffer.SerializeCharArray(AnswerChoice[i], 31);
 		}
+		
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> AnswerChoice[0];
-		buf >> AnswerChoice[1];
-		buf >> AnswerChoice[2];
-		buf >> AnswerChoice[3];
-		buf >> AnswerChoice[4];
+
 	}
 };
 class TwentySelectAnswer : public TwentyQuestionGamePacket {
 public:
-	TwentySelectAnswer() :TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Select_Answer){}
+	TwentySelectAnswer() :TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_None){}
 
-	std::string Answer;
+
+	char Answer[31] = { NULL, };
 
 	virtual Buffer& Serialize() override {
-
-		buffer << Answer;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		
 		buf >> ingame_packet_type;
 		buf >> twenty_packet;
-		buf >> Answer;
+		if (buf.Length() < 5)return;
+		buf.DeserializeCharArray(Answer, 31);
 	}
 };
 class TwentyGameStart :public TwentyQuestionGamePacket {
@@ -249,47 +240,44 @@ public:
 };
 class TwentyAskerQuestion : public TwentyQuestionGamePacket {
 public:
-	TwentyAskerQuestion() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Question) {}
+	TwentyAskerQuestion() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_None) {}
 
-	std::string Question = 0;
+	char Question[91] = { NULL, };
 
 	virtual Buffer& Serialize() override {
-
-		buffer << Question;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> Question;
+		
+		buffer.DeserializeCharArray(Question, 91);
 	}
 };
 class TwentyAskerQuestionBroadCast : public TwentyQuestionGamePacket {
 public:
-	TwentyAskerQuestionBroadCast(std::string name, std::string question) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Question_BroadCast)
+	TwentyAskerQuestionBroadCast(char* name, char* question) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Question_BroadCast)
 	{
-		PlayerName = name;
-		Question = question;
+		strcpy_s(PlayerName, 31, name);
+		strcpy_s(Question, 91, question);
 	}
 
-	std::string PlayerName = 0;
-	std::string Question = 0;
+	char PlayerName[31] = { NULL, };
+	char Question[91] = { NULL, };
 
 	virtual Buffer& Serialize() override {
 
-		buffer << PlayerName;
-		buffer << Question;
+		buffer.SerializeCharArray(PlayerName, 31);
+		buffer.SerializeCharArray(Question, 91);
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> PlayerName;
-		buf >> Question;
 
 	}
 };
 class TwentyProviderReply : public TwentyQuestionGamePacket {
 public:
-	TwentyProviderReply() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Reply) {}
+	TwentyProviderReply() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_None) {}
 
 	int ReplyOX = 0;
 
@@ -306,116 +294,104 @@ public:
 };
 class TwentyProviderReplyBroadCast : public TwentyQuestionGamePacket {
 public:
-	TwentyProviderReplyBroadCast(std::string name,int Reply) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Reply_Broadcast)
+	TwentyProviderReplyBroadCast(char* name,int Reply) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Provider_Reply_Broadcast)
 	{
-		PlayerName = name;
+		strcpy_s(PlayerName, 31, name);
 		ReplyOX = Reply;
 	}
 
-	std::string PlayerName;
+	char PlayerName[31] = { NULL, };
 	int ReplyOX = 0;
 
 	virtual Buffer& Serialize() override {
 
-		buffer << PlayerName;
+		buffer.SerializeCharArray(PlayerName, 31);
 		buffer << ReplyOX;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> PlayerName;
-		buf >> ReplyOX;
+
 	}
 };
 class TwentyAskerAnswer : public TwentyQuestionGamePacket {
 public:
-	TwentyAskerAnswer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer){}
+	TwentyAskerAnswer() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_None){}
 
-	std::string AskerAnswer;
+	char AskerAnswer[31] = { NULL, };
 
 	virtual Buffer& Serialize() override {
 
-		buffer << AskerAnswer;
+		buffer.SerializeCharArray(AskerAnswer, 31);
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
 
-		buf >> AskerAnswer;
+		buffer.DeserializeCharArray(AskerAnswer, 31);
 	}
 };
 class TwentyAskerAnswerBroadCast : public TwentyQuestionGamePacket {
 public:
-	TwentyAskerAnswerBroadCast(std::string name, std::string answer, int answervalue) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer_Broadcast)
+	TwentyAskerAnswerBroadCast(char* answer, char* name , int answervalue) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Asker_Answer_Broadcast)
 	{
-		AskerAnswer = answer;
-		AskerName = name;
+		strcpy_s(AskerAnswer, 31, answer);
+		strcpy_s(AskerName, 31, name);
 		AnswerResult = answervalue;
 	}
 
-	std::string AskerAnswer;
-	std::string AskerName;
+	char AskerAnswer[31] = { NULL, };
+	char AskerName[31] = { NULL, };
 	int AnswerResult = 0;
 
 	virtual Buffer& Serialize() override {
 		
-		buffer << AskerAnswer;
-		buffer << AskerName;
-		buffer << AnswerResult;
-
+		buffer.SerializeCharArray(AskerAnswer, 31);
+		buffer.SerializeCharArray(AskerName, 31);
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
 		
-		buf >> ingame_packet_type;
-		buf >> twenty_packet;
-		buf >> AskerAnswer;
-		buf >> AskerName;
-		buf >> AnswerResult;
 	}
 };
 class TwentyNoticeNextAsker : public TwentyQuestionGamePacket {
 public:
-	TwentyNoticeNextAsker(std::string name, int status) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Notice_Next_Asker)
+	TwentyNoticeNextAsker(char* name, int status) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Notice_Next_Asker)
 	{
-		PlayerName = name;
+		strcpy_s(PlayerName, 31, name);
 		NoticeStatus = status;
 	}
 
-	std::string PlayerName;
+	char PlayerName[31] = { NULL, };
 	int NoticeStatus = 0; //0은 질문 답변 듣고 넘김, 1은 질문자 타임오버, 2는 출제자 타임오버
 
 	virtual Buffer& Serialize() override {
-		buffer << PlayerName;
+
+		buffer.SerializeCharArray(PlayerName, 31);
 		buffer << NoticeStatus;
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
 
-		buf >> ingame_packet_type;
-		buf >> twenty_packet;
-
-		buf >> PlayerName;
-		buf >> NoticeStatus;
 	}
 };
 class TwentyRoundEnd : public TwentyQuestionGamePacket {
 public:
-	TwentyRoundEnd(std::string prov, std::string ask, int round) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Round_End)
+	TwentyRoundEnd(char* prov, char* ask, int round) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Round_End)
 	{
-		Provider = prov;
-		Asker = ask;
+		strcpy_s(Provider, 31, prov);
+		strcpy_s(Asker, 31, ask);
 		Round = round;
 	}
 
-	std::string Provider;
-	std::string Asker;
+	char Provider[31] = { NULL, };
+	char Asker[31] = { NULL };
 	int Round = 0;
 
 	virtual Buffer& Serialize() override {
 
-		buffer << Provider;
-		buffer << Asker;
+		buffer.SerializeCharArray(Provider, 31);
+		buffer.SerializeCharArray(Asker, 31);
 		buffer << Round;
 
 		return buffer;
@@ -425,24 +401,21 @@ public:
 		buf >> ingame_packet_type;
 		buf >> twenty_packet;
 
-		buf >> Provider;
-		buf >> Asker;
-		buf >> Round;
 	}
 };
 class TwentyUpdateScore : public TwentyQuestionGamePacket {
 public:
-	TwentyUpdateScore(std::string name, int update) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Update_Score)
+	TwentyUpdateScore(char* name, int update) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Update_Score)
 	{
-		PlayerName = name;
+		strcpy_s(PlayerName, 31, name);
 		Score = update;
 	}
 
-	std::string PlayerName;
-	int Score;
+	char PlayerName[31] = { NULL,};
+	int Score = 0;
 
 	virtual Buffer& Serialize() override {
-		buffer << PlayerName;
+		buffer.SerializeCharArray(PlayerName, 31);
 		buffer << Score;
 
 		return buffer;
@@ -450,8 +423,6 @@ public:
 	virtual void Deserialize(Buffer& buf) override {
 		buf >> ingame_packet_type;
 		buf >> twenty_packet;
-		buf >> PlayerName;
-		buf >> Score;
 	}
 };
 
@@ -459,17 +430,18 @@ class TwentyAnswerOpen : public TwentyQuestionGamePacket {
 public:
 	TwentyAnswerOpen() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Answer_Open){}
 
-	std::string Answer;
+	char Answer[31] = { NULL, };
 
 	virtual Buffer& Serialize() override {
-		buffer << Answer;
+
+		buffer.SerializeCharArray(Answer, 31);
+
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
 
 		buf >> ingame_packet_type;
 		buf >> twenty_packet;
-		buf >> Answer;
 	}
 };
 class TwentyRestTime : public TwentyQuestionGamePacket {
@@ -489,13 +461,13 @@ class TwentyGameEnd : public TwentyQuestionGamePacket {
 public:
 	TwentyGameEnd() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Game_End){}
 
-	std::string RankSortPlayer[5];
-	int RankScore[5];
+	char RankSortPlayer[5][31] = { NULL, };
+	int RankScore[5] = { NULL, };
 
 	virtual Buffer& Serialize() override {
-		for (std::string s : RankSortPlayer)
+		for (int i = 0; i < 5; ++i)
 		{
-			buffer << s;
+			buffer.SerializeCharArray(RankSortPlayer[i], 31);
 		}
 		for (int i : RankScore)
 		{
@@ -504,73 +476,52 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
-		buf >> twenty_packet;
-		//배열 하나는 size가 되고 다른 하나는 안됨, 문제 발생 가능성 높음
-		for (int i = 0; i < RankSortPlayer->size(); ++i)
-		{
-			buf >> RankSortPlayer[i];
-		}
-
-		buf >> RankScore[0];
-		buf >> RankScore[1];
-		buf >> RankScore[2];
-		buf >> RankScore[3];
-		buf >> RankScore[4];
 	}
 };
 class TwentyEscapeQuizProvider : public TwentyQuestionGamePacket {
 public:
-	TwentyEscapeQuizProvider(std::string name) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escpse_Quiz_Provider)
+	TwentyEscapeQuizProvider(char* name) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escpse_Quiz_Provider)
 	{
-		PlayerName = name;
+		strcpy_s(PlayerName, 31, name);
 	}
 
-	std::string PlayerName;
+	char PlayerName[31] = { NULL, };
 	int RemainMember = 0;	//남은 멤버가 한명일 경우 1을 설정
 
 	virtual Buffer& Serialize() override {
 
-		buffer << PlayerName;
+		buffer.SerializeCharArray(PlayerName, 31);
 		buffer << RemainMember;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
-		buf >> twenty_packet;
-		buf >> PlayerName;
-		buf >> RemainMember;
 	}
 };
 class TwentyEscapeAnotherPlayer : public TwentyQuestionGamePacket {
 public:
-	TwentyEscapeAnotherPlayer(std::string name) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escape_Another_Player)
+	TwentyEscapeAnotherPlayer(char* name) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Escape_Another_Player)
 	{
-		PlayerName = name;
+		strcpy_s(PlayerName, 31 ,name);
 	}
 
-	std::string PlayerName;
+	char PlayerName[31] = { NULL, };
 	int RemainMember = 0;	//남은 멤버가 한명일 경우 1을 설정
 	int AskerOrWaiter = 0;	//질문자는 1, 대기자는 0
 
 	virtual Buffer& Serialize() override {
-		buffer << PlayerName;
+		buffer.SerializeCharArray(PlayerName, 31);
 		buffer << RemainMember;
 		buffer << AskerOrWaiter;
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
-		buf >> twenty_packet;
-		buf >> PlayerName;
-		buf >> RemainMember;
-		buf >> AskerOrWaiter;
+
 	}
 };
 class TwentyExitReservation : public TwentyQuestionGamePacket {
 public:
-	TwentyExitReservation() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Exit_Reservation){}
+	TwentyExitReservation() : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_None){}
 
 	int ReservationType = 0; //0은 예약 취소, 1은 나가기 예약
 
@@ -598,13 +549,13 @@ public:
 };
 class TwentyExitNotification : public TwentyQuestionGamePacket {
 public:
-	TwentyExitNotification(std::string name,int type) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Exit_Notification)
+	TwentyExitNotification(char* name,int type) : TwentyQuestionGamePacket(Twenty_Packet_Type::Twenty_Exit_Notification)
 	{
-		PlayerName = name;
+		strcpy_s(PlayerName, 31, name);
 		ReservationType = type;
 	}
 
-	std::string PlayerName;
+	char PlayerName[31] = { NULL, };
 	int ReservationType = 0;	//0은 예약 취소, 1은 나가기 예약
 
 	virtual Buffer& Serialize() override {
@@ -634,10 +585,15 @@ public:
 		buf >> RemainQuestionCount;
 	}
 };
+#pragma endregion Twenty
 
+#pragma region Relay
 class RelayNovelWritingGamePacket : public InGamePacket {
 
 };
+
+#pragma endregion Relay 
+
 class BanKeywordGamePacket : public InGamePacket {
 
 };

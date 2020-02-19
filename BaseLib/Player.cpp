@@ -10,19 +10,18 @@ void Player::Initialize() {
 
 /*void Player::HandlePacket(BufferInfo* bufInfo) {}*/
 
-void Player::SetGamePacket(BufferInfo* buffer)
+void Player::SetGamePacket(Buffer& buffer)
 {
-	if (buffer == nullptr) return;
+	if (buffer.Length() == 0) return;
 	InGameBuf = buffer;
+	RecvGameBuf = true;
 }
 
-BufferInfo* Player::GetGamePacket() {
-	if (InGameBuf == nullptr) 
-		return nullptr;
+Buffer* Player::GetGamePacket() {
+	if (!RecvGameBuf) return nullptr;
 
-	BufferInfo* temp = InGameBuf;
-	InGameBuf = nullptr;
-	return temp;
+	RecvGameBuf = false;
+	return &InGameBuf;
 }
 
 void Player::PlayerInfoClear() {

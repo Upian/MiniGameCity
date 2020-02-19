@@ -355,6 +355,22 @@ public:
 		m_index = 0;
 		m_length = 0;
 	}
+	Buffer& SerializeCharArray(char* str, int size) {
+		for (int i = 0; i < size; ++i) {
+			m_buffer[m_index] = str[i];
+			++m_index;
+			++m_length;
+		}
+		return *this;
+	}
+	Buffer& DeserializeCharArray(char* str, int size) {
+		for (int i = 0; i < size; ++i) {
+			str[i] = m_buffer[m_index];
+			++m_index;
+			++m_length;
+		}
+		return *this;
+	}
 private:
 	char		m_buffer[BUFFER_SIZE] = { '\0', };
 	int			m_index = 0;

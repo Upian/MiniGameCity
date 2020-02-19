@@ -81,7 +81,7 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 		break;
 	}
 	case BasePacketType::basePacketTypeGame: {
-//		this->HandleBasePacketGame(bufInfo);
+		this->HandleBasePacketGame(bufInfo);
 		break;
 	}
 	default: {
@@ -127,7 +127,7 @@ void GameServer::HandleBasePacketGame(BufferInfo* bufInfo) {
 	if (nullptr == player)
 		return;
 	
-	player->SetGamePacket(bufInfo);
+	player->SetGamePacket(bufInfo->buffer);
 }
 
 #pragma endregion Handle packet functions
