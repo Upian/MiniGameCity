@@ -1,7 +1,9 @@
 #ifndef __DB_LOAD_H__
 #define __DB_LOAD_H__
 
-namespace Database {
+#include "BasePacket.h"
+
+namespace db {
 	
 	// select
 	inline void LoadData() {

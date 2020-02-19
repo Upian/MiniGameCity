@@ -40,7 +40,7 @@ private:
 
 	std::string dbHost = Util::GetConfigToString("LoginDBCache.ini", "DB", "Host", "127.0.0.1");
 	std::string dbUser = Util::GetConfigToString("LoginDBCache.ini", "DB", "User", "root");
-	std::string dbPass = Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "wjdghks2@");
+	std::string dbPass = Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "minicity1!");
 	std::string dbName = Util::GetConfigToString("LoginDBCache.ini", "DB", "Name", "minigamecity");
 	int dbPort = Util::GetConfigToInt("LoginDBCache.ini", "DB", "Port", 3306);
 };

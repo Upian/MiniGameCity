@@ -8,8 +8,8 @@
 enum DBCachePacketType : char {
 	dbCachePacketTypeNone = 0,
 
-	dbCacheSave, // (Command)command, (Table)table, (string)requestData
-	dbCacheLoad, // (Command)command, (Table)table, (string)responseData
+	dbCacheSave, // (Table)table, (string)requestData
+	dbCacheLoad, // (Table)table, (string)responseData
 
 	dbCachePacketTypeSize,
 };
@@ -30,20 +30,17 @@ public:
 	~DBCacheSave() {}
 
 	virtual Buffer& Serialize() override {
-		buffer << command;
 		buffer << table;
 		buffer << requestData;
 
 		return buffer;
 	};
 	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> command;
 		_buf >> table;
 		_buf >> requestData;
 	};
 
-	Database::Command command = Database::commandNone;
-	Database::Table table = Database::tableNone;
+	db::Table table = db::tableNone;
 	std::string requestData;
 };
 
@@ -53,17 +50,17 @@ public:
 	~DBCacheLoad() {}
 
 	virtual Buffer& Serialize() override {
-
+		buffer << table;
 		buffer << responseData;
 
 		return buffer;
 	};
 	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> table;
 		_buf >> responseData;
 	};
 
-	Database::Command command = Database::commandNone;
-	Database::Table table = Database::tableNone;
+	db::Table table = db::tableNone;
 	std::string responseData;
 };
 
