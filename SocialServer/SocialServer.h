@@ -17,6 +17,7 @@ private:
 	MAKE_SERVER(SocialServer);
 
 	void HandleBaseSocialPacket(BufferInfo* bufInfo);
+	void HandleRegisterServer(SocialPacketServerRegisterServerInfo&, std::shared_ptr<ClntServer>);
 	void HandleUpdatePlayerLogin(SocialPacketServerUpdatePlayerLogin&, std::shared_ptr<ClntServer>);
 	void HandleUpdatePlayerLogout(SocialPacketServerUpdatePlayerLogout&, std::shared_ptr<ClntServer>);
 	void LoadPlayerSocialData(std::shared_ptr<SocialPlayer>);

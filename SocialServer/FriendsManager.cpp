@@ -61,7 +61,7 @@ void FriendsManager::HandleConfirmFriendRequest(std::shared_ptr<SocialPlayer> pp
 	SocialPacketServerConfirmFriendResponse packet;
 	packet.m_gpid = pplayer->GetGPID();
 	for (auto p : pplayer->GetFriendRequestList()) {
-		packet.m_names.emplace_back(p.second);
+		packet.m_names.emplace_back(GetFriendNameInfo(p));
 	}
 
 	pplayer->GetServer()->SendPacket(packet);
@@ -117,7 +117,11 @@ void FriendsManager::HandleFriendListRequest(std::shared_ptr<SocialPlayer> playe
 	SocialPacketServerFriendListResponse packet;
 	packet.m_gpid = player->GetGPID();
 	for (auto p : player->GetFriendList()) {
-		packet.m_names.emplace_back(p.second);
+		packet.m_friends.emplace_back(GetFriendNameInfo(p), [&p]()->bool {
+			if (nullptr == GetFriend(p))
+				return false;
+			else return true;
+		}());
 	}
 	
 	player->GetServer()->SendPacket(packet);
@@ -179,4 +183,10 @@ void FriendsManager::HandleChatFriendRequest(std::shared_ptr<SocialPlayer> srcPl
 
 	srcPlayer->GetServer()->SendPacket(responseSrc);
 	destPlayer->GetServer()->SendPacket(responseDest);
+}
+
+void FriendsManager::HandleInviteFriendRequest(std::shared_ptr<SocialPlayer> player, const std::string & friendName, const std::string & roomName) {
+	if (nullptr == player)
+		return;
+
 }

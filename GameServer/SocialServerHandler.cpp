@@ -13,6 +13,7 @@ void SocialServerHandler::Initialize() {
 		Util::GetConfigToString("GameServer.ini", "Network", "SocialServerIP", "127.0.0.1").c_str(),
 		Util::GetConfigToInt("GameServer.ini", "Network", "SocialServerPort", 20000)
 	);
+	this->RegisterToServer();
 }
 
 //Client to game server
@@ -68,8 +69,14 @@ void SocialServerHandler::HandleSocialPacket(Buffer& buffer, std::shared_ptr<Pla
 		this->HandlePacketDeleteFriendRequest(packet, player);
 		break;
 	}
+	case PacketTypeSocialClient::packetTypeSocialInviteFriendRequest: {
+		SocialGamePacketInviteFriendRequest packet;
+		packet.Deserialize(buffer);
+		this->HandlePacketInviteFriendRequest(packet, player);
+		break;
+	}
 	default:
-		Util::LoggingError("Social.log", "Un defined packet error. packet type[%d]", type);
+		Util::LoggingError("Social.log", "Un defined packet error. packet type[%d]", type); break;
 	}
 }
 
@@ -90,6 +97,14 @@ void SocialServerHandler::UpdatePlayerInfoAtLogout(std::shared_ptr<Player> pplay
 
 	SocialPacketServerUpdatePlayerLogout packet;
 	packet.m_gpid = pplayer->GetGPID();
+
+	this->SendPacketToServer(packet);
+}
+
+void SocialServerHandler::RegisterToServer() {
+	SocialPacketServerRegisterServerInfo packet;
+	packet.m_ipAddress = m_gameServer->GetServerIPAddress();
+	packet.m_portNum = m_gameServer->GetServerPortNum();
 
 	this->SendPacketToServer(packet);
 }
@@ -217,15 +232,33 @@ void SocialServerHandler::HandlePacketAcceptFriendRequest(SocialGamePacketAccept
 	this->SendPacketToServer(sendPacket);
 }
 void SocialServerHandler::HandlePacketFriendListRequest(std::shared_ptr<Player> player) {
+	if (nullptr == player)
+		return;
 	SocialPacketServerFriendListRequest packet;
 	packet.m_gpid = player->GetGPID();
 
 	this->SendPacketToServer(packet);
 }
 void SocialServerHandler::HandlePacketDeleteFriendRequest(SocialGamePacketDeleteFriendRequest& packet, std::shared_ptr<Player> player) {
+	if (nullptr == player)
+		return;
 	SocialPacketServerDeleteFriendRequest sendPacket;
 	sendPacket.m_gpid = player->GetGPID();
 	sendPacket.m_name = packet.m_name;
+
+	this->SendPacketToServer(sendPacket);
+}
+void SocialServerHandler::HandlePacketInviteFriendRequest(SocialGamePacketInviteFriendRequest& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+	auto room = pplayer->GetRoom();
+	if (nullptr == room)
+		return;
+
+	SocialPacketServerInviteFriendRequest sendPacket;
+	sendPacket.m_gpid = pplayer->GetGPID();
+	sendPacket.m_roomName = room->GetRoomName();
+	sendPacket.m_friendName = packet.m_friendname;
 
 	this->SendPacketToServer(sendPacket);
 }
@@ -272,7 +305,9 @@ void SocialServerHandler::HandlePacketFriendListResponse(SocialPacketServerFrien
 		return;
 	SocialGamePacketFriendListResponse responsePacket;
 
-	responsePacket.m_friends.swap(packet.m_names);
+	for (auto p : packet.m_friends) {
+		responsePacket.m_friends.emplace_back(p.name, p.isLogin);
+	}
 
 	pplayer->SendPacket(responsePacket);
 }

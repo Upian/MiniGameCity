@@ -4,18 +4,20 @@
 
 #include <list>
 #include <memory>
-#include <utility>
+#include <tuple>
 
 #include "ErrorType.h"
 
 using GPID = unsigned __int32; //Unique ID for each player (Game Player ID)
 
+
 class Guild;
 class ClntServer;
 class BasePacket;
 
-
-class SocialPlayer {
+class SocialPlayer : std::enable_shared_from_this<SocialPlayer> {
+private:
+	using FriendInfo = std::tuple<GPID, std::string, std::shared_ptr<SocialPlayer> >;
 public:
 	SocialPlayer() {}
 	SocialPlayer(GPID gpid, std::shared_ptr<ClntServer> server);
@@ -33,15 +35,19 @@ public:
 
 	//Friend
 	bool IsFriendRequestEmpty() const { return m_friendRequestList.empty(); }
-	std::list<std::pair<GPID, std::string> >& GetFriendRequestList() { return m_friendRequestList; }
-	std::list<std::pair<GPID, std::string> >& GetFriendList() { return m_friendList; }
+	std::list<FriendInfo>& GetFriendRequestList() { return m_friendRequestList; }
+	std::list<FriendInfo>& GetFriendList() { return m_friendList; }
+
 	ErrorTypeAddFriend AddFriendRequest(std::shared_ptr<SocialPlayer> srcPlayer); //Only login player can add friend request
 	bool IsExistFriendRequestList(std::shared_ptr<SocialPlayer>);
 	bool IsExistFriendRequestList(std::string);
 	bool IsExistFriendList(std::shared_ptr<SocialPlayer>);
 	bool IsExistFriendList(std::string);
+
 	bool AddFriendList(std::shared_ptr<SocialPlayer>);
 	bool IsAddFriendAvailable() { return m_maxFriendListSize > m_friendList.size(); }
+	void InformLoginToFriends();
+	void UpdateFriendIsLogin(std::shared_ptr<SocialPlayer>);
 
 	void DeleteFriendList(GPID);
 	void DeleteFriendRequestList(GPID);
@@ -58,11 +64,20 @@ private:
 	//Friend
 	int m_maxFriendRequestSize = 5; //#DesignData
 	int m_maxFriendListSize = 10; //#DesignData
-	std::list<std::pair<GPID, std::string> > m_friendRequestList;
-	std::list<std::pair<GPID, std::string> > m_friendList;
+	std::list<FriendInfo> m_friendRequestList;
+	std::list<FriendInfo> m_friendList;
 	
 	//Guild
 	std::shared_ptr<Guild> m_guild = nullptr;
 
 };
+
+
+GPID GetFriendGPIDInfo(const std::tuple<GPID, std::string, std::shared_ptr<SocialPlayer> >& info);
+std::string GetFriendNameInfo(const std::tuple<GPID, std::string, std::shared_ptr<SocialPlayer> >& info);
+std::shared_ptr<SocialPlayer> GetFriend(const std::tuple<GPID, std::string, std::shared_ptr<SocialPlayer> >& info);
+
+
+
+
 #endif // !__SOCIALSERVER_SOCIAL_PLAYER_H__

@@ -18,7 +18,8 @@ void SocialPlayerManager::RemovePlayer(GPID gpid) {
 		return;
 	printf("LOGOUT PLAYER %d - %s\n", gpid, pplayer->GetName().c_str());
 	m_socialPlayers.remove(pplayer);
-	
+	pplayer.reset();
+	pplayer = nullptr;
 }
 
 std::shared_ptr<SocialPlayer> SocialPlayerManager::FindSocialPlayer(GPID gpid) {

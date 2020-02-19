@@ -36,6 +36,9 @@ public:
 
 	void SetPortNum(int portNum) { m_portNum = portNum; }
 	void SetServerName(std::string str = "") { m_serverName = str; }
+	std::string GetServerIPAddress();
+	int GetServerPortNum() const { return m_portNum; }
+	
 	void InitializeBaseServer();
 	void RunServer();
 	
@@ -131,6 +134,26 @@ template<typename T_Server>
 BaseServer<T_Server>::~BaseServer() {
 	m_runningThread = false;
 	WSACleanup();
+}
+
+template<typename T_Server>
+std::string BaseServer<T_Server>::GetServerIPAddress() {
+	char localHostName[MAX_PATH];
+	IN_ADDR addr = { 0, };
+	std::string ipAddress;
+	if (SOCKET_ERROR == gethostname(localHostName, MAX_PATH))
+		return ipAddress;
+
+	HOSTENT* hostEntry = gethostbyname(localHostName);
+	while (nullptr != hostEntry && hostEntry->h_name) {
+		if (PF_INET == hostEntry->h_addrtype) {
+			memcpy(&addr, hostEntry->h_addr_list[0], hostEntry->h_length);
+			ipAddress = inet_ntoa(addr);
+			break;
+		}
+		++hostEntry;
+	}
+	return ipAddress;
 }
 
 template<typename T_Server>

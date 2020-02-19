@@ -1,7 +1,7 @@
 #pragma once
 #ifndef __BASELIB_SERVER_COMMON_H__
 #define __BASELIB_SERVER_COMMON_H__
-
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <WinSock2.h>
 #include <string>
 #include <algorithm>

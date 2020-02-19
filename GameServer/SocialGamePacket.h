@@ -26,6 +26,7 @@ enum class PacketTypeSocialClient : char{
 	packetTypeSocialFriendListRequest, //친구 리스트
 	packetTypeSocialFriendListResponse,
 	packetTypeSocialInviteFriendRequest, //친구 게임 초대
+	packetTypeSocialInviteFriendResponse,
 
 	packetTypeSocialCount,
 };
@@ -271,15 +272,26 @@ struct SocialGamePacketFriendListRequest : public BaseSocialGamePacket {
 struct SocialGamePacketFriendListResponse : public BaseSocialGamePacket {
 	SocialGamePacketFriendListResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialFriendListResponse) {}
 
+	struct PlayerInfo {
+		PlayerInfo(std::string nm, bool login) :
+			name(nm),
+			isLogin(login)
+		{}
+		PlayerInfo() {}
+		std::string name;
+		bool isLogin;
+	};
+
 	__int16 m_size = 0;
-	std::list<std::string> m_friends;
+	std::list<PlayerInfo> m_friends;
 
 	virtual Buffer& Serialize() {
 		m_size = m_friends.size();
 
 		buffer << m_size;
-		for (auto k : m_friends) {
-			buffer << k;
+		for (auto s : m_friends) {
+			buffer << s.name;
+			buffer << s.isLogin;
 		}
 		return buffer;
 	}
@@ -288,10 +300,29 @@ struct SocialGamePacketFriendListResponse : public BaseSocialGamePacket {
 
 		buf >> m_size;
 
+		PlayerInfo tempInfo;
 		for (int i = 0; i < m_size; ++i) {
-			buf >> tempString;
-			m_friends.emplace_back(tempString);
+			buf >> tempInfo.name;
+			buf >> tempInfo.isLogin;
+			m_friends.emplace_back(tempInfo);
 		}
+
+		return;
+	}
+};
+
+struct SocialGamePacketInviteFriendRequest : public BaseSocialGamePacket {
+	SocialGamePacketInviteFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialInviteFriendRequest) {}
+
+	std::string m_friendname;
+
+	virtual Buffer& Serialize() override{
+		buffer << m_friendname;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) override{
+		buf >> m_friendname;
 
 		return;
 	}

@@ -23,7 +23,7 @@ public:
 	void UpdatePlayerInfoAtLogin(std::shared_ptr<Player>);
 	void UpdatePlayerInfoAtLogout(std::shared_ptr<Player>);
 
-	virtual void RegisterToServer() override {}
+	virtual void RegisterToServer() override;
 	virtual void HandlePacket(Buffer& buffer) override;
 private:
 	//Client to Game server
@@ -35,6 +35,7 @@ private:
 	void HandlePacketAcceptFriendRequest(SocialGamePacketAcceptFriendRequest&, std::shared_ptr<Player>);
 	void HandlePacketFriendListRequest(std::shared_ptr<Player>);
 	void HandlePacketDeleteFriendRequest(SocialGamePacketDeleteFriendRequest&, std::shared_ptr<Player>);
+	void HandlePacketInviteFriendRequest(SocialGamePacketInviteFriendRequest&, std::shared_ptr<Player>);
 
 	//Social server to Game server
 	void HandlePacketAddFriendResponse(SocialPacketServerAddFriendResponse& packet, std::shared_ptr<Player> pplayer);

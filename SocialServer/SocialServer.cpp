@@ -43,6 +43,12 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 	PacketTypeSocialServer type = (PacketTypeSocialServer)PacketTypeDeserial(bufInfo->buffer);
 
 	switch (type) {
+	case PacketTypeSocialServer::registerServerInfo: {
+		SocialPacketServerRegisterServerInfo packet;
+		packet.Deserialize(bufInfo->buffer);
+		this->HandleRegisterServer(packet, m_gameServers.FindServerBySocket(bufInfo->socket));
+		break;
+	}
 	case PacketTypeSocialServer::updatePlayerLogin: { 
 		SocialPacketServerUpdatePlayerLogin packet;
 		packet.Deserialize(bufInfo->buffer);
@@ -98,6 +104,13 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		m_friendManager.HandleChatFriendRequest(player, packet.m_destName, packet.m_message);
 		break;
 	}
+	case PacketTypeSocialServer::InviteRequestFriendRequest: {
+		SocialPacketServerInviteFriendRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		auto Player = m_socialPlayerManager.FindSocialPlayer(packet.m_gpid);
+		m_friendManager.HandleInviteFriendRequest(Player, packet.m_roomName, packet.m_friendName);
+		break;
+	}
 	default: {
 		Util::LoggingInfo("SocialServer.log", "Recv wrong soical server packet ID: %d", type);
 		break;
@@ -105,14 +118,21 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 	}
 }
 
+void SocialServer::HandleRegisterServer(SocialPacketServerRegisterServerInfo& packet, std::shared_ptr<ClntServer> clntServer) {
+	if (nullptr == clntServer)
+		return;
+
+	clntServer->SetServerAddress(packet.m_ipAddress, packet.m_portNum);
+}
+
 void SocialServer::HandleUpdatePlayerLogin(SocialPacketServerUpdatePlayerLogin& packet, std::shared_ptr<ClntServer> server) {
 	if (nullptr == server) 
 		return;
-	printf("NEW PLAYER TRY LOGIN %d - %s\n", packet.m_gpid, packet.m_name.c_str());
+
 	std::shared_ptr<SocialPlayer> pplayer = m_socialPlayerManager.InsertPlayer(packet.m_gpid, server);
 	if (nullptr == pplayer)
 		return;
-	printf("NEW PLAYER LOGIN %d - %s\n", pplayer->GetGPID(), packet.m_name);
+
 
 	pplayer->SetName(packet.m_name); //#Test
 	//#DatabaseLoad
