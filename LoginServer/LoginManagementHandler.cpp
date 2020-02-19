@@ -103,12 +103,11 @@ void LoginManagementHandler::HandlePacketShowChannelResponse(LoginManagementPack
 	if (player == nullptr)
 		return;
 
-	// 채널 수정 예정
-	ClientLoginPacketTypeShowChannelResponse packetClientResponse{};
-	packetClientResponse.channel[0] = packet.channel[0];
-	packetClientResponse.channel[1] = packet.channel[1];
-	packetClientResponse.channel[2] = packet.channel[2];
-	packetClientResponse.channel[3] = packet.channel[3];
+	ClientLoginPacketTypeShowChannelResponse packetClientResponse;
+	packetClientResponse.channelSize = packet.channelSize;
+	for (auto c : packet.channel) {
+		packetClientResponse.channel.emplace_back(c._channelName, c._currentPeople, c._maximumPeople);
+	}
 	player->SendPacket(packetClientResponse);
 }
 

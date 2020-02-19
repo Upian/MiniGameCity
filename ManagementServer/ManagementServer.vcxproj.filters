@@ -19,6 +19,12 @@
     <ClCompile Include="ManagementServer.cpp">
       <Filter>ManagementServer</Filter>
     </ClCompile>
+    <ClCompile Include="GameServerManager.cpp">
+      <Filter>ManageGameServer</Filter>
+    </ClCompile>
+    <ClCompile Include="GameServer.cpp">
+      <Filter>ManageGameServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ManagementServer.h">
@@ -28,6 +34,9 @@
       <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="GameServerManager.h">
+      <Filter>ManageGameServer</Filter>
+    </ClInclude>
+    <ClInclude Include="GameServer.h">
       <Filter>ManageGameServer</Filter>
     </ClInclude>
   </ItemGroup>

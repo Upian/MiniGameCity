@@ -169,23 +169,28 @@ public:
 	~ClientLoginPacketTypeShowChannelResponse() {}
 
 	virtual Buffer& Serialize() override {
-		for (int i = 0; i < CHANNEL_SIZE; ++i) {
-			buffer << channel[i].channelName;
-			buffer << channel[i].numberOfPeople;
-			buffer << channel[i].limitOfPeople;
+		buffer << channelSize;
+		for (auto s : channel) {
+			buffer << s._channelName;
+			buffer << s._currentPeople;
+			buffer << s._maximumPeople;
 		}
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		for (int i = 0; i < CHANNEL_SIZE; ++i) {
-			_buf >> channel[i].channelName;
-			_buf >> channel[i].numberOfPeople;
-			_buf >> channel[i].limitOfPeople;
+		_buf >> channelSize;
+		Channel tmp;
+		for (int i = 0; i < channel.size(); ++i) {
+			_buf >> tmp._channelName;
+			_buf >> tmp._currentPeople;
+			_buf >> tmp._maximumPeople;
+			channel.emplace_back(tmp);
 		}
 	}
 
-	Channel channel[CHANNEL_SIZE]{}; // 개수 바뀔 수 있음.
+	int32 channelSize;
+	std::list<Channel> channel;
 };
 
 class ClientLoginPacketTypeShowChannelRequest : public LoginPacket {

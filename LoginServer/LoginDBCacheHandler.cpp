@@ -1,5 +1,4 @@
 #include "LoginDBCacheHandler.h"
-#include "LoginPacket.h"
 #include "LoginServer.h"
 #include "Player.h"
 #include "Log.h"

@@ -132,9 +132,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameServer.cpp" />
+    <ClCompile Include="GameServerManager.cpp" />
     <ClCompile Include="ManagementServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameServer.h" />
     <ClInclude Include="GameServerManager.h" />
     <ClInclude Include="ManagementPacket.h" />
     <ClInclude Include="ManagementServer.h" />

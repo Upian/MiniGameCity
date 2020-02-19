@@ -1,10 +1,8 @@
 #ifndef __MANAGEMENT_PACKET_H__
 #define __MANAGEMENT_PACKET_H__
 
+#include <list>
 #include "BasePacket.h"
-
-// must go to ini file 
-#define CHANNEL_SIZE 4 // test
 
 enum ManagementPacketType : char {
 	managementPacketTypeNone = 0,
@@ -17,6 +15,7 @@ enum ManagementPacketType : char {
 
 	// game server <-> management server
 	gameManagementPacketTypeCurrentPeopleRequest, // (int32)currentPeople 
+	gameManagementPacketTypeChannelInRequest, // (unsigned int)GPID
 	registerServerInfo, //Game -> Management
 	preLoadRequest, //Management -> Game
 	updateServerInfo, //Game -> Management
@@ -25,9 +24,13 @@ enum ManagementPacketType : char {
 };
 
 struct Channel {
-	std::string channelName;
-	int32 numberOfPeople = 0;
-	int32 limitOfPeople = 0;
+	std::string _channelName;
+	int32 _currentPeople = 0;
+	int32 _maximumPeople = 0;
+
+	Channel() {}
+	Channel(std::string channelName, int32 currentPeople, int32 maximumPeople)
+		: _channelName(channelName), _currentPeople(currentPeople), _maximumPeople(maximumPeople) {}
 };
 
 /*
@@ -52,25 +55,30 @@ public:
 	~LoginManagementPacketTypeShowChannelResponse() {}
 
 	virtual Buffer& Serialize() override {
-		for (int i = 0; i < CHANNEL_SIZE; ++i) {
-			buffer << channel[i].channelName;
-			buffer << channel[i].numberOfPeople;
-			buffer << channel[i].limitOfPeople;
+		buffer << channelSize;
+		for (auto s : channel) {
+			buffer << s._channelName;
+			buffer << s._currentPeople;
+			buffer << s._maximumPeople;
 		}
 		buffer << gpid;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		for (int i = 0; i < CHANNEL_SIZE; ++i) {
-			_buf >> channel[i].channelName;
-			_buf >> channel[i].numberOfPeople;
-			_buf >> channel[i].limitOfPeople;
+		_buf >> channelSize;
+		Channel tmp;
+		for (int i = 0; i < channel.size(); ++i) {
+			_buf >> tmp._channelName;
+			_buf >> tmp._currentPeople;
+			_buf >> tmp._maximumPeople;
+			channel.emplace_back(tmp);
 		}
 		_buf >> gpid;
 	}
 
-	Channel channel[CHANNEL_SIZE]{}; // 개수 바뀔 수 있음.
+	int32 channelSize;
+	std::list<Channel> channel;
 	uint32 gpid = 0;
 };
 
@@ -121,14 +129,17 @@ public:
 
 	virtual Buffer& Serialize() override {
 		buffer << channelName;
+		buffer << gpid;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> channelName;
+		_buf >> gpid;
 	}
 
 	std::string channelName;
+	uint32 gpid;
 };
 
 /////////////////////////////////////////
@@ -199,6 +210,23 @@ public:
 	}
 
 	int32 currentPeople = 0;
+};
+
+class GameManagementPacketTypeChannelInRequest : public GameManagementPacket {
+public:
+	GameManagementPacketTypeChannelInRequest() : GameManagementPacket(gameManagementPacketTypeChannelInRequest) {}
+	~GameManagementPacketTypeChannelInRequest() {}
+
+	virtual Buffer& Serialize() override {
+		buffer << gpid;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> gpid;
+	}
+
+	uint32 gpid = 0;
 };
 
 #endif
