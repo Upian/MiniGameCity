@@ -15,7 +15,7 @@ enum LoginPacketType : char {
 	clientLoginPacketTypeSignupRequest, //(string)userId(4~8), (string)userPw(8~16), (string)userNick(4~8),
 	clientLoginPacketTypeDeleteResponse, //(bool)flag
 	clientLoginPacketTypeDeleteRequest, //nothing
-	clientLoginPacketTypeShowChannelResponse, //(channel(string, int, int)channelName, numberOfPeople, limitOfPeople)
+	clientLoginPacketTypeShowChannelResponse, // (int32)channelSize, (channel(string, int, int)channelName, numberOfPeople, limitOfPeople)
 	clientLoginPacketTypeShowChannelRequest, //nothing.
 	clientLoginPacketTypeChannelInResponse, //(bool)flag, (string)ip, (int)port
 	clientLoginPacketTypeChannelInRequest, //(string)channelName
@@ -189,7 +189,7 @@ public:
 		}
 	}
 
-	int32 channelSize;
+	int32 channelSize = 0;
 	std::list<Channel> channel;
 };
 

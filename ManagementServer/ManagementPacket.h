@@ -8,17 +8,18 @@ enum ManagementPacketType : char {
 	managementPacketTypeNone = 0,
 
 	// login server <-> management sserver
-	loginManagementPacketTypeShowChannelResponse, //(channel(string, int, int)channelName, numberOfPeople, limitOfPeople), (unsigned int)GPID
+	loginManagementPacketTypeShowChannelResponse, // (int32)channelSize (channel(string, int, int)channelName, numberOfPeople, limitOfPeople), (unsigned int)GPID
 	loginManagementPacketTypeShowChannelRequest, //nothing.
 	loginManagementPacketTypeChannelInResponse, //(bool)flag, (string)ip, (int)port
 	loginManagementPacketTypeChannelInRequest, //(string)channelName, (unsigned int)GPID
 
 	// game server <-> management server
-	gameManagementPacketTypeCurrentPeopleRequest, // (int32)currentPeople 
-	gameManagementPacketTypeChannelInRequest, // (unsigned int)GPID
-	registerServerInfo, //Game -> Management
-	preLoadRequest, //Management -> Game
-	updateServerInfo, //Game -> Management
+	registerServerInfo, //Game -> Management // (int32)m_maxPlayer
+	preLoadRequest, //Management -> Game // m_gpid
+	updateServerInfo, //Game -> Management // (int32)m_currentPlayer
+
+	//gameManagementPacketTypeCurrentPeopleRequest, // (int32)currentPeople 
+	//gameManagementPacketTypeChannelInRequest, // (unsigned int)GPID
 
 	managementPacketTypeSize,
 };
@@ -77,7 +78,7 @@ public:
 		_buf >> gpid;
 	}
 
-	int32 channelSize;
+	int32 channelSize = 0;
 	std::list<Channel> channel;
 	uint32 gpid = 0;
 };
@@ -142,7 +143,12 @@ public:
 	uint32 gpid;
 };
 
-/////////////////////////////////////////
+/*
+
+		  game server <-> management server
+
+*/
+
 struct GameToManagementPacket : public BasePacket {
 	GameToManagementPacket(ManagementPacketType type) : BasePacket(BasePacketType::basePacketTypeGameToManagementServer), m_packetType(type) {
 		this->PacketTypeSerial(m_packetType);
@@ -151,10 +157,10 @@ protected:
 	ManagementPacketType m_packetType = ManagementPacketType::managementPacketTypeNone;
 };
 
-struct GameToManagementResistarServerInfo : public GameToManagementPacket {
-	GameToManagementResistarServerInfo() : GameToManagementPacket(ManagementPacketType::registerServerInfo) {}
+struct GameToManagementRegisterServerInfo : public GameToManagementPacket {
+	GameToManagementRegisterServerInfo() : GameToManagementPacket(ManagementPacketType::registerServerInfo) {}
 
-	int m_maxPlayer = 0;
+	/*int m_maxPlayer = 0;
 	
 	virtual Buffer& Serialize() override {
 		buffer << m_maxPlayer;
@@ -163,6 +169,20 @@ struct GameToManagementResistarServerInfo : public GameToManagementPacket {
 	}
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> m_maxPlayer;
+	}*/
+
+	std::string m_ipAddress;
+	__int32 m_portNum;
+
+	virtual Buffer& Serialize() override {
+		buffer << m_ipAddress;
+		buffer << m_portNum;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) override {
+		buf >> m_ipAddress;
+		buf >> m_portNum;
 	}
 };
 
@@ -180,53 +200,67 @@ struct GameToManagementPreLoadRequest : public GameToManagementPacket {
 	}
 };
 
+struct GameToManagementUpdateServerInfoRequest : public GameToManagementPacket {
+	GameToManagementUpdateServerInfoRequest() : GameToManagementPacket(ManagementPacketType::updateServerInfo) {}
+
+	int m_currentPlayer;
+
+	virtual Buffer& Serialize() override {
+		buffer << m_currentPlayer;
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> m_currentPlayer;
+	}
+};
+
 /*
 
 		  game server <-> management server
 
 */
-class GameManagementPacket : public BasePacket {
-public:
-	GameManagementPacket(ManagementPacketType _managementPacketType) : BasePacket(BasePacketType::basePacketTypeGameToManagementServer), managementPacketType(_managementPacketType) {
-		this->PacketTypeSerial(managementPacketType);
-	}
-	~GameManagementPacket() {}
-protected:
-	ManagementPacketType managementPacketType = managementPacketTypeNone;
-};
-
-class GameManagementPacketTypeCurrentPeopleRequest : public GameManagementPacket {
-public:
-	GameManagementPacketTypeCurrentPeopleRequest() : GameManagementPacket(gameManagementPacketTypeCurrentPeopleRequest) {}
-	~GameManagementPacketTypeCurrentPeopleRequest() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << currentPeople;
-		
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> currentPeople;
-	}
-
-	int32 currentPeople = 0;
-};
-
-class GameManagementPacketTypeChannelInRequest : public GameManagementPacket {
-public:
-	GameManagementPacketTypeChannelInRequest() : GameManagementPacket(gameManagementPacketTypeChannelInRequest) {}
-	~GameManagementPacketTypeChannelInRequest() {}
-
-	virtual Buffer& Serialize() override {
-		buffer << gpid;
-
-		return buffer;
-	}
-	virtual void Deserialize(Buffer& _buf) override {
-		_buf >> gpid;
-	}
-
-	uint32 gpid = 0;
-};
+//class GameManagementPacket : public BasePacket {
+//public:
+//	GameManagementPacket(ManagementPacketType _managementPacketType) : BasePacket(BasePacketType::basePacketTypeGameToManagementServer), managementPacketType(_managementPacketType) {
+//		this->PacketTypeSerial(managementPacketType);
+//	}
+//	~GameManagementPacket() {}
+//protected:
+//	ManagementPacketType managementPacketType = managementPacketTypeNone;
+//};
+//
+//class GameManagementPacketTypeCurrentPeopleRequest : public GameManagementPacket {
+//public:
+//	GameManagementPacketTypeCurrentPeopleRequest() : GameManagementPacket(gameManagementPacketTypeCurrentPeopleRequest) {}
+//	~GameManagementPacketTypeCurrentPeopleRequest() {}
+//
+//	virtual Buffer& Serialize() override {
+//		buffer << currentPeople;
+//		
+//		return buffer;
+//	}
+//	virtual void Deserialize(Buffer& _buf) override {
+//		_buf >> currentPeople;
+//	}
+//
+//	int32 currentPeople = 0;
+//};
+//
+//class GameManagementPacketTypeChannelInRequest : public GameManagementPacket {
+//public:
+//	GameManagementPacketTypeChannelInRequest() : GameManagementPacket(gameManagementPacketTypeChannelInRequest) {}
+//	~GameManagementPacketTypeChannelInRequest() {}
+//
+//	virtual Buffer& Serialize() override {
+//		buffer << gpid;
+//
+//		return buffer;
+//	}
+//	virtual void Deserialize(Buffer& _buf) override {
+//		_buf >> gpid;
+//	}
+//
+//	uint32 gpid = 0;
+//};
 
 #endif

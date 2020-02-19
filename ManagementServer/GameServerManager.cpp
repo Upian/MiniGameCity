@@ -13,16 +13,16 @@ void GameServerManager::Initialize() {
 
 }
 
-void GameServerManager::InsertServer(SOCKET socket) {
-	if (true == this->isExistServer(socket))
-		return;
-
-	std::shared_ptr<GameServer> gameServer = std::make_shared<GameServer>(socket);
-	gameServer->SetChannelName("Channel" + MakeChannelNumber());
-	gameServer->SetCurrentPeople(0);
-	gameServer->SetMaximumPeople(300);
-	_gameServer.emplace_back(gameServer);
-}
+//void GameServerManager::InsertServer(SOCKET socket) {
+//	if (true == this->isExistServer(socket))
+//		return;
+//
+//	std::shared_ptr<GameServer> gameServer = std::make_shared<GameServer>(socket);
+//	gameServer->SetChannelName("Channel" + MakeChannelNumber());
+//	gameServer->SetCurrentPeople(0);
+//	gameServer->SetMaximumPeople(300);
+//	_gameServer.emplace_back(gameServer);
+//}
 
 std::shared_ptr<GameServer> GameServerManager::FindGameServerBySocket(SOCKET socket) {
 	for (auto g : _gameServer) {
@@ -55,61 +55,33 @@ std::string GameServerManager::MakeChannelNumber() {
 
 /*
 
-		  login server <-> management server
-
-*/
-
-void GameServerManager::HandleShowChannel(LoginManagementPacketTypeShowChannelRequest& packet, std::shared_ptr<ClntServer> loginServer) {
-	if (loginServer == nullptr)
-		return;
-
-	LoginManagementPacketTypeShowChannelResponse packetLoginResponse;
-	packetLoginResponse.channelSize = GetGameServerCount();
-	for (auto c : _gameServer) {
-		packetLoginResponse.channel.emplace_back(c->GetChannelName(), c->GetCurrentPeople(), c->GetMaximumPeople());
-	}
-	loginServer->SendPacket(packetLoginResponse);
-}
-
-void GameServerManager::HandleChannelIn(LoginManagementPacketTypeChannelInRequest& packet, std::shared_ptr<ClntServer> loginServer) {
-	if (loginServer == nullptr)
-		return;
-
-	std::shared_ptr<GameServer> gameServer;
-	for (auto g : _gameServer) {
-		if (g->GetChannelName() == packet.channelName) {
-			gameServer = g;
-			break;
-		}
-	}
-
-	GameManagementPacketTypeChannelInRequest packetGameRequest;
-	packetGameRequest.gpid = packet.gpid;
-	gameServer->SendPacket(packetGameRequest);
-
-
-	LoginManagementPacketTypeChannelInResponse packetLoginResponse;
-	packetLoginResponse.flag = true;
-	packetLoginResponse.ip = Util::GetConfigToString("ManagementServer.ini", "Network", "GameServerIP", "127.0.0.1");
-	packetLoginResponse.port = Util::GetConfigToInt("ManagementServer.ini", "Network", "GameServerPort", 10010);
-
-	loginServer->SendPacket(packetLoginResponse);
-
-}
-
-/*
-
 		  game server <-> management server
 
 */
 
-void GameServerManager::HandlePacketGameUpdate(GameManagementPacketTypeCurrentPeopleRequest& packet, std::shared_ptr<ClntServer> gameServer) {
+void GameServerManager::HandlePacketGameRegister(GameToManagementRegisterServerInfo& packet, std::shared_ptr<GameServer> gameServer) {
+	if (nullptr == gameServer)
+		return;
+
+	gameServer->SetChannelName("Channel" + MakeChannelNumber());
+	gameServer->SetCurrentPeople(0);
+	gameServer->SetMaximumPeople(300);
+
+	for (auto g : _gameServer) {
+		if (gameServer->GetSocket() == g->GetSocket()) {
+			g->SetServerIpAddress(packet.m_ipAddress);
+			g->SetServerPortNum(packet.m_portNum);
+		}
+	}
+}
+
+void GameServerManager::HandlePacketGameUpdate(GameToManagementUpdateServerInfoRequest& packet, std::shared_ptr<GameServer> gameServer) {
 	if (nullptr == gameServer)
 		return;
 
 	for (auto g : _gameServer) {
 		if (gameServer->GetSocket() == g->GetSocket())
-			g->SetCurrentPeople(packet.currentPeople);
+			g->SetCurrentPeople(packet.m_currentPlayer);
 	}
 }
 

@@ -4,25 +4,23 @@
 
 #include "BaseServer.h"
 #include "GameServerManager.h"
-//#include "ManagPacket.h"
 
 /*
 *
 */
-
-// DB Cache 건너야되나?
 
 class ManagementServer : public BaseServer<ManagementServer> {
 public:
 
 private:
 	MAKE_SERVER(ManagementServer)
-		void HandlePacketLogin(BufferInfo* bufInfo);
+	void HandlePacketLogin(BufferInfo* bufInfo);
 	void HandlePacketGame(BufferInfo* bufInfo);
+	void HandleShowChannel(LoginManagementPacketTypeShowChannelRequest& bufInfo, std::shared_ptr<ClntServer> loginServer);
+	void HandleChannelIn(LoginManagementPacketTypeChannelInRequest& bufInfo, std::shared_ptr<ClntServer> loginServer);
 
 	//manager
-	//ClntServerManager m_gameServerManager;
 	GameServerManager m_gameServerManager;
-	// LoginServerManager m_loginServerManager;
+	ClntServerManager m_loginServerManager;
 };
 #endif // !__MANAGEMENTSERVER_MANAGEMENT_SERVER_H__

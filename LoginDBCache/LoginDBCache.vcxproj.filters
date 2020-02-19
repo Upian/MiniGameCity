@@ -16,21 +16,18 @@
     <ClInclude Include="LoginDBCachePacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="..\DBCache\DBCache.h">
-      <Filter>LoginDBCache</Filter>
-    </ClInclude>
-    <ClInclude Include="DatabaseAPI.h">
-      <Filter>LoginDBCache</Filter>
-    </ClInclude>
     <ClInclude Include="LoginDBCache.h">
+      <Filter>LoginDBCache</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginDatabaseAPI.h">
       <Filter>LoginDBCache</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DatabaseAPI.cpp">
+    <ClCompile Include="LoginDBCache.cpp">
       <Filter>LoginDBCache</Filter>
     </ClCompile>
-    <ClCompile Include="LoginDBCache.cpp">
+    <ClCompile Include="LoginDatabaseAPI.cpp">
       <Filter>LoginDBCache</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,18 +1,3 @@
-// #pragma once
-// #ifndef __MANAGEMENTSERVER_GAME_SERVER_MANAGER_H__
-// #define __MANAGEMENTSERVER_GAME_SERVER_MANAGER_H__
-// 
-// #include "ClntServerManager.h"
-// 
-// class GameServerManager {
-// public:
-// 
-// private:
-// 	ClntServerManager m_gameServerManager;
-// };
-// 
-// #endif // !__MANAGEMENTSERVER_GAME_SERVER_MANAGER_H__
-
 #ifndef __GAME_SERVER_MANAGER_H__
 #define __GAME_SERVER_MANAGER_H__
 #include <list>
@@ -31,11 +16,10 @@ public:
 
 	void Initialize();
 
-	void InsertServer(SOCKET socket);
+	// void InsertServer(SOCKET socket);
 
-	void HandleShowChannel(LoginManagementPacketTypeShowChannelRequest& packet, std::shared_ptr<ClntServer> loginServer);
-	void HandleChannelIn(LoginManagementPacketTypeChannelInRequest& packet, std::shared_ptr<ClntServer> loginServer);
-	void HandlePacketGameUpdate(GameManagementPacketTypeCurrentPeopleRequest& packet, std::shared_ptr<ClntServer> gameServer);
+	void HandlePacketGameRegister(GameToManagementRegisterServerInfo& packet, std::shared_ptr<GameServer> gameServer);
+	void HandlePacketGameUpdate(GameToManagementUpdateServerInfoRequest& packet, std::shared_ptr<GameServer> gameServer);
 
 	std::shared_ptr<GameServer> FindGameServerBySocket(SOCKET socket);
 	std::shared_ptr<GameServer> FindGameServerByChannelName(std::string name);

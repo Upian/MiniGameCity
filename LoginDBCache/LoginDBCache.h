@@ -3,7 +3,7 @@
 
 #include "ServerCommon.h"
 #include "BaseServer.h"
-#include "DatabaseAPI.h"
+#include "LoginDatabaseAPI.h"
 #include "LoginDBCachePacket.h"
 
 class LoginDBCache : public BaseServer<LoginDBCache> {

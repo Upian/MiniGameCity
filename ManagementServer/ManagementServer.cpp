@@ -4,15 +4,11 @@
 ManagementServer::ManagementServer() {}
 ManagementServer::~ManagementServer() {}
 
-// Game Server와 통신 필요함.
-// ShowChannel 누르면 게임서버로부터 인원들 파악해서 가져와야 함.
-
-void ManagementServer::HandleAcceptClient(SOCKET gameServerSocket) {
+void ManagementServer::HandleAcceptClient(SOCKET socket) {
 	// login서버면 insert 할 필요 없다.
-
-
-	m_gameServerManager.InsertServer(gameServerSocket);
-	Util::LoggingDebug("ManagementServer.log", "Connect Client[%d]", gameServerSocket);
+	m_loginServerManager.InsertServer(socket);
+	m_gameServerManager.InsertServer(socket);
+	Util::LoggingDebug("ManagementServer.log", "Connect Client[%d]", socket);
 
 }
 void ManagementServer::HandleDisconnectClient(SOCKET gameServerSocket) {
@@ -38,6 +34,7 @@ void ManagementServer::HandleBasePacket(BufferInfo* bufInfo) {
 	}
 	case BasePacketType::basePacketTypeGameToManagementServer: {
 		this->HandlePacketGame(bufInfo);
+		break;
 	}
 	default: {
 		Util::LoggingInfo("ManagementServer.log", "Recv wrong base packet ID : %d", type);
@@ -54,18 +51,14 @@ void ManagementServer::HandlePacketLogin(BufferInfo* bufInfo) {
 	case loginManagementPacketTypeShowChannelRequest: {
 		LoginManagementPacketTypeShowChannelRequest packetLoginRequest{};
 		packetLoginRequest.Deserialize(bufInfo->buffer);
-		std::shared_ptr<ClntServer> clntServer;
-		clntServer->SetServerSocket(bufInfo->socket);
-		m_gameServerManager.HandleShowChannel(packetLoginRequest, clntServer);
+		this->HandleShowChannel(packetLoginRequest, m_loginServerManager.FindServerBySocket(bufInfo->socket));
 		break;
 	}
 
 	case loginManagementPacketTypeChannelInRequest: {
 		LoginManagementPacketTypeChannelInRequest packetLoginRequest{};
 		packetLoginRequest.Deserialize(bufInfo->buffer);
-		std::shared_ptr<ClntServer> clntServer;
-		clntServer->SetServerSocket(bufInfo->socket);
-		m_gameServerManager.HandleChannelIn(packetLoginRequest, clntServer);
+		this->HandleChannelIn(packetLoginRequest, m_loginServerManager.FindServerBySocket(bufInfo->socket));
 		break;
 	}
 	default: {
@@ -78,16 +71,59 @@ void ManagementServer::HandlePacketGame(BufferInfo* bufInfo) {
 	ManagementPacketType type = (ManagementPacketType)PacketTypeDeserial(bufInfo->buffer);
 
 	switch (type) {
-	case gameManagementPacketTypeCurrentPeopleRequest: {
-		GameManagementPacketTypeCurrentPeopleRequest packetGameRequest;
+	case registerServerInfo: {
+		GameToManagementRegisterServerInfo packetGameRequest;
 		packetGameRequest.Deserialize(bufInfo->buffer);
-		auto gameServer = m_gameServerManager.FindServerBySocket(bufInfo->socket);
+		auto gameServer = m_gameServerManager.FindGameServerBySocket(bufInfo->socket);
+		m_gameServerManager.HandlePacketGameRegister(packetGameRequest, gameServer);
+		break;
+	}
+	case updateServerInfo: {
+		GameToManagementUpdateServerInfoRequest packetGameRequest;
+		packetGameRequest.Deserialize(bufInfo->buffer);
+		auto gameServer = m_gameServerManager.FindGameServerBySocket(bufInfo->socket);
 		m_gameServerManager.HandlePacketGameUpdate(packetGameRequest, gameServer);
 		break;
 	}
-
 	default: {
 		Util::LoggingInfo("ManagementServer.log", "Recv wrong login packet ID : %d", type);
 	}
 	}
+}
+
+void ManagementServer::HandleShowChannel(LoginManagementPacketTypeShowChannelRequest& packet, std::shared_ptr<ClntServer> loginServer) {
+	if (loginServer == nullptr)
+			return;
+	
+	LoginManagementPacketTypeShowChannelResponse packetLoginResponse;
+	packetLoginResponse.channelSize = m_gameServerManager.GetGameServerCount();
+	for (auto c : m_gameServerManager.GetGameServerList()) {
+		if (c->GetChannelName() == "")
+			continue;
+		packetLoginResponse.channel.emplace_back(c->GetChannelName(), c->GetCurrentPeople(), c->GetMaximumPeople());
+	}
+	loginServer->SendPacket(packetLoginResponse);
+}
+
+void ManagementServer::HandleChannelIn(LoginManagementPacketTypeChannelInRequest& packet, std::shared_ptr<ClntServer> loginServer) {
+	if (loginServer == nullptr) 
+		return;
+
+	std::shared_ptr<GameServer> gameServer;
+	for (auto g : m_gameServerManager.GetGameServerList()) {
+		if (g->GetChannelName() == packet.channelName) {
+			gameServer = g;
+			break;
+		}
+	}
+
+	GameToManagementPreLoadRequest packetGameRequest;
+	packetGameRequest.m_gpid = packet.gpid;
+	gameServer->SendPacket(packetGameRequest);
+
+	LoginManagementPacketTypeChannelInResponse packetLoginResponse;
+	packetLoginResponse.flag = true;
+	packetLoginResponse.ip = gameServer->GetServerIpAddress();
+	packetLoginResponse.port = gameServer->GetServerPortNum();
+	loginServer->SendPacket(packetLoginResponse);
 }

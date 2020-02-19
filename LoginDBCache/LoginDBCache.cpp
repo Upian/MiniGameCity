@@ -66,7 +66,7 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			DatabaseAPI db;
 			if (db.Connect(Util::GetConfigToString("LoginDBCache.ini", "DB", "Host", "127.0.0.1"),
 				Util::GetConfigToString("LoginDBCache.ini", "DB", "User", "root"),
-				Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "minicity1!"),
+				Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "wjdghks2@"),
 				Util::GetConfigToString("LoginDBCache.ini", "DB", "Name", "minigamecity"),
 				Util::GetConfigToInt("LoginDBCache.ini", "DB", "Port", 3306))) {
 
@@ -115,7 +115,7 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 		db.SetGpid(packetLoginRequest.gpid);
 		if (db.Connect(Util::GetConfigToString("LoginDBCache.ini", "DB", "Host", "127.0.0.1"),
 			Util::GetConfigToString("LoginDBCache.ini", "DB", "User", "root"),
-			Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "minicity1!"),
+			Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "wjdghks2@"),
 			Util::GetConfigToString("LoginDBCache.ini", "DB", "Name", "minigamecity"),
 			Util::GetConfigToInt("LoginDBCache.ini", "DB", "Port", 3306))) {
 			printf("db 立加 己傍\n");
@@ -163,7 +163,7 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			DatabaseAPI db;
 			if (db.Connect(Util::GetConfigToString("LoginDBCache.ini", "DB", "Host", "127.0.0.1"),
 				Util::GetConfigToString("LoginDBCache.ini", "DB", "User", "root"),
-				Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "minicity1!"),
+				Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "wjdghks2@"),
 				Util::GetConfigToString("LoginDBCache.ini", "DB", "Name", "minigamecity"),
 				Util::GetConfigToInt("LoginDBCache.ini", "DB", "Port", 3306))) {
 				printf("db 立加 己傍\n");
@@ -208,7 +208,7 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 		db.SetGpid(packetLoginRequest.gpid);
 		if (db.Connect(Util::GetConfigToString("LoginDBCache.ini", "DB", "Host", "127.0.0.1"),
 			Util::GetConfigToString("LoginDBCache.ini", "DB", "User", "root"),
-			Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "minicity1!"),
+			Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "wjdghks2@"),
 			Util::GetConfigToString("LoginDBCache.ini", "DB", "Name", "minigamecity"),
 			Util::GetConfigToInt("LoginDBCache.ini", "DB", "Port", 3306))) {
 			printf("db 立加 己傍\n");

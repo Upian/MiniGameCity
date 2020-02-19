@@ -2,10 +2,10 @@
 #define __DB_CACHE_H__
 
 #include "BaseServer.h"
-#include "SaveData.h"
-#include "LoadData.h"
 #include "ClntServerManager.h"
 #include "DBCachePacket.h"
+#include <mysql.h>
+
 
 struct Login {
 	uint32 gpid = 0;
@@ -24,8 +24,14 @@ struct User {
 };
 
 struct Friend {
-	uint32 gpid = 0;
+	uint32 friendGpid = 0;
+	std::string friendName;
+	std::string modifyDate;
+};
 
+struct Friends {
+	uint32 gpid = 0;
+	std::list<Friend> friends;
 };
 
 struct Guild {
@@ -47,15 +53,21 @@ public:
 
 private:
 	MAKE_SERVER(DBCache)
-	void HandleBasePacket(BufferInfo* bufInfo);
 	void HandleSave();
 	void HandleLoad();
 
+	bool Connect(const std::string& dbHost, const std::string& dbUser, const std::string& dbPass, const std::string& dbName, const int32& dbPort);
+	void Close();
 
 	std::list<Login> loginData;
+	std::list<User> userData;
 	std::list<Friend> friendData;
 	std::list<Guild> guildData;
 	std::list<Game> gameData;
+
+	MYSQL* conn;
+	MYSQL_RES* res;
+	MYSQL_ROW row;
 };
 
 
