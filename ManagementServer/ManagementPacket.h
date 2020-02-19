@@ -176,7 +176,7 @@ struct GameToManagementPreLoadRequest : public GameToManagementPacket {
 */
 class GameManagementPacket : public BasePacket {
 public:
-	GameManagementPacket(ManagementPacketType _managementPacketType) : BasePacket(BasePacketType::gamePacketTypeManagement), managementPacketType(_managementPacketType) {
+	GameManagementPacket(ManagementPacketType _managementPacketType) : BasePacket(BasePacketType::basePacketTypeGameToManagementServer), managementPacketType(_managementPacketType) {
 		this->PacketTypeSerial(managementPacketType);
 	}
 	~GameManagementPacket() {}

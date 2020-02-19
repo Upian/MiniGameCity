@@ -16,6 +16,9 @@
     <ClInclude Include="DBCachePacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
+    <ClInclude Include="DBCache.h">
+      <Filter>DBCache</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DBCache.cpp">

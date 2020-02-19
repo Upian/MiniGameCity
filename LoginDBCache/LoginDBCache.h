@@ -1,5 +1,5 @@
-#ifndef __DB_CACHE_H__
-#define __DB_CACHE_H__
+#ifndef __LOGIN_DB_CACHE_H__
+#define __LOGIN_DB_CACHE_H__
 
 #include "ServerCommon.h"
 #include "BaseServer.h"
