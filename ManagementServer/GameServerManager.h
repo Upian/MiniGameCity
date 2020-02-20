@@ -16,23 +16,18 @@ public:
 
 	void Initialize();
 
-	// void InsertServer(SOCKET socket);
-
-	void HandlePacketGameRegister(GameToManagementRegisterServerInfo& packet, std::shared_ptr<GameServer> gameServer);
+	void HandlePacketGameRegister(GameToManagementRegisterServerInfo& packet, SOCKET socket);
 	void HandlePacketGameUpdate(GameToManagementUpdateServerInfoRequest& packet, std::shared_ptr<GameServer> gameServer);
 
 	std::shared_ptr<GameServer> FindGameServerBySocket(SOCKET socket);
 	std::shared_ptr<GameServer> FindGameServerByChannelName(std::string name);
 
-	size_t GetGamerServerCount() const {
-		return _gameServer.size();
-	}
 	std::list<std::shared_ptr<GameServer> >& GetGameServerList() {
 		return _gameServer;
 	}
 	size_t GetGameServerCount() const {
 		return _gameServer.size();
-	}
+	};
 	std::string MakeChannelNumber();
 
 private:

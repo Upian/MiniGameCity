@@ -7,13 +7,13 @@ ManagementServer::~ManagementServer() {}
 void ManagementServer::HandleAcceptClient(SOCKET socket) {
 	// login서버면 insert 할 필요 없다.
 	m_loginServerManager.InsertServer(socket);
-	m_gameServerManager.InsertServer(socket);
+	// m_gameServerManager.InsertGameSever(socket);
 	Util::LoggingDebug("ManagementServer.log", "Connect Client[%d]", socket);
 
 }
 void ManagementServer::HandleDisconnectClient(SOCKET gameServerSocket) {
 	m_gameServerManager.RemoveServer(gameServerSocket);
-	printf("Disconnect client[%d] Total players[%d]\n", gameServerSocket, m_gameServerManager.GetGamerServerCount());
+	printf("Disconnect client[%d] Total players[%d]\n", gameServerSocket, m_gameServerManager.GetGameServerCount());
 }
 
 /*
@@ -52,6 +52,8 @@ void ManagementServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		LoginManagementPacketTypeShowChannelRequest packetLoginRequest{};
 		packetLoginRequest.Deserialize(bufInfo->buffer);
 		this->HandleShowChannel(packetLoginRequest, m_loginServerManager.FindServerBySocket(bufInfo->socket));
+
+		// this->HandleShowChannel(packetLoginRequest, m_loginServerManager.FindServerBySocket(bufInfo->socket));
 		break;
 	}
 
@@ -74,8 +76,7 @@ void ManagementServer::HandlePacketGame(BufferInfo* bufInfo) {
 	case registerServerInfo: {
 		GameToManagementRegisterServerInfo packetGameRequest;
 		packetGameRequest.Deserialize(bufInfo->buffer);
-		auto gameServer = m_gameServerManager.FindGameServerBySocket(bufInfo->socket);
-		m_gameServerManager.HandlePacketGameRegister(packetGameRequest, gameServer);
+		m_gameServerManager.HandlePacketGameRegister(packetGameRequest, bufInfo->socket);
 		break;
 	}
 	case updateServerInfo: {
@@ -102,6 +103,7 @@ void ManagementServer::HandleShowChannel(LoginManagementPacketTypeShowChannelReq
 			continue;
 		packetLoginResponse.channel.emplace_back(c->GetChannelName(), c->GetCurrentPeople(), c->GetMaximumPeople());
 	}
+	packetLoginResponse.gpid = packet.gpid;
 	loginServer->SendPacket(packetLoginResponse);
 }
 
@@ -125,5 +127,6 @@ void ManagementServer::HandleChannelIn(LoginManagementPacketTypeChannelInRequest
 	packetLoginResponse.flag = true;
 	packetLoginResponse.ip = gameServer->GetServerIpAddress();
 	packetLoginResponse.port = gameServer->GetServerPortNum();
+	packetLoginResponse.gpid = packet.gpid;
 	loginServer->SendPacket(packetLoginResponse);
 }

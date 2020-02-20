@@ -24,6 +24,7 @@ protected:
 	DBCachePacketType dbCachePacketType = dbCachePacketTypeNone;
 };
 
+template<typename... Args>
 class DBCacheSave : public DBCachePacket {
 public:
 	DBCacheSave() : DBCachePacket(dbCacheSave) {}
@@ -42,6 +43,7 @@ public:
 
 	db::Table table = db::tableNone;
 	std::string requestData;
+//	Args... args;
 };
 
 class DBCacheLoad : public DBCachePacket {

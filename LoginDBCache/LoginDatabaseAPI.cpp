@@ -94,7 +94,7 @@ bool DatabaseAPI::SignUpAccount(const std::string& userId, const std::string& us
 		std::string sql = "SELECT * FROM ";
 		sql += dbName;
 		sql += ".login WHERE ";
-		sql += "user_id='" + userId + "' and user_status='1'";
+		sql += "user_id='" + userId + "' and user_nick='" + userNick + "' and user_status='1'";
 
 		if (mysql_query(conn, sql.c_str())) {
 			printf("%s\n", mysql_error(conn)); // 검색 실패
@@ -164,7 +164,7 @@ bool DatabaseAPI::SignUpAccount(const std::string& userId, const std::string& us
 
 		sql = "INSERT INTO ";
 		sql += dbName;
-		sql += ".social (GPID) VALUES ";
+		sql += ".social_friend (GPID) VALUES ";
 		sql += "(" + std::to_string(gpid) + ")";
 
 		if (mysql_query(conn, sql.c_str())) {

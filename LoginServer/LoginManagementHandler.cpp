@@ -49,6 +49,7 @@ void LoginManagementHandler::HandlePacketShowChannelRequest(ClientLoginPacketTyp
 		return;
 
 	LoginManagementPacketTypeShowChannelRequest packetLoginRequest{};
+	packetLoginRequest.gpid = player->GetGPID();
 	this->SendPacketToServer(packetLoginRequest);
 }
 void LoginManagementHandler::HandlePacketChannelInRequest(ClientLoginPacketTypeChannelInRequest& packet, std::shared_ptr<Player> player) {
@@ -57,6 +58,7 @@ void LoginManagementHandler::HandlePacketChannelInRequest(ClientLoginPacketTypeC
 
 	LoginManagementPacketTypeChannelInRequest packetLoginRequest{};
 	packetLoginRequest.channelName = packet.channelName;
+	packetLoginRequest.gpid = player->GetGPID();
 	this->SendPacketToServer(packetLoginRequest);
 }
 

@@ -9,8 +9,8 @@ enum ManagementPacketType : char {
 
 	// login server <-> management sserver
 	loginManagementPacketTypeShowChannelResponse, // (int32)channelSize (channel(string, int, int)channelName, numberOfPeople, limitOfPeople), (unsigned int)GPID
-	loginManagementPacketTypeShowChannelRequest, //nothing.
-	loginManagementPacketTypeChannelInResponse, //(bool)flag, (string)ip, (int)port
+	loginManagementPacketTypeShowChannelRequest, // (uint32)gpid;
+	loginManagementPacketTypeChannelInResponse, // (bool)flag, (string)ip, (int)port, (uint32)gpid
 	loginManagementPacketTypeChannelInRequest, //(string)channelName, (unsigned int)GPID
 
 	// game server <-> management server
@@ -69,7 +69,7 @@ public:
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> channelSize;
 		Channel tmp;
-		for (int i = 0; i < channel.size(); ++i) {
+		for (int i = 0; i < channelSize; ++i) {
 			_buf >> tmp._channelName;
 			_buf >> tmp._currentPeople;
 			_buf >> tmp._maximumPeople;
@@ -89,12 +89,14 @@ public:
 	~LoginManagementPacketTypeShowChannelRequest() {}
 
 	virtual Buffer& Serialize() override {
+		buffer << gpid;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-
+		_buf >> gpid;
 	}
+	uint32 gpid = 0;
 };
 
 class LoginManagementPacketTypeChannelInResponse : public LoginManagementPacket {
