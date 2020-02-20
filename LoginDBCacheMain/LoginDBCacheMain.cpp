@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
 	if (1 < argc)
 		pServer->SetPortNum(atoi(argv[1]));
 	else
-		pServer->SetPortNum(Util::GetConfigToInt("DBCache.ini", "Network", "Port", 30000));
+		pServer->SetPortNum(Util::GetConfigToInt("DBCache.ini", "Network", "Port", 30001));
 	pServer->SetServerName("LoginDBCache");
 
 	pServer->InitializeBaseServer();

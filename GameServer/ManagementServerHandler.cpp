@@ -6,14 +6,18 @@ void ManagementServerHandler::Initialize() {
 	m_gameServer = GameServer::GetServer();
 	this->ConnectToServer(
 		Util::GetConfigToString("GameServer.ini", "Network", "ManagementServerIP", "127.0.0.1").c_str(),
-		Util::GetConfigToInt("GameServer.ini", "Network", "ManagementServerPort", 19998)
+		Util::GetConfigToInt("GameServer.ini", "Network", "ManagementServerPort", 19999)
 	);
 
 	this->RegisterToServer();
 }
 
 void ManagementServerHandler::RegisterToServer() {
-	GameToManagementResistarServerInfo packet;
+	GameToManagementRegisterServerInfo packet;
+	
+	// ip port Ãß°¡
+	packet.m_ipAddress = m_gameServer->GetServerIPAddress();
+	packet.m_portNum = m_gameServer->GetServerPortNum();
 
 	this->SendPacketToServer(packet);
 }

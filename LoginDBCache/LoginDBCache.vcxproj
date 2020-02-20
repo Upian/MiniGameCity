@@ -19,13 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\DBCache\DBCache.h" />
-    <ClInclude Include="DatabaseAPI.h" />
+    <ClInclude Include="LoginDatabaseAPI.h" />
     <ClInclude Include="LoginDBCache.h" />
     <ClInclude Include="LoginDBCachePacket.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DatabaseAPI.cpp" />
+    <ClCompile Include="LoginDatabaseAPI.cpp" />
     <ClCompile Include="LoginDBCache.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

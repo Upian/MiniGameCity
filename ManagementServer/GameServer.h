@@ -31,6 +31,8 @@ public:
 	}
 private:
 	Channel _channel{ "", 0, 300 };
+	std::string _ipAddress;
+	int32 _port;
 };
 
 

@@ -2,21 +2,17 @@
 #define __DBCACHE_PACKET_H__
 
 #include "BasePacket.h"
+#include "SaveData.h"
+#include "LoadData.h"
 
 enum DBCachePacketType : char {
 	dbCachePacketTypeNone = 0,
 
-	dbCacheSave, // (string)data
-	dbCacheLoad, // (string)data
+	dbCacheSave, // (Table)table, (string)requestData
+	dbCacheLoad, // (Table)table, (string)responseData
 
 	dbCachePacketTypeSize,
 };
-
-/*
-
-		  login server <-> db cache
-
-*/
 
 class DBCachePacket : public BasePacket {
 public:
@@ -28,36 +24,43 @@ protected:
 	DBCachePacketType dbCachePacketType = dbCachePacketTypeNone;
 };
 
-class LoginDBCachePacketTypeLoginResponse : public DBCachePacket {
+class DBCacheSave : public DBCachePacket {
 public:
-	LoginDBCachePacketTypeLoginResponse() : DBCachePacket(dbCacheSave) {}
-	~LoginDBCachePacketTypeLoginResponse() {}
+	DBCacheSave() : DBCachePacket(dbCacheSave) {}
+	~DBCacheSave() {}
 
 	virtual Buffer& Serialize() override {
+		buffer << table;
 		buffer << requestData;
 
 		return buffer;
 	};
 	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> table;
 		_buf >> requestData;
 	};
 
+	db::Table table = db::tableNone;
 	std::string requestData;
 };
-class LoginDBCachePacketTypeLoginResponse : public DBCachePacket {
+
+class DBCacheLoad : public DBCachePacket {
 public:
-	LoginDBCachePacketTypeLoginResponse() : DBCachePacket(dbCacheLoad) {}
-	~LoginDBCachePacketTypeLoginResponse() {}
+	DBCacheLoad() : DBCachePacket(dbCacheLoad) {}
+	~DBCacheLoad() {}
 
 	virtual Buffer& Serialize() override {
+		buffer << table;
 		buffer << responseData;
 
 		return buffer;
 	};
 	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> table;
 		_buf >> responseData;
 	};
 
+	db::Table table = db::tableNone;
 	std::string responseData;
 };
 

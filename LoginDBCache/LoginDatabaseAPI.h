@@ -1,5 +1,5 @@
-#ifndef __DB_API_H__
-#define __DB_API_H__
+#ifndef __LOGIN_DB_API_H__
+#define __LOGIN_DB_API_H__
 
 #include <winsock2.h>
 #include <mysql.h>

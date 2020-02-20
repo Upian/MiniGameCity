@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 		pServer->SetPortNum(atoi(argv[2]));
 	}
 	else {
-		pServer->SetPortNum(Util::GetConfigToInt("GameServer.ini", "Network", "Port", 10000));
+		pServer->SetPortNum(Util::GetConfigToInt("GameServer.ini", "Network", "Port", 10010));
 	}
 	
 	pServer->SetServerName("GameServer");
