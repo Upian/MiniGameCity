@@ -159,11 +159,11 @@ void SocialServerHandler::HandlePacket(Buffer& buffer) {
 		this->HandlePacketChatFriendResponse(packet, pplayer);
 		break;
 	}
-	case PacketTypeSocialServer::InviteConfirmFriendRequest: {
-		SocialPacketServerInviteConfirmFriendRequest packet;
+	case PacketTypeSocialServer::InviteConfirmFriendResponse: {
+		SocialPacketServerInviteConfirmFriendResponse packet;
 		packet.Deserialize(buffer);
 		auto pplayer = this->GetPlayer(packet.m_gpid);
-		this->HandlePacketInviteConfirmRequest(packet, pplayer);
+		this->HandlePacketInviteConfirmResponse(packet, pplayer);
 		break;
 	}
 	default:break;
@@ -276,8 +276,10 @@ void SocialServerHandler::HandlePacketInviteFriendRequest(SocialGamePacketInvite
 	
 	SocialPacketServerInviteFriendRequest sendPacket;
 	sendPacket.m_gpid = pplayer->GetGPID();
-	sendPacket.m_roomName = room->GetRoomName();
 	sendPacket.m_friendName = packet.m_friendname;
+	sendPacket.m_roomName = room->GetRoomName();
+	sendPacket.m_roomNumber = room->GetRoomNumber();
+	sendPacket.m_createdTime = room->GetCreatedTime();
 	sendPacket.m_gameMode = static_cast<char>(room->GetRoomGameType());
 
 	this->SendPacketToServer(sendPacket);
@@ -342,13 +344,16 @@ void SocialServerHandler::HandlePacketChatFriendResponse(SocialPacketServerChatF
 	pplayer->SendPacket(responsePacket);
 }
 
-void SocialServerHandler::HandlePacketInviteConfirmRequest(SocialPacketServerInviteConfirmFriendRequest& packet, std::shared_ptr<Player> pplayer) {
+void SocialServerHandler::HandlePacketInviteConfirmResponse(SocialPacketServerInviteConfirmFriendResponse& packet, std::shared_ptr<Player> pplayer) {
 	if (nullptr == pplayer)
 		return;
 
-	SocialGamePacketConfirmInviteFriendRequest sendPacket;
+	SocialGamePacketConfirmInviteFriendResponse sendPacket;
+	sendPacket.m_roomNumber = packet.m_roomNumber;
 	sendPacket.m_name = packet.m_name;
-	sendPacket.m_roomName = sendPacket.m_roomName;
+	sendPacket.m_roomName = packet.m_roomName;
+	sendPacket.m_ipAddress = packet.m_ipAddress;
+	sendPacket.m_port = packet.m_port;
 	sendPacket.m_gameMode = static_cast<RoomGameType>(packet.m_gameMode);
 
 	pplayer->SendPacket(sendPacket);

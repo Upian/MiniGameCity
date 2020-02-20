@@ -189,9 +189,13 @@ void FriendsManager::HandleInviteFriendRequest(std::shared_ptr<SocialPlayer> pla
 	if (nullptr == friendPlayer)
 		return;
 
-	SocialPacketServerInviteConfirmFriendRequest sendPacket;
+	SocialPacketServerInviteConfirmFriendResponse sendPacket;
 	sendPacket.m_gpid = friendPlayer->GetGPID();
 	sendPacket.m_name = player->GetName();
 	sendPacket.m_roomName = packet.m_roomName;
+	sendPacket.m_roomNumber = packet.m_roomNumber;
+	sendPacket.m_createdTime = packet.m_createdTime;
 	sendPacket.m_gameMode = packet.m_gameMode;
+	sendPacket.m_ipAddress = player->GetServer()->GetServerIpAddress();
+	sendPacket.m_port = player->GetServer()->GetServerPortNum();
 }

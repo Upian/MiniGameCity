@@ -28,8 +28,8 @@ enum class PacketTypeSocialClient : char{
 	packetTypeSocialFriendListResponse,
 	packetTypeSocialInviteFriendRequest, //친구 게임 초대
 	packetTypeSocialInviteFriendResponse, //가능 여부 판별하여 반환
-	packetTypeSocialConfirmInviteFriendRequest, //Social -> Game -> client 참가 여부 묻기 위한 패킷
-	packetTypeSocialConfirmInviteFriendResponse, //
+	packetTypeSocialConfirmInviteFriendResponse, //Social -> Game -> client 참가 여부 묻기 위한 패킷
+
 
 	packetTypeSocialCount,
 };
@@ -336,25 +336,33 @@ struct SocialGamePacketInviteFriendResponse : public BaseSocialGamePacket {
 	}
 };
 
-struct SocialGamePacketConfirmInviteFriendRequest : public BaseSocialGamePacket {
-	SocialGamePacketConfirmInviteFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialConfirmInviteFriendRequest) {}
+struct SocialGamePacketConfirmInviteFriendResponse : public BaseSocialGamePacket {
+	SocialGamePacketConfirmInviteFriendResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialConfirmInviteFriendResponse) {}
 	
+	int m_roomNumber;
 	std::string m_name;
 	std::string m_roomName;
+	std::string m_ipAddress;
+	int m_port = 0;
 	RoomGameType m_gameMode = RoomGameType::GameTypeNone;
 
 	virtual Buffer& Serialize() override {
+		buffer << m_roomNumber;
 		buffer << m_name;
 		buffer << m_roomName;
+		buffer << m_ipAddress;
+		buffer << m_port;
 		buffer << m_gameMode;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
+		buf >> m_roomNumber;
 		buf >> m_name;
 		buf >> m_roomName;
+		buf >> m_ipAddress;
+		buf >> m_port;
 		buf >> m_gameMode;
-
 		return;
 	}
 };
