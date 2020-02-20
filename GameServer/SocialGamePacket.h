@@ -30,7 +30,6 @@ enum class PacketTypeSocialClient : char{
 	packetTypeSocialInviteFriendResponse, //가능 여부 판별하여 반환
 	packetTypeSocialConfirmInviteFriendResponse, //Social -> Game -> client 참가 여부 묻기 위한 패킷
 
-
 	packetTypeSocialCount,
 };
 
@@ -342,6 +341,7 @@ struct SocialGamePacketConfirmInviteFriendResponse : public BaseSocialGamePacket
 	int m_roomNumber;
 	std::string m_name;
 	std::string m_roomName;
+	time_t m_createdTime;
 	std::string m_ipAddress;
 	int m_port = 0;
 	RoomGameType m_gameMode = RoomGameType::GameTypeNone;
@@ -350,6 +350,7 @@ struct SocialGamePacketConfirmInviteFriendResponse : public BaseSocialGamePacket
 		buffer << m_roomNumber;
 		buffer << m_name;
 		buffer << m_roomName;
+		buffer << m_createdTime;
 		buffer << m_ipAddress;
 		buffer << m_port;
 		buffer << m_gameMode;
@@ -360,10 +361,12 @@ struct SocialGamePacketConfirmInviteFriendResponse : public BaseSocialGamePacket
 		buf >> m_roomNumber;
 		buf >> m_name;
 		buf >> m_roomName;
+		buf >> m_createdTime;;
 		buf >> m_ipAddress;
 		buf >> m_port;
 		buf >> m_gameMode;
 		return;
 	}
 };
+
 #endif // !__GAMESERVER_SOCIAL_PACKET_H__

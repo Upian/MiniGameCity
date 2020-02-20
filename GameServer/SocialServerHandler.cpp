@@ -352,6 +352,7 @@ void SocialServerHandler::HandlePacketInviteConfirmResponse(SocialPacketServerIn
 	sendPacket.m_roomNumber = packet.m_roomNumber;
 	sendPacket.m_name = packet.m_name;
 	sendPacket.m_roomName = packet.m_roomName;
+	sendPacket.m_createdTime = packet.m_createdTime;
 	sendPacket.m_ipAddress = packet.m_ipAddress;
 	sendPacket.m_port = packet.m_port;
 	sendPacket.m_gameMode = static_cast<RoomGameType>(packet.m_gameMode);

@@ -75,5 +75,8 @@
     <ClInclude Include="InGameLibrary.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="ManagementGamePacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
