@@ -30,8 +30,6 @@ public:
 
 	void Initialize();
 
-	void HandleGamePacket(Buffer& packet);
-
 	SOCKET GetSocket() const { return m_socket; }
 	GPID GetGPID() const { return m_gamePlayerId; }
 	void SetGPID(int i) { m_gamePlayerId = i; } //#Test
@@ -73,8 +71,6 @@ public:
 	void SetExitReservation(bool changeExit) { ExitReservation = changeExit; }
 	bool GetExitReservation() { return ExitReservation; }
 
-	void SetGamePacket(Buffer& buffer);
-	Buffer* GetGamePacket();
 #pragma endregion for using game room
 
 
@@ -97,8 +93,6 @@ private:
 
 	int				InGameScore = 0;			//인게임 점수
 	bool			ExitReservation = false;	//게임 나가기 예약
-	Buffer			InGameBuf;					//인게임에 사용할 버퍼
-	bool			RecvGameBuf = false;
 
 #pragma endregion for using game room
 };

@@ -70,6 +70,7 @@ public:
 	bool CheckAllPlayerIsReady();
 	RoomGameType GetRoomGameType() const { return m_gameType; }
 	std::string& GetRoomName() { return m_roomName; }
+	InGameLibrary& GetGameLibrary() { return m_gameLib; }
 
 	std::shared_ptr<Player> GetRoomMaster() const { return m_roomMaster; }
 	//operator

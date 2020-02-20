@@ -10,20 +10,6 @@ void Player::Initialize() {
 
 /*void Player::HandlePacket(BufferInfo* bufInfo) {}*/
 
-void Player::SetGamePacket(Buffer& buffer)
-{
-	if (buffer.Length() == 0) return;
-	InGameBuf = buffer;
-	RecvGameBuf = true;
-}
-
-Buffer* Player::GetGamePacket() {
-	if (!RecvGameBuf) return nullptr;
-
-	RecvGameBuf = false;
-	return &InGameBuf;
-}
-
 void Player::PlayerInfoClear() {
 	m_potionIndex = 0;
 	m_room = nullptr;

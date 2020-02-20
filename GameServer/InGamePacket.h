@@ -140,7 +140,6 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
 		buf >> twenty_packet;
 	}
 };
@@ -202,9 +201,7 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
 		buf >> twenty_packet;
-		if (buf.Length() < 5)return;
 		buf.DeserializeCharArray(Answer, 31);
 	}
 };
@@ -250,7 +247,7 @@ public:
 	}
 	virtual void Deserialize(Buffer& buf) override {
 		
-		buffer.DeserializeCharArray(Question, 91);
+		buf.DeserializeCharArray(Question, 91);
 	}
 };
 class TwentyAskerQuestionBroadCast : public TwentyQuestionGamePacket {
@@ -328,7 +325,7 @@ public:
 	}
 	virtual void Deserialize(Buffer& buf) override {
 
-		buffer.DeserializeCharArray(AskerAnswer, 31);
+		buf.DeserializeCharArray(AskerAnswer, 31);
 	}
 };
 class TwentyAskerAnswerBroadCast : public TwentyQuestionGamePacket {
@@ -530,7 +527,6 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
 		buf >> twenty_packet;
 		buf >> ReservationType;
 	}
@@ -543,7 +539,6 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
 		buf >> twenty_packet;
 	}
 };
@@ -562,7 +557,6 @@ public:
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
-		buf >> ingame_packet_type;
 		buf >> twenty_packet;
 	}
 };

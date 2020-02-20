@@ -23,8 +23,8 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 	{
 		return;
 	}
-
 	//게임 준비 파트 변수 생성
+	BaseGameTypeSet = InGamePacketType::Twenty_Question_Game;
 	this->InGamePlayerManager = _InGamePlayerManager;
 	InGamePlayerList = InGamePlayerManager.GetPlayerList();
 	InGamePlayer.reserve(5);
@@ -83,11 +83,9 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 			TwentySelectAnswer SelectedAnswer;
 			do 
 			{
-				RecvBuf = nullptr;
-				RecvBuf = (Quiz_Provide_Player)->GetGamePacket();
-				if (RecvBuf==nullptr) continue;
-				Buffer temp = *RecvBuf;
-				SelectedAnswer.Deserialize(temp);
+				if(!PopGamePacketToQueue()) continue;
+				if(RecvPacket.first->GetGPID() != (Quiz_Provide_Player)->GetGPID()) continue;
+				SelectedAnswer.Deserialize(RecvPacket.second);
 			} while ((int)SelectedAnswer.getTwentyPacket() != 6);
 
 			strcpy_s(TwentyAnswer, 31, conversion.ToAnsi(SelectedAnswer.Answer));
@@ -104,30 +102,23 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 		//질문 및 타이머를 반복하기 위한 while문
 		while (1)
 		{
-			for (auto i = InGamePlayer.begin(); i < InGamePlayer.end(); ++i)
+			if (PopGamePacketToQueue())
 			{
-				RecvBuf = (*i)->GetGamePacket();
-				if (RecvBuf == nullptr) continue;
-
-				// 받은 패킷 세분화 과정
-				InGamePacketType GameType;
-				GameType = (InGamePacketType)PacketTypeDeserial(*RecvBuf);
-
-				if (GameType != InGamePacketType::Twenty_Question_Game) continue;
-
 				Twenty_Packet_Type PacketType;
-				PacketType = (Twenty_Packet_Type)PacketTypeDeserial(*RecvBuf);
+				PacketType = (Twenty_Packet_Type)PacketTypeDeserial(RecvPacket.second);
 
 				switch (PacketType)
 				{
 				case Twenty_Packet_Type::Twenty_Asker_Question:
 				{
-					if ((*Asker)->GetGPID() != (*i)->GetGPID()) continue;
+					if ((*Asker)->GetGPID() != RecvPacket.first->GetGPID()) continue;
 
 					//받은 질문을 다시 뿌려줌
 					TwentyAskerQuestion QuestionPacket;
-					QuestionPacket.Deserialize(*RecvBuf);
-					TwentyAskerQuestionBroadCast QuestionBroadCastPacket(conversion.ToUTF8((*i)->GetPlayerName().c_str()), QuestionPacket.Question);
+					QuestionPacket.Deserialize(RecvPacket.second);
+					char temp[31] = { NULL, };
+					strcpy_s(temp, 31, conversion.ToAnsi(QuestionPacket.Question));
+					TwentyAskerQuestionBroadCast QuestionBroadCastPacket(conversion.ToUTF8(RecvPacket.first->GetPlayerName().c_str()), conversion.ToUTF8(temp));
 					InGamePlayerManager.SendToAllPlayers(QuestionBroadCastPacket);
 
 					//남은 질문횟수 뿌려줌
@@ -142,12 +133,12 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				}
 				case Twenty_Packet_Type::Twenty_Provider_Reply:
 				{
-					if (Quiz_Provide_Player->GetGPID() != (*i)->GetGPID()) continue;
+					if (Quiz_Provide_Player->GetGPID() != RecvPacket.first->GetGPID()) continue;
 
 					//받은 답변을 뿌려줌
 					TwentyProviderReply ReplyPacket;
-					ReplyPacket.Deserialize(*RecvBuf);
-					TwentyProviderReplyBroadCast ReplyBroadcastPacket(conversion.ToUTF8((*i)->GetPlayerName().c_str()), ReplyPacket.ReplyOX);
+					ReplyPacket.Deserialize(RecvPacket.second);
+					TwentyProviderReplyBroadCast ReplyBroadcastPacket(conversion.ToUTF8(RecvPacket.first->GetPlayerName().c_str()), ReplyPacket.ReplyOX);
 					InGamePlayerManager.SendToAllPlayers(ReplyBroadcastPacket);
 
 					if (QuestionCount != 0)
@@ -172,12 +163,12 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				}
 				case Twenty_Packet_Type::Twenty_Asker_Answer:
 				{
-					if ((*Asker)->GetGPID() != (*i)->GetGPID()) continue;
+					if ((*Asker)->GetGPID() != RecvPacket.first->GetGPID()) continue;
 
 					TwentyAskerAnswer AnswerPacket;
-					AnswerPacket.Deserialize(*RecvBuf);
+					AnswerPacket.Deserialize(RecvPacket.second);
 
-					TwentyAskerAnswerBroadCast AnswerBroadCastPacket(AnswerPacket.AskerAnswer,conversion.ToUTF8((*i)->GetPlayerName().c_str()),0);
+					TwentyAskerAnswerBroadCast AnswerBroadCastPacket(AnswerPacket.AskerAnswer, conversion.ToUTF8(RecvPacket.first->GetPlayerName().c_str()), 0);
 
 					char tempAnswer[31];
 					strcpy_s(tempAnswer, 31, conversion.ToAnsi(AnswerPacket.AskerAnswer));
@@ -186,11 +177,11 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 						//정답을 맞췄을 경우 동작
 						AnswerBroadCastPacket.AnswerResult = 1;
 						InGamePlayerManager.SendToAllPlayers(AnswerBroadCastPacket);
-						
+
 						(Quiz_Provide_Player)->UpdateGameScore(QuestionCount * 2);
 						(*Asker)->UpdateGameScore(QuestionCount * 5);
 
-						TwentyUpdateScore providerScorePacket(conversion.ToUTF8((Quiz_Provide_Player)->GetPlayerName().c_str()),(Quiz_Provide_Player)->GetGameScore());
+						TwentyUpdateScore providerScorePacket(conversion.ToUTF8((Quiz_Provide_Player)->GetPlayerName().c_str()), (Quiz_Provide_Player)->GetGameScore());
 						TwentyUpdateScore askerScorerPacker(conversion.ToUTF8((*Asker)->GetPlayerName().c_str()), (*Asker)->GetGameScore());
 
 						InGamePlayerManager.SendToAllPlayers(providerScorePacket);
@@ -201,7 +192,7 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 					}
 					else
 					{
-						 //정답을 틀렸을 경우 동작
+						//정답을 틀렸을 경우 동작
 						AnswerBroadCastPacket.AnswerResult = 0;
 						InGamePlayerManager.SendToAllPlayers(AnswerBroadCastPacket);
 
@@ -212,7 +203,7 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 
 						if (QuestionCount != 0) {
 							Next_Asker_Point();
-							TwentyNoticeNextAsker NoticeAskerPacket(conversion.ToUTF8((*i)->GetPlayerName().c_str()), 0);
+							TwentyNoticeNextAsker NoticeAskerPacket(conversion.ToUTF8(RecvPacket.first->GetPlayerName().c_str()), 0);
 							InGamePlayerManager.SendToAllPlayers(NoticeAskerPacket);
 
 							AskerTimer = 30;
@@ -231,9 +222,9 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				case Twenty_Packet_Type::Twenty_Exit_Reservation:
 				{
 					TwentyExitReservation exitReservationPacket;
-					exitReservationPacket.Deserialize(*RecvBuf);
-					(*i)->SetExitReservation(exitReservationPacket.ReservationType);
-					TwentyExitNotification exitNotificationPacket(conversion.ToUTF8((*i)->GetPlayerName().c_str()),exitReservationPacket.ReservationType);
+					exitReservationPacket.Deserialize(RecvPacket.second);
+					RecvPacket.first->SetExitReservation(exitReservationPacket.ReservationType);
+					TwentyExitNotification exitNotificationPacket(conversion.ToUTF8(RecvPacket.first->GetPlayerName().c_str()), exitReservationPacket.ReservationType);
 
 					break;
 				}
@@ -303,7 +294,6 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				}
 			}
 
-			//타이머 오류 제어 부분
 
 			if (QuestionCount == 0)
 			{
@@ -337,7 +327,6 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 	InGamePlayerManager.SendToAllPlayers(gameEndPacket);
 
 	return;
-
 }
 
 //다음 질문자를 가리킴
@@ -438,9 +427,13 @@ void InGameLibrary::AllPlayerReadyCheck()
 // 				break;
 // 			}
 
-			RecvBuf = (*i)->GetGamePacket();
-			if(RecvBuf == nullptr) continue;
-			packet.Deserialize(*RecvBuf);
+			if(!PopGamePacketToQueue()) continue;
+			if (RecvPacket.first->GetGPID() != (*i)->GetGPID())
+			{
+				PacketQueue.push(RecvPacket);
+				continue;
+			}
+			packet.Deserialize(RecvPacket.second);
 		} while (packet.getTwentyPacket() != Twenty_Packet_Type::Twenty_Player_Ready_Complete);
 		++i;
 	}
@@ -468,4 +461,29 @@ void InGameLibrary::TimerErrorProcess() {
 		}
 		ActionTime = time(NULL);
 	}
+}
+
+void InGameLibrary::SaveGamePacketToQueue(Buffer& buffer, std::shared_ptr<Player> player)
+{
+	if (nullptr == player) return;
+
+	InGamePacketType type = (InGamePacketType)PacketTypeDeserial(buffer);
+
+	if (type != BaseGameTypeSet) return;
+
+	std::pair<std::shared_ptr<Player>, Buffer> temp;
+
+	temp = make_pair(player, buffer);
+
+	PacketQueue.push(temp);
+}
+
+bool InGameLibrary::PopGamePacketToQueue()
+{
+	if (PacketQueue.empty()) return false;
+
+	RecvPacket = make_pair(PacketQueue.front().first, PacketQueue.front().second);
+	PacketQueue.pop();
+
+	return true;
 }

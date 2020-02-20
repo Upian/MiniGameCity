@@ -52,7 +52,7 @@ public:
 		memcpy(m_buffer, rhs, sz);
 		m_length = sz;
 	}
-	Buffer(Buffer& rhs) {
+	Buffer(const Buffer& rhs) {
 		memcpy(m_buffer, rhs.m_buffer, rhs.m_length);
 		m_index = rhs.m_index;
 		m_length = rhs.m_length;
