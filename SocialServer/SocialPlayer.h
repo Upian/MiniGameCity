@@ -43,6 +43,7 @@ public:
 	bool IsExistFriendRequestList(std::string);
 	bool IsExistFriendList(std::shared_ptr<SocialPlayer>);
 	bool IsExistFriendList(std::string);
+	std::shared_ptr<SocialPlayer> FindFriend(const std::string&);
 
 	bool AddFriendList(std::shared_ptr<SocialPlayer>);
 	bool IsAddFriendAvailable() { return m_maxFriendListSize > m_friendList.size(); }

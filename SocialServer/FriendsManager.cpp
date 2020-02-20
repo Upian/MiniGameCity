@@ -181,8 +181,17 @@ void FriendsManager::HandleChatFriendRequest(std::shared_ptr<SocialPlayer> srcPl
 	destPlayer->GetServer()->SendPacket(responseDest);
 }
 
-void FriendsManager::HandleInviteFriendRequest(std::shared_ptr<SocialPlayer> player, const std::string & friendName, const std::string & roomName) {
+void FriendsManager::HandleInviteFriendRequest(std::shared_ptr<SocialPlayer> player, SocialPacketServerInviteFriendRequest& packet) {
 	if (nullptr == player)
 		return;
 
+	auto friendPlayer = player->FindFriend(packet.m_friendName);
+	if (nullptr == friendPlayer)
+		return;
+
+	SocialPacketServerInviteConfirmFriendRequest sendPacket;
+	sendPacket.m_gpid = friendPlayer->GetGPID();
+	sendPacket.m_name = player->GetName();
+	sendPacket.m_roomName = packet.m_roomName;
+	sendPacket.m_gameMode = packet.m_gameMode;
 }

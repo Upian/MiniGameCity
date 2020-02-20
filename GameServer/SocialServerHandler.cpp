@@ -157,6 +157,14 @@ void SocialServerHandler::HandlePacket(Buffer& buffer) {
 		packet.Deserialize(buffer);
 		auto pplayer = this->GetPlayer(packet.m_gpid);
 		this->HandlePacketChatFriendResponse(packet, pplayer);
+		break;
+	}
+	case PacketTypeSocialServer::InviteConfirmFriendRequest: {
+		SocialPacketServerInviteConfirmFriendRequest packet;
+		packet.Deserialize(buffer);
+		auto pplayer = this->GetPlayer(packet.m_gpid);
+		this->HandlePacketInviteConfirmRequest(packet, pplayer);
+		break;
 	}
 	default:break;
 	}
@@ -256,16 +264,21 @@ void SocialServerHandler::HandlePacketInviteFriendRequest(SocialGamePacketInvite
 		return;
 
 	SocialGamePacketInviteFriendResponse responsePacket;
-	if (room->GetPlayerCount() < room->GetMaxPlayerCount())
+	if (room->GetPlayerCount() < room->GetMaxPlayerCount()) {
 		responsePacket.m_isSuccess = true;
-	else
+		pplayer->SendPacket(responsePacket);
+	}
+	else {
 		responsePacket.m_isSuccess = false;
-	pplayer->SendPacket(responsePacket);
-
+		pplayer->SendPacket(responsePacket);
+		return;
+	}
+	
 	SocialPacketServerInviteFriendRequest sendPacket;
 	sendPacket.m_gpid = pplayer->GetGPID();
 	sendPacket.m_roomName = room->GetRoomName();
 	sendPacket.m_friendName = packet.m_friendname;
+	sendPacket.m_gameMode = static_cast<char>(room->GetRoomGameType());
 
 	this->SendPacketToServer(sendPacket);
 }
@@ -327,6 +340,18 @@ void SocialServerHandler::HandlePacketChatFriendResponse(SocialPacketServerChatF
 	responsePacket.m_isSender = packet.m_isSender;
 
 	pplayer->SendPacket(responsePacket);
+}
+
+void SocialServerHandler::HandlePacketInviteConfirmRequest(SocialPacketServerInviteConfirmFriendRequest& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+
+	SocialGamePacketConfirmInviteFriendRequest sendPacket;
+	sendPacket.m_name = packet.m_name;
+	sendPacket.m_roomName = sendPacket.m_roomName;
+	sendPacket.m_gameMode = static_cast<RoomGameType>(packet.m_gameMode);
+
+	pplayer->SendPacket(sendPacket);
 }
 
 std::shared_ptr<Player> SocialServerHandler::GetPlayer(GPID gpid) { 

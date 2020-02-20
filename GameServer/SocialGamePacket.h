@@ -5,6 +5,7 @@
 #include <tuple>
 #include "BasePacket.h"
 #include "ErrorType.h"
+#include "Room.h"
 enum class PacketTypeSocialClient : char{
 	packetTypeSocialNone = 0,
 	//Chat
@@ -26,7 +27,9 @@ enum class PacketTypeSocialClient : char{
 	packetTypeSocialFriendListRequest, //친구 리스트
 	packetTypeSocialFriendListResponse,
 	packetTypeSocialInviteFriendRequest, //친구 게임 초대
-	packetTypeSocialInviteFriendResponse,
+	packetTypeSocialInviteFriendResponse, //가능 여부 판별하여 반환
+	packetTypeSocialConfirmInviteFriendRequest, //Social -> Game -> client 참가 여부 묻기 위한 패킷
+	packetTypeSocialConfirmInviteFriendResponse, //
 
 	packetTypeSocialCount,
 };
@@ -328,6 +331,29 @@ struct SocialGamePacketInviteFriendResponse : public BaseSocialGamePacket {
 	}
 	virtual void Deserialize(Buffer& buf) override {
 		buf >> m_isSuccess;
+
+		return;
+	}
+};
+
+struct SocialGamePacketConfirmInviteFriendRequest : public BaseSocialGamePacket {
+	SocialGamePacketConfirmInviteFriendRequest() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialConfirmInviteFriendRequest) {}
+	
+	std::string m_name;
+	std::string m_roomName;
+	RoomGameType m_gameMode = RoomGameType::GameTypeNone;
+
+	virtual Buffer& Serialize() override {
+		buffer << m_name;
+		buffer << m_roomName;
+		buffer << m_gameMode;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) override {
+		buf >> m_name;
+		buf >> m_roomName;
+		buf >> m_gameMode;
 
 		return;
 	}

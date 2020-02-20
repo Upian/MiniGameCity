@@ -108,7 +108,7 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		SocialPacketServerInviteFriendRequest packet;
 		packet.Deserialize(bufInfo->buffer);
 		auto Player = m_socialPlayerManager.FindSocialPlayer(packet.m_gpid);
-		m_friendManager.HandleInviteFriendRequest(Player, packet.m_roomName, packet.m_friendName);
+		m_friendManager.HandleInviteFriendRequest(Player, packet);
 		break;
 	}
 	default: {

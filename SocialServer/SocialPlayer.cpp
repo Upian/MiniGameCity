@@ -73,6 +73,14 @@ bool SocialPlayer::IsExistFriendList(std::string name) {
 	return false;
 }
 
+std::shared_ptr<SocialPlayer> SocialPlayer::FindFriend(const std::string& name) {
+	for (auto p : m_friendList) {
+		if (name == GetFriendNameInfo(p))
+			return GetFriend(p);
+	}
+	return nullptr;
+}
+
 bool SocialPlayer::AddFriendList(std::shared_ptr<SocialPlayer> player) {
 	if (m_maxFriendListSize <= m_friendList.size())
 		return false;
