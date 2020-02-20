@@ -255,6 +255,13 @@ void SocialServerHandler::HandlePacketInviteFriendRequest(SocialGamePacketInvite
 	if (nullptr == room)
 		return;
 
+	SocialGamePacketInviteFriendResponse responsePacket;
+	if (room->GetPlayerCount() < room->GetMaxPlayerCount())
+		responsePacket.m_isSuccess = true;
+	else
+		responsePacket.m_isSuccess = false;
+	pplayer->SendPacket(responsePacket);
+
 	SocialPacketServerInviteFriendRequest sendPacket;
 	sendPacket.m_gpid = pplayer->GetGPID();
 	sendPacket.m_roomName = room->GetRoomName();

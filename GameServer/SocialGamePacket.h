@@ -316,6 +316,20 @@ struct SocialGamePacketInviteFriendRequest : public BaseSocialGamePacket {
 		return;
 	}
 };
+struct SocialGamePacketInviteFriendResponse : public BaseSocialGamePacket {
+	SocialGamePacketInviteFriendResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialInviteFriendResponse) {}
 
+	bool m_isSuccess = false;
 
+	virtual Buffer& Serialize() override {
+		buffer << m_isSuccess;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) override {
+		buf >> m_isSuccess;
+
+		return;
+	}
+};
 #endif // !__GAMESERVER_SOCIAL_PACKET_H__
