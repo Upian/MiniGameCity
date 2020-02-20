@@ -2,6 +2,7 @@
 #include "LoginServer.h"
 #include "Player.h"
 #include "Log.h"
+#include <mutex>
 
 void LoginDBCacheHandler::Initialize() {
 	m_loginServer = LoginServer::GetServer();
@@ -23,6 +24,10 @@ void LoginDBCacheHandler::HandleLoginPacket(Buffer& buffer, std::shared_ptr<Play
 		ClientLoginPacketTypeLoginRequest packetClientRequest{};
 		packetClientRequest.Deserialize(buffer);
 		player->SetName(packetClientRequest.userId);
+		std::unique_lock<std::mutex> lck(mtx);
+		lck.lock();
+		player->SetToken(std::time(nullptr));
+		lck.unlock();
 		if (CheckIDPW(packetClientRequest.userId, packetClientRequest.userPw)) {
 			this->HandlePacketLoginRequest(packetClientRequest, player);
 		}

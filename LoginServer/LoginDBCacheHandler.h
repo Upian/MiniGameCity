@@ -36,7 +36,7 @@ private:
 
 	LoginServer* m_loginServer;
 	
-	
+	std::mutex mtx; // mutex for session id token.
 };
 
 #endif // __LOGIN_MANAGER_HANDLER_H__
