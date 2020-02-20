@@ -37,7 +37,7 @@ ErrorTypeAddFriend SocialPlayer::AddFriendRequest(std::shared_ptr<SocialPlayer> 
 	if (true == this->IsExistFriendRequestList(srcPlayer))
 		return ErrorTypeAddFriend::alreadySendRequest;
 
-	m_friendRequestList.emplace_back(srcPlayer->GetGPID(), srcPlayer->GetName(), srcPlayer);
+	m_friendRequestList.emplace_back(srcPlayer->GetGPID(), srcPlayer->GetName(), true, srcPlayer);
 	return ErrorTypeAddFriend::none;
 }
 
@@ -58,7 +58,7 @@ bool SocialPlayer::IsExistFriendRequestList(std::string name) {
 }
 
 bool SocialPlayer::IsExistFriendList(std::shared_ptr<SocialPlayer> player) {
-	for (FriendInfo& p : m_friendList) {
+	for (FriendInfo& p : this->GetFriendList()) {
 		if (player->GetGPID() == GetFriendGPIDInfo(p))
 			return true;
 	}
@@ -66,7 +66,7 @@ bool SocialPlayer::IsExistFriendList(std::shared_ptr<SocialPlayer> player) {
 }
 
 bool SocialPlayer::IsExistFriendList(std::string name) {
-	for (auto p : m_friendList) {
+	for (auto p : this->GetFriendList()) {
 		if (name == GetFriendNameInfo(p))
 			return true;
 	}
@@ -80,22 +80,40 @@ bool SocialPlayer::AddFriendList(std::shared_ptr<SocialPlayer> player) {
 		return false;
 
 	this->DeleteFriendRequestList(player->GetGPID());
-	m_friendList.emplace_back(player->GetGPID(), player->GetName(), player);
+	m_friendList.emplace_back(player->GetGPID(), player->GetName(), true, player);
 	return true;
 }
 //Call when player login
 void SocialPlayer::InformLoginToFriends() {
 	//Find loggedin player
-	auto manager = SocialServer::GetServer()->GetSocialPlayerManager();
-	for (auto p : m_friendList) {
-		std::shared_ptr<SocialPlayer> friendPlayer = manager.FindSocialPlayer(GetFriendGPIDInfo(p));
+	for (auto p : this->GetFriendList()) {
+		if (false == GetFriendIsLoginInfo(p))
+			return;
+
+		auto friendPlayer = GetFriend(p);
 		if (nullptr == friendPlayer)
-			continue;
+			return;
 		//Let my friends know I'm logged in
 		friendPlayer->UpdateFriendIsLogin(shared_from_this());
 
-		//Update logged in player
-		GetFriend(p) = friendPlayer;
+		//#update my friendList
+
+	}
+}
+
+void SocialPlayer::InformLogoutToFriends() {
+	//this -> logout player
+	//Find loggedin player
+	for (auto loginPlayer : this->GetFriendList()) {
+		if (false == GetFriendIsLoginInfo(loginPlayer))
+			return;
+
+		auto friendPlayer = GetFriend(loginPlayer);
+		if (nullptr == friendPlayer)
+			return;
+		//Let my friends know I'm logged out
+		friendPlayer->UpdateFriendIsLogout(shared_from_this());
+
 	}
 }
 
@@ -103,13 +121,26 @@ void SocialPlayer::UpdateFriendIsLogin(std::shared_ptr<SocialPlayer> player) {
 	if (nullptr == player)
 		return;
 
-	for (auto p : m_friendList) {
+	for (auto p : this->GetFriendList()) {
 		if (player->GetGPID() == GetFriendGPIDInfo(p)) {
-			GetFriend(p) = player;
+			SetFriendIsLoginInfo(p, true);
+			SetFriend(p, player);
 			return;
 		}
 	}
+}
 
+void SocialPlayer::UpdateFriendIsLogout(std::shared_ptr<SocialPlayer> player) {
+	if (nullptr == player)
+		return;
+
+	for (auto& p : this->GetFriendList()) {
+		if (player->GetGPID() == GetFriendGPIDInfo(p)) {
+			SetFriendIsLoginInfo(p, false);
+			SetFriend(p, nullptr);
+			return;
+		}
+	}
 }
 
 void SocialPlayer::DeleteFriendList(GPID gpid) {
@@ -130,12 +161,41 @@ void SocialPlayer::DeleteFriendRequestList(std::string name) {
 	});
 }
 
-GPID GetFriendGPIDInfo(const std::tuple<GPID, std::string, std::shared_ptr<SocialPlayer>>& info) {
+GPID GetFriendGPIDInfo(const std::tuple<GPID, std::string, bool, std::shared_ptr<SocialPlayer>>& info) {
 	return std::get<0>(info);
 }
-std::string GetFriendNameInfo(const std::tuple<GPID, std::string, std::shared_ptr<SocialPlayer> >& info) {
+std::string GetFriendNameInfo(const std::tuple<GPID, std::string, bool, std::shared_ptr<SocialPlayer> >& info) {
 	 return std::get<1>(info); 
 }
-std::shared_ptr<SocialPlayer> GetFriend(const std::tuple<GPID, std::string, std::shared_ptr<SocialPlayer> >& info) {
-	return std::get<2>(info); 
+bool GetFriendIsLoginInfo(std::tuple<GPID, std::string, bool, std::shared_ptr<SocialPlayer> >& info) {
+	return std::get<2>(info);
+}
+
+std::shared_ptr<SocialPlayer> GetFriend(std::tuple<GPID, std::string, bool, std::shared_ptr<SocialPlayer>>& info) {
+	bool isLogin = GetFriendIsLoginInfo(info);
+	auto temp = std::get<3>(info);
+	if (false == isLogin) {
+		if (nullptr == temp)
+			return nullptr;
+		temp.reset();
+		temp = nullptr;
+	}
+	return temp;
+}
+
+void SetFriendIsLoginInfo(std::tuple<GPID, std::string, bool, std::shared_ptr<SocialPlayer>>& info, const bool isLogin) {
+	if (false == isLogin) {
+		std::get<3>(info).reset();
+		std::get<3>(info) = nullptr;
+	}
+	std::get<2>(info) = isLogin;
+}
+
+void SetFriend(std::tuple<GPID, std::string, bool, std::shared_ptr<SocialPlayer>>& info, std::shared_ptr<SocialPlayer> player) {
+	if (nullptr == player) {
+		std::get<3>(info).reset();
+		std::get<3>(info) = nullptr;
+		return;
+	}
+	std::get<3>(info) = player;
 }

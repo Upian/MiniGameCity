@@ -7,7 +7,8 @@ std::shared_ptr<SocialPlayer> SocialPlayerManager::InsertPlayer(GPID gpid, std::
 		return nullptr;
 
 	std::shared_ptr<SocialPlayer> temp(new SocialPlayer(gpid, server));
-
+	
+	temp->InformLoginToFriends(); //friend
 	m_socialPlayers.push_back(temp);
 	return temp;
 }
@@ -16,6 +17,7 @@ void SocialPlayerManager::RemovePlayer(GPID gpid) {
 	auto pplayer = this->FindSocialPlayer(gpid);
 	if (nullptr == pplayer)
 		return;
+	pplayer->InformLogoutToFriends();
 	printf("LOGOUT PLAYER %d - %s\n", gpid, pplayer->GetName().c_str());
 	m_socialPlayers.remove(pplayer);
 	pplayer.reset();

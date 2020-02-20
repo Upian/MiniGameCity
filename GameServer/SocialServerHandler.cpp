@@ -305,9 +305,7 @@ void SocialServerHandler::HandlePacketFriendListResponse(SocialPacketServerFrien
 		return;
 	SocialGamePacketFriendListResponse responsePacket;
 
-	for (auto p : packet.m_friends) {
-		responsePacket.m_friends.emplace_back(p.name, p.isLogin);
-	}
+	responsePacket.m_friends.swap(packet.m_friends);
 
 	pplayer->SendPacket(responsePacket);
 }

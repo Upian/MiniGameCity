@@ -133,7 +133,6 @@ void SocialServer::HandleUpdatePlayerLogin(SocialPacketServerUpdatePlayerLogin& 
 	if (nullptr == pplayer)
 		return;
 
-
 	pplayer->SetName(packet.m_name); //#Test
 	//#DatabaseLoad
 	this->LoadPlayerSocialData(pplayer);
@@ -141,6 +140,7 @@ void SocialServer::HandleUpdatePlayerLogin(SocialPacketServerUpdatePlayerLogin& 
 
 void SocialServer::HandleUpdatePlayerLogout(SocialPacketServerUpdatePlayerLogout& packet, std::shared_ptr<ClntServer> server) {
 	m_socialPlayerManager.RemovePlayer(packet.m_gpid);
+
 	//#DatabaseSave
 }
 

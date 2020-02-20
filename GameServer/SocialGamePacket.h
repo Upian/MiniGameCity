@@ -2,7 +2,7 @@
 #ifndef __GAMESERVER_SOCIAL_PACKET_H__
 #define __GAMESERVER_SOCIAL_PACKET_H__
 #include <list>
-
+#include <tuple>
 #include "BasePacket.h"
 #include "ErrorType.h"
 enum class PacketTypeSocialClient : char{
@@ -272,39 +272,28 @@ struct SocialGamePacketFriendListRequest : public BaseSocialGamePacket {
 struct SocialGamePacketFriendListResponse : public BaseSocialGamePacket {
 	SocialGamePacketFriendListResponse() : BaseSocialGamePacket(PacketTypeSocialClient::packetTypeSocialFriendListResponse) {}
 
-	struct PlayerInfo {
-		PlayerInfo(std::string nm, bool login) :
-			name(nm),
-			isLogin(login)
-		{}
-		PlayerInfo() {}
-		std::string name;
-		bool isLogin;
-	};
-
 	__int16 m_size = 0;
-	std::list<PlayerInfo> m_friends;
+	std::list<std::tuple<std::string, bool> > m_friends;
 
 	virtual Buffer& Serialize() {
 		m_size = m_friends.size();
 
 		buffer << m_size;
 		for (auto s : m_friends) {
-			buffer << s.name;
-			buffer << s.isLogin;
+			buffer << std::get<0>(s);
+			buffer << std::get<1>(s);
 		}
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
-		std::string tempString;
+		std::tuple<std::string, bool> temp;
 
 		buf >> m_size;
 
-		PlayerInfo tempInfo;
 		for (int i = 0; i < m_size; ++i) {
-			buf >> tempInfo.name;
-			buf >> tempInfo.isLogin;
-			m_friends.emplace_back(tempInfo);
+			buf >> std::get<0>(temp);
+			buf >> std::get<1>(temp);
+			m_friends.emplace_back(temp);
 		}
 
 		return;

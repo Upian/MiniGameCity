@@ -117,11 +117,7 @@ void FriendsManager::HandleFriendListRequest(std::shared_ptr<SocialPlayer> playe
 	SocialPacketServerFriendListResponse packet;
 	packet.m_gpid = player->GetGPID();
 	for (auto p : player->GetFriendList()) {
-		packet.m_friends.emplace_back(GetFriendNameInfo(p), [&p]()->bool {
-			if (nullptr == GetFriend(p))
-				return false;
-			else return true;
-		}());
+		packet.m_friends.emplace_back(GetFriendNameInfo(p), GetFriendIsLoginInfo(p));
 	}
 	
 	player->GetServer()->SendPacket(packet);
