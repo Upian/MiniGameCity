@@ -11,16 +11,14 @@ enum ManagementPacketType : char {
 	loginManagementPacketTypeShowChannelResponse, // (int32)channelSize (channel(string, int, int)channelName, numberOfPeople, limitOfPeople), (unsigned int)GPID
 	loginManagementPacketTypeShowChannelRequest, // (uint32)gpid;
 	loginManagementPacketTypeChannelInResponse, // (bool)flag, (string)ip, (int)port, (uint32)gpid
-	loginManagementPacketTypeChannelInRequest, //(string)channelName, (unsigned int)GPID
+	loginManagementPacketTypeChannelInRequest, //(string)channelName, (unsigned int)GPID, (int64)token
 
 	// game server <-> management server
-	registerServerInfo, //Game -> Management // (int32)m_maxPlayer
-	preLoadRequest, //Management -> Game // m_gpid
+	registerServerInfo, //Game -> Management // (string)m_ipAddress, (int)port
+	preLoadRequest, //Management -> Game // (uint32)m_gpid, (int64)token
 	updateServerInfo, //Game -> Management // (int32)m_currentPlayer
 	transferChannelRequest,
 	transferChannelResponse,
-	//gameManagementPacketTypeCurrentPeopleRequest, // (int32)currentPeople 
-	//gameManagementPacketTypeChannelInRequest, // (unsigned int)GPID
 
 	managementPacketTypeSize,
 };
@@ -134,16 +132,19 @@ public:
 	virtual Buffer& Serialize() override {
 		buffer << channelName;
 		buffer << gpid;
+		buffer << token;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> channelName;
 		_buf >> gpid;
+		_buf >> token;
 	}
 
 	std::string channelName;
 	uint32 gpid;
+	int64 token;
 };
 
 /*
@@ -193,13 +194,17 @@ struct GameToManagementPreLoadRequest : public GameToManagementPacket {
 	GameToManagementPreLoadRequest() : GameToManagementPacket(ManagementPacketType::preLoadRequest) {}
 
 	unsigned __int32 m_gpid;
+	int64 m_token;
 
 	virtual Buffer& Serialize() override {
 		buffer << m_gpid;
+		buffer << m_token;
+
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> m_gpid;
+		_buf >> m_token;
 	}
 };
 

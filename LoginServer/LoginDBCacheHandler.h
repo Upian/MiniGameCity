@@ -4,6 +4,7 @@
 #include <memory>
 #include "LoginPacket.h"
 #include "BaseServerHandler.h"
+#include <chrono>
 
 class LoginServer;
 
@@ -29,11 +30,13 @@ private:
 	void HandlePacketSignupResponse(LoginDBCachePacketTypeSignupResponse& packet, std::shared_ptr<Player> player);
 	void HandlePacketDeleteResponse(LoginDBCachePacketTypeDeleteResponse& packet, std::shared_ptr<Player> player);
 
-	LoginServer* m_loginServer;
-
 	// check
 	bool CheckIDPW(std::string userId, std::string userPw);
 	bool CheckNick(std::string userNick);
+
+	LoginServer* m_loginServer;
+	
+	
 };
 
 #endif // __LOGIN_MANAGER_HANDLER_H__

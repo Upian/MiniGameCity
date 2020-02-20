@@ -8,7 +8,7 @@ enum LoginPacketType : char {
 	loginPacketTypeNone = 0,
 
 	// client <-> login server
-	clientLoginPacketTypeLoginResponse, //(bool)flag(1), (string)userNick(4~8)
+	clientLoginPacketTypeLoginResponse, //(bool)flag(1), (string)userNick(4~8), (int64)token
 	clientLoginPacketTypeLoginRequest, //(string)userId(4~8), (string)userPw(8~16)  
 	clientLoginPacketTypeLogoutRequest, //nothing
 	clientLoginPacketTypeSignupResponse, //(bool)flag
@@ -48,15 +48,19 @@ public:
 	virtual Buffer& Serialize() override {
 		buffer << flag;
 		buffer << userNick;
+		buffer << token;
+
 		return buffer;
 	};
 	virtual void Deserialize(Buffer& _buf) override {
 		_buf >> flag;
 		_buf >> userNick;
+		_buf >> token;
 	};
 
 	bool flag = true;
 	std::string userNick;
+	int64 token = 0;
 };
 
 class ClientLoginPacketTypeLoginRequest : public LoginPacket {

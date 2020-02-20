@@ -163,6 +163,7 @@ void LoginDBCacheHandler::HandlePacketLoginResponse(LoginDBCachePacketTypeLoginR
 	ClientLoginPacketTypeLoginResponse packetClientResponse{};
 	packetClientResponse.flag = packet.flag;
 	packetClientResponse.userNick = packet.userNick;
+	packetClientResponse.token = player->GetToekn();
 	player->SendPacket(packetClientResponse);
 }
 

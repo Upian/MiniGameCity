@@ -63,34 +63,91 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 		if (flag == true) {
 			LoginDBCachePacketTypeLoginResponse packetLoginResponse{};
 
-			DatabaseAPI db;
-			if (db.Connect(Util::GetConfigToString("LoginDBCache.ini", "DB", "Host", "127.0.0.1"),
-				Util::GetConfigToString("LoginDBCache.ini", "DB", "User", "root"),
-				Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "minicity1!"),
-				Util::GetConfigToString("LoginDBCache.ini", "DB", "Name", "minigamecity"),
-				Util::GetConfigToInt("LoginDBCache.ini", "DB", "Port", 3306))) {
-
-				printf("db 접속 성공\n");
-				Account account = db.LoginAccount(packetLoginRequest.userId, packetLoginRequest.userPw);
-				packetLoginResponse.flag = account.flag;
-				packetLoginResponse.userNick = account.nick;
-				packetLoginResponse.gpid = db.GetGpid();
+			// test dummy
+			if (packetLoginRequest.userId == "admin1" && packetLoginRequest.userPw == "12341234") {
+				packetLoginResponse.flag = true;
+				packetLoginResponse.userNick = "1일1일";
+				packetLoginResponse.gpid = 1;
 				packetLoginResponse.userId = packetLoginRequest.userId;
-				db.Close();
+				bufInfo->Clear();
+				bufInfo->buffer = packetLoginResponse.Serialize();
+				send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
+			}
+			else if (packetLoginRequest.userId == "admin2" && packetLoginRequest.userPw == "12341234") {
+				packetLoginResponse.flag = true;
+				packetLoginResponse.userNick = "2이2이";
+				packetLoginResponse.gpid = 1;
+				packetLoginResponse.userId = packetLoginRequest.userId;
+				bufInfo->Clear();
+				bufInfo->buffer = packetLoginResponse.Serialize();
+				send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
+			}
+			else if (packetLoginRequest.userId == "admin3" && packetLoginRequest.userPw == "12341234") {
+				packetLoginResponse.flag = true;
+				packetLoginResponse.userNick = "3삼3삼";
+				packetLoginResponse.gpid = 1;
+				packetLoginResponse.userId = packetLoginRequest.userId;
+				bufInfo->Clear();
+				bufInfo->buffer = packetLoginResponse.Serialize();
+				send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
+			}
+			else if (packetLoginRequest.userId == "admin4" && packetLoginRequest.userPw == "12341234") {
+				packetLoginResponse.flag = true;
+				packetLoginResponse.userNick = "4사4사";
+				packetLoginResponse.gpid = 1;
+				packetLoginResponse.userId = packetLoginRequest.userId;
+				bufInfo->Clear();
+				bufInfo->buffer = packetLoginResponse.Serialize();
+				send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
+			}
+			else if (packetLoginRequest.userId == "admin5" && packetLoginRequest.userPw == "12341234") {
+				packetLoginResponse.flag = true;
+				packetLoginResponse.userNick = "5오5오";
+				packetLoginResponse.gpid = 1;
+				packetLoginResponse.userId = packetLoginRequest.userId;
+				bufInfo->Clear();
+				bufInfo->buffer = packetLoginResponse.Serialize();
+				send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
+			}
+			else if (packetLoginRequest.userId == "admin6" && packetLoginRequest.userPw == "12341234") {
+				packetLoginResponse.flag = true;
+				packetLoginResponse.userNick = "6육6육";
+				packetLoginResponse.gpid = 1;
+				packetLoginResponse.userId = packetLoginRequest.userId;
+				bufInfo->Clear();
+				bufInfo->buffer = packetLoginResponse.Serialize();
+				send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
 			}
 			else {
-				printf("db 접속 실패\n");
-				packetLoginResponse.flag = false;
-				packetLoginResponse.userNick = "";
-				packetLoginResponse.gpid = 0;
-				packetLoginResponse.userId = packetLoginRequest.userId;
-			}
+				DatabaseAPI db;
+				if (db.Connect(Util::GetConfigToString("LoginDBCache.ini", "DB", "Host", "127.0.0.1"),
+					Util::GetConfigToString("LoginDBCache.ini", "DB", "User", "root"),
+					Util::GetConfigToString("LoginDBCache.ini", "DB", "Pass", "minicity1!"),
+					Util::GetConfigToString("LoginDBCache.ini", "DB", "Name", "minigamecity"),
+					Util::GetConfigToInt("LoginDBCache.ini", "DB", "Port", 3306))) {
 
-			bufInfo->Clear();
-			bufInfo->buffer = packetLoginResponse.Serialize();
-			send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
-			Util::LoggingInfo("LoginDBCache.log", "Type : LoginDBCachePacketTypeLoginResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+					printf("db 접속 성공\n");
+					Account account = db.LoginAccount(packetLoginRequest.userId, packetLoginRequest.userPw);
+					packetLoginResponse.flag = account.flag;
+					packetLoginResponse.userNick = account.nick;
+					packetLoginResponse.gpid = db.GetGpid();
+					packetLoginResponse.userId = packetLoginRequest.userId;
+					db.Close();
+				}
+				else {
+					printf("db 접속 실패\n");
+					packetLoginResponse.flag = false;
+					packetLoginResponse.userNick = "";
+					packetLoginResponse.gpid = 0;
+					packetLoginResponse.userId = packetLoginRequest.userId;
+				}
 
+				bufInfo->Clear();
+				bufInfo->buffer = packetLoginResponse.Serialize();
+				send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
+				Util::LoggingInfo("LoginDBCache.log", "Type : LoginDBCachePacketTypeLoginResponse || Send packet : %s || size: %d || from %d", bufInfo->buffer, bufInfo->buffer.Length(), bufInfo->socket);
+
+			}	
 		}
 		else {
 			LoginDBCachePacketTypeLoginResponse packetLoginResponse{};

@@ -5,6 +5,7 @@
 
 #include "ServerCommon.h"
 #include "ClientBase.h"
+#include <ctime>
 
 enum class PlayerState {
 	playerStateNone = 0,
@@ -48,6 +49,9 @@ public:
 	std::string GetName() {
 		return m_playerName;
 	}
+	long long GetToekn() {
+		return m_token;
+	}
 
 #pragma region Game
 	void PlayerInfoClear();
@@ -90,6 +94,7 @@ private:
 	bool m_isRoomMaster = false;
 	__int32 m_imageIndex = 0;
 	bool m_isReady = false;
+	std::time_t m_token = std::time(nullptr);
 
 	int				InGameScore = 0;			//인게임 점수
 	bool			ExitReservation = false;	//게임 나가기 예약

@@ -121,6 +121,7 @@ void ManagementServer::HandleChannelIn(LoginManagementPacketTypeChannelInRequest
 
 	GameToManagementPreLoadRequest packetGameRequest;
 	packetGameRequest.m_gpid = packet.gpid;
+	packetGameRequest.m_token = packet.token;
 	gameServer->SendPacket(packetGameRequest);
 
 	LoginManagementPacketTypeChannelInResponse packetLoginResponse;
