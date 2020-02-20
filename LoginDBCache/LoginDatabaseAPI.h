@@ -9,6 +9,7 @@
 
 struct Account {
 	bool flag = true;
+	bool duplicate = false;
 	std::string nick;
 };
 

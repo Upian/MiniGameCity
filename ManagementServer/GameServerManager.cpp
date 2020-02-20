@@ -13,17 +13,6 @@ void GameServerManager::Initialize() {
 
 }
 
-//void GameServerManager::InsertServer(SOCKET socket) {
-//	if (true == this->isExistServer(socket))
-//		return;
-//
-//	std::shared_ptr<GameServer> gameServer = std::make_shared<GameServer>(socket);
-//	gameServer->SetChannelName("Channel" + MakeChannelNumber());
-//	gameServer->SetCurrentPeople(0);
-//	gameServer->SetMaximumPeople(300);
-//	_gameServer.emplace_back(gameServer);
-//}
-
 std::shared_ptr<GameServer> GameServerManager::FindGameServerBySocket(SOCKET socket) {
 	for (auto g : _gameServer) {
 		if (socket == g->GetSocket())
@@ -60,7 +49,7 @@ std::string GameServerManager::MakeChannelNumber() {
 */
 
 void GameServerManager::HandlePacketGameRegister(GameToManagementRegisterServerInfo& packet, SOCKET socket) {
-	if (packet.m_portNum >= 10010) {
+	if (packet.m_portNum >= Util::GetConfigToInt("ManagementServer.ini", "Network", "GameServerPort", 10010)) {
 		std::shared_ptr<GameServer> gameServer(new GameServer(socket));
 		gameServer->SetServerIpAddress(packet.m_ipAddress);
 		gameServer->SetServerPortNum(packet.m_portNum);
