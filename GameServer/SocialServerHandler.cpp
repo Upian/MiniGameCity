@@ -157,6 +157,14 @@ void SocialServerHandler::HandlePacket(Buffer& buffer) {
 		packet.Deserialize(buffer);
 		auto pplayer = this->GetPlayer(packet.m_gpid);
 		this->HandlePacketChatFriendResponse(packet, pplayer);
+		break;
+	}
+	case PacketTypeSocialServer::InviteConfirmFriendResponse: {
+		SocialPacketServerInviteConfirmFriendResponse packet;
+		packet.Deserialize(buffer);
+		auto pplayer = this->GetPlayer(packet.m_gpid);
+		this->HandlePacketInviteConfirmResponse(packet, pplayer);
+		break;
 	}
 	default:break;
 	}
@@ -255,10 +263,24 @@ void SocialServerHandler::HandlePacketInviteFriendRequest(SocialGamePacketInvite
 	if (nullptr == room)
 		return;
 
+	SocialGamePacketInviteFriendResponse responsePacket;
+	if (room->GetPlayerCount() < room->GetMaxPlayerCount()) {
+		responsePacket.m_isSuccess = true;
+		pplayer->SendPacket(responsePacket);
+	}
+	else {
+		responsePacket.m_isSuccess = false;
+		pplayer->SendPacket(responsePacket);
+		return;
+	}
+	
 	SocialPacketServerInviteFriendRequest sendPacket;
 	sendPacket.m_gpid = pplayer->GetGPID();
-	sendPacket.m_roomName = room->GetRoomName();
 	sendPacket.m_friendName = packet.m_friendname;
+	sendPacket.m_roomName = room->GetRoomName();
+	sendPacket.m_roomNumber = room->GetRoomNumber();
+	sendPacket.m_createdTime = room->GetCreatedTime();
+	sendPacket.m_gameMode = static_cast<char>(room->GetRoomGameType());
 
 	this->SendPacketToServer(sendPacket);
 }
@@ -305,9 +327,7 @@ void SocialServerHandler::HandlePacketFriendListResponse(SocialPacketServerFrien
 		return;
 	SocialGamePacketFriendListResponse responsePacket;
 
-	for (auto p : packet.m_friends) {
-		responsePacket.m_friends.emplace_back(p.name, p.isLogin);
-	}
+	responsePacket.m_friends.swap(packet.m_friends);
 
 	pplayer->SendPacket(responsePacket);
 }
@@ -322,6 +342,22 @@ void SocialServerHandler::HandlePacketChatFriendResponse(SocialPacketServerChatF
 	responsePacket.m_isSender = packet.m_isSender;
 
 	pplayer->SendPacket(responsePacket);
+}
+
+void SocialServerHandler::HandlePacketInviteConfirmResponse(SocialPacketServerInviteConfirmFriendResponse& packet, std::shared_ptr<Player> pplayer) {
+	if (nullptr == pplayer)
+		return;
+
+	SocialGamePacketConfirmInviteFriendResponse sendPacket;
+	sendPacket.m_roomNumber = packet.m_roomNumber;
+	sendPacket.m_name = packet.m_name;
+	sendPacket.m_roomName = packet.m_roomName;
+	sendPacket.m_createdTime = packet.m_createdTime;
+	sendPacket.m_ipAddress = packet.m_ipAddress;
+	sendPacket.m_port = packet.m_port;
+	sendPacket.m_gameMode = static_cast<RoomGameType>(packet.m_gameMode);
+
+	pplayer->SendPacket(sendPacket);
 }
 
 std::shared_ptr<Player> SocialServerHandler::GetPlayer(GPID gpid) { 

@@ -3,6 +3,7 @@
 #define __SOCIALSERVER_FRIENDS_MANAGER_H__
 
 #include <memory>
+#include "SocialServerPacket.h"
 
 class SocialPlayer;
 
@@ -15,7 +16,7 @@ public:
 	void HandleFriendListRequest(std::shared_ptr<SocialPlayer>);
 	void HandleDeleteFriendRequest(std::shared_ptr<SocialPlayer>, std::string);
 	void HandleChatFriendRequest(std::shared_ptr<SocialPlayer>, const std::string& destName, const std::string& message);
-	void HandleInviteFriendRequest(std::shared_ptr<SocialPlayer>, const std::string& friendName, const std::string& roomName);
+	void HandleInviteFriendRequest(std::shared_ptr<SocialPlayer>, SocialPacketServerInviteFriendRequest& packet);
 
 private:
 

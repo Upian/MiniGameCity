@@ -44,7 +44,7 @@ private:
 	void HandlePacketAcceptFriendResponse(SocialPacketServerAcceptFriendResponse& packet, std::shared_ptr<Player> pplayer);
 	void HandlePacketFriendListResponse(SocialPacketServerFriendListResponse& packet, std::shared_ptr<Player> pplayer);
 	void HandlePacketChatFriendResponse(SocialPacketServerChatFriendResponse& packet, std::shared_ptr<Player> pplayer);
-
+	void HandlePacketInviteConfirmResponse(SocialPacketServerInviteConfirmFriendResponse& packet, std::shared_ptr<Player> pplayer);
 
 	std::shared_ptr<Player> GetPlayer(GPID gpid);
 	GameServer* m_gameServer = nullptr;

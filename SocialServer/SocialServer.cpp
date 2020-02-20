@@ -108,7 +108,7 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		SocialPacketServerInviteFriendRequest packet;
 		packet.Deserialize(bufInfo->buffer);
 		auto Player = m_socialPlayerManager.FindSocialPlayer(packet.m_gpid);
-		m_friendManager.HandleInviteFriendRequest(Player, packet.m_roomName, packet.m_friendName);
+		m_friendManager.HandleInviteFriendRequest(Player, packet);
 		break;
 	}
 	default: {
@@ -133,7 +133,6 @@ void SocialServer::HandleUpdatePlayerLogin(SocialPacketServerUpdatePlayerLogin& 
 	if (nullptr == pplayer)
 		return;
 
-
 	pplayer->SetName(packet.m_name); //#Test
 	//#DatabaseLoad
 	this->LoadPlayerSocialData(pplayer);
@@ -141,6 +140,7 @@ void SocialServer::HandleUpdatePlayerLogin(SocialPacketServerUpdatePlayerLogin& 
 
 void SocialServer::HandleUpdatePlayerLogout(SocialPacketServerUpdatePlayerLogout& packet, std::shared_ptr<ClntServer> server) {
 	m_socialPlayerManager.RemovePlayer(packet.m_gpid);
+
 	//#DatabaseSave
 }
 

@@ -60,6 +60,7 @@ private:
 /*	bool Packet*/
 	TwentyProviderSelectAnswer SelectFiveAnswer(TwentyProviderSelectAnswer packet);		//5개의 문제를 선택
 
+
 	//기타 함수
 	void Read_File();								//파일 읽는 함수
 	void Random_Int();								//무작위 숫자 리턴

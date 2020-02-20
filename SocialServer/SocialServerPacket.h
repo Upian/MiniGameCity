@@ -3,7 +3,7 @@
 #define __SOCIALSERVER_SOCIAL_SERVER_PACKET_H__
 
 #include <list>
-
+#include <tuple>
 #include "BasePacket.h"
 #include "ErrorType.h"
 using GPID = unsigned __int32;
@@ -28,10 +28,9 @@ enum class PacketTypeSocialServer : char {
 	friendListResponse,
 	chatFriendRequest,
 	chatFriendResponse,
+
 	InviteRequestFriendRequest, // src client -> game server -> social server
-	InviteResponseFriendResponse, // src client <- game server <- social server
-	InviteConfirmFriendRequest, //social server -> game server -> dest client
-	InviteConfirmFriendResponse,
+	InviteConfirmFriendResponse, //social server -> game server -> dest client
 
 	//Guild
 
@@ -290,21 +289,10 @@ struct SocialPacketServerFriendListRequest : public BaseSocialServerPacket {
 };
 struct SocialPacketServerFriendListResponse : public BaseSocialServerPacket {
 	SocialPacketServerFriendListResponse() : BaseSocialServerPacket(PacketTypeSocialServer::friendListResponse) {}
-private:
-	struct PlayerInfo {
-		PlayerInfo(std::string nm, bool login) :
-			name(nm),
-			isLogin(login)
-		{}
-		PlayerInfo() {}
-		std::string name;
-		bool isLogin;
-	};
 
-public:
 	GPID m_gpid = 0;
 	__int16 m_size = 0;
-	std::list<PlayerInfo> m_friends;
+	std::list<std::tuple<std::string, bool> > m_friends;
 
 	virtual Buffer& Serialize() {
 		m_size = m_friends.size();
@@ -312,8 +300,8 @@ public:
 		buffer << m_gpid;
 		buffer << m_size;
 		for (auto s : m_friends) {
-			buffer << s.name;
-			buffer << s.isLogin;
+			buffer << std::get<0>(s);
+			buffer << std::get<1>(s);
 		}
 
 		return buffer;
@@ -322,10 +310,10 @@ public:
 		buf >> m_gpid;
 		buf >> m_size;
 
-		PlayerInfo tempInfo;
+		std::tuple<std::string, bool> tempInfo;
 		for (int i = 0; i < m_size; ++i) {
-			buf >> tempInfo.name;
-			buf >> tempInfo.isLogin;
+			buf >> std::get<0>(tempInfo);
+			buf >> std::get<1>(tempInfo);
 			m_friends.emplace_back(tempInfo);
 		}
 		return;
@@ -377,27 +365,71 @@ struct SocialPacketServerChatFriendResponse : public BaseSocialServerPacket {
 		return;
 	}
 };
-
+//Game server -> Social server
 struct SocialPacketServerInviteFriendRequest : public BaseSocialServerPacket {
 	SocialPacketServerInviteFriendRequest() : BaseSocialServerPacket(PacketTypeSocialServer::InviteRequestFriendRequest) {}
 
 	GPID m_gpid = 0;
-	std::string m_roomName;
 	std::string m_friendName;
+	std::string m_roomName;
+	int m_roomNumber = 0;
+	time_t m_createdTime = 0;
+	char m_gameMode = 0;
 
 	virtual Buffer& Serialize() {
 		buffer << m_gpid;
-		buffer << m_roomName;
 		buffer << m_friendName;
+		buffer << m_roomName;
+		buffer << m_roomNumber;
+		buffer << m_createdTime;
+		buffer << m_gameMode;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) {
 		buf >> m_gpid;
-		buf >> m_roomName;
 		buf >> m_friendName;
-
+		buf >> m_roomName;
+		buf >> m_roomNumber;
+		buf >> m_createdTime;
+		buf >> m_gameMode;
 	}
 };
 
+//social server -> invited friend
+struct SocialPacketServerInviteConfirmFriendResponse : public BaseSocialServerPacket {
+	SocialPacketServerInviteConfirmFriendResponse() : BaseSocialServerPacket(PacketTypeSocialServer::InviteConfirmFriendResponse) {}
+
+	GPID m_gpid = 0; //invited friend (dest)
+	std::string m_name; //src 
+	std::string m_roomName;
+	int m_roomNumber = 0;
+	time_t m_createdTime = 0;
+	char m_gameMode = 0;
+	std::string m_ipAddress;
+	int m_port = 0;
+
+	virtual Buffer& Serialize() {
+		buffer << m_gpid;
+		buffer << m_name;
+		buffer << m_roomName;
+		buffer << m_roomNumber;
+		buffer << m_createdTime;
+		buffer << m_gameMode;
+		buffer << m_ipAddress;
+		buffer << m_port;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& buf) {
+		buf >> m_gpid;
+		buf >> m_name;
+		buf >> m_roomName;
+		buf >> m_roomNumber;
+		buf >> m_createdTime;
+		buf >> m_gameMode;
+		buf >> m_ipAddress;
+		buf >> m_port;
+	}
+};
 #endif // !__SOCIALSERVER_SOCIAL_SERVER_PACKET_H__

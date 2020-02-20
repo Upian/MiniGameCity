@@ -17,7 +17,8 @@ enum ManagementPacketType : char {
 	registerServerInfo, //Game -> Management // (int32)m_maxPlayer
 	preLoadRequest, //Management -> Game // m_gpid
 	updateServerInfo, //Game -> Management // (int32)m_currentPlayer
-
+	transferChannelRequest,
+	transferChannelResponse,
 	//gameManagementPacketTypeCurrentPeopleRequest, // (int32)currentPeople 
 	//gameManagementPacketTypeChannelInRequest, // (unsigned int)GPID
 
@@ -216,53 +217,27 @@ struct GameToManagementUpdateServerInfoRequest : public GameToManagementPacket {
 	}
 };
 
-/*
+struct GameToManagementTransferChannelRequest : public GameToManagementPacket {
+	GameToManagementTransferChannelRequest() : GameToManagementPacket(ManagementPacketType::transferChannelRequest) {}
 
-		  game server <-> management server
+	virtual Buffer& Serialize() override {
+		
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		
+	}
+};
 
-*/
-//class GameManagementPacket : public BasePacket {
-//public:
-//	GameManagementPacket(ManagementPacketType _managementPacketType) : BasePacket(BasePacketType::basePacketTypeGameToManagementServer), managementPacketType(_managementPacketType) {
-//		this->PacketTypeSerial(managementPacketType);
-//	}
-//	~GameManagementPacket() {}
-//protected:
-//	ManagementPacketType managementPacketType = managementPacketTypeNone;
-//};
-//
-//class GameManagementPacketTypeCurrentPeopleRequest : public GameManagementPacket {
-//public:
-//	GameManagementPacketTypeCurrentPeopleRequest() : GameManagementPacket(gameManagementPacketTypeCurrentPeopleRequest) {}
-//	~GameManagementPacketTypeCurrentPeopleRequest() {}
-//
-//	virtual Buffer& Serialize() override {
-//		buffer << currentPeople;
-//		
-//		return buffer;
-//	}
-//	virtual void Deserialize(Buffer& _buf) override {
-//		_buf >> currentPeople;
-//	}
-//
-//	int32 currentPeople = 0;
-//};
-//
-//class GameManagementPacketTypeChannelInRequest : public GameManagementPacket {
-//public:
-//	GameManagementPacketTypeChannelInRequest() : GameManagementPacket(gameManagementPacketTypeChannelInRequest) {}
-//	~GameManagementPacketTypeChannelInRequest() {}
-//
-//	virtual Buffer& Serialize() override {
-//		buffer << gpid;
-//
-//		return buffer;
-//	}
-//	virtual void Deserialize(Buffer& _buf) override {
-//		_buf >> gpid;
-//	}
-//
-//	uint32 gpid = 0;
-//};
+struct GameToManagementTransferChannelResponse : public GameToManagementPacket {
+	GameToManagementTransferChannelResponse() : GameToManagementPacket(ManagementPacketType::transferChannelResponse) {}
 
+	virtual Buffer& Serialize() override {
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+
+	}
+};
 #endif

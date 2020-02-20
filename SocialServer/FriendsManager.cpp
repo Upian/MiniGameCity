@@ -117,11 +117,7 @@ void FriendsManager::HandleFriendListRequest(std::shared_ptr<SocialPlayer> playe
 	SocialPacketServerFriendListResponse packet;
 	packet.m_gpid = player->GetGPID();
 	for (auto p : player->GetFriendList()) {
-		packet.m_friends.emplace_back(GetFriendNameInfo(p), [&p]()->bool {
-			if (nullptr == GetFriend(p))
-				return false;
-			else return true;
-		}());
+		packet.m_friends.emplace_back(GetFriendNameInfo(p), GetFriendIsLoginInfo(p));
 	}
 	
 	player->GetServer()->SendPacket(packet);
@@ -185,8 +181,21 @@ void FriendsManager::HandleChatFriendRequest(std::shared_ptr<SocialPlayer> srcPl
 	destPlayer->GetServer()->SendPacket(responseDest);
 }
 
-void FriendsManager::HandleInviteFriendRequest(std::shared_ptr<SocialPlayer> player, const std::string & friendName, const std::string & roomName) {
+void FriendsManager::HandleInviteFriendRequest(std::shared_ptr<SocialPlayer> player, SocialPacketServerInviteFriendRequest& packet) {
 	if (nullptr == player)
 		return;
 
+	auto friendPlayer = player->FindFriend(packet.m_friendName);
+	if (nullptr == friendPlayer)
+		return;
+
+	SocialPacketServerInviteConfirmFriendResponse sendPacket;
+	sendPacket.m_gpid = friendPlayer->GetGPID();
+	sendPacket.m_name = player->GetName();
+	sendPacket.m_roomName = packet.m_roomName;
+	sendPacket.m_roomNumber = packet.m_roomNumber;
+	sendPacket.m_createdTime = packet.m_createdTime;
+	sendPacket.m_gameMode = packet.m_gameMode;
+	sendPacket.m_ipAddress = player->GetServer()->GetServerIpAddress();
+	sendPacket.m_port = player->GetServer()->GetServerPortNum();
 }
