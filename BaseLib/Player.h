@@ -49,10 +49,10 @@ public:
 	std::string GetName() {
 		return m_playerName;
 	}
-	int64 GetToken() {
+	time_t GetToken() {
 		return m_token;
 	}
-	long long SetToken(time_t time) {
+	void SetToken(time_t time) {
 		m_token = time;
 	}
 
