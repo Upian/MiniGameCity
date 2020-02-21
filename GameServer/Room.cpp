@@ -37,7 +37,7 @@ void Room::Initialize() {
 void Room::StartGame() {
 	RoomPacketStartGameResponse packet;
 	packet.m_isSuccess = false;
-	packet.m_errorCode == ErrorTypeStartGame::errorTypeStartGameNone;
+	packet.m_errorCode = ErrorTypeStartGame::errorTypeStartGameNone;
 
 	if (nullptr == m_game)
 		packet.m_errorCode = ErrorTypeStartGame::errorTypeStartGameNotHaveGame;
@@ -69,6 +69,7 @@ void Room::StartGame() {
 		m_roomPlayerManager.SetAllPlayerState(PlayerState::playerStatePlayGame);
 		m_game(m_roomPlayerManager);
 		m_roomState = RoomState::roomStateNone;
+		m_roomPlayerManager.SetAllPlayerState(PlayerState::playerStateLobby);
 		return;
 	});
 }

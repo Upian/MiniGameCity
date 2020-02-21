@@ -50,7 +50,7 @@ private:
 	Util::Conversion conversion;
 
 	//받은 패킷 저장 큐
-	std::queue<std::pair<std::shared_ptr<Player>, Buffer>> PacketQueue;
+	std::queue<std::pair<std::shared_ptr<Player>, Buffer>*> PacketQueue;
 	std::pair<std::shared_ptr<Player>, Buffer> RecvPacket;
 	InGamePacketType BaseGameTypeSet;
 

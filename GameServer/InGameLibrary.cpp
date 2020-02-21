@@ -25,7 +25,7 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 	}
 	//게임 준비 파트 변수 생성
 	BaseGameTypeSet = InGamePacketType::Twenty_Question_Game;
-	this->InGamePlayerManager = _InGamePlayerManager;
+	InGamePlayerManager = _InGamePlayerManager;
 	InGamePlayerList = InGamePlayerManager.GetPlayerList();
 	InGamePlayer.reserve(5);
 	AskerGroup.reserve(4);
@@ -172,7 +172,7 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 
 					char tempAnswer[31];
 					strcpy_s(tempAnswer, 31, conversion.ToAnsi(AnswerPacket.AskerAnswer));
-					if (tempAnswer == TwentyAnswer)
+					if (strcmp(tempAnswer,TwentyAnswer) == 0)
 					{
 						//정답을 맞췄을 경우 동작
 						AnswerBroadCastPacket.AnswerResult = 1;
@@ -245,7 +245,7 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				if (AskerTurn)
 				{
 					InGameTimerPacket.Remaintime = AskerTimer;
-					InGamePlayerManager.SendToAllPlayers(InGameTimerPacket);
+					//InGamePlayerManager.SendToAllPlayers(InGameTimerPacket);
 					if (AskerTimer <= 0)
 					{
 						AskerTimer = 31;
@@ -276,13 +276,16 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				else 
 				{
 					InGameTimerPacket.Remaintime = ProviderTimer;
-					InGamePlayerManager.SendToAllPlayers(InGameTimerPacket);
+					//InGamePlayerManager.SendToAllPlayers(InGameTimerPacket);
 
 					if (ProviderTimer <= 0)
 					{
 						(Quiz_Provide_Player)->UpdateGameScore(-15);
 						TwentyUpdateScore ProviderScorePacket(conversion.ToUTF8((Quiz_Provide_Player)->GetPlayerName().c_str()),(Quiz_Provide_Player)->GetGameScore());
 						InGamePlayerManager.SendToAllPlayers(ProviderScorePacket);
+
+						TwentyRemainQuestion RemainCountPacket(20);
+						InGamePlayerManager.SendToAllPlayers(RemainCountPacket);
 
 						Next_Asker_Point();
 						TwentyNoticeNextAsker NoticeAskerPacket(conversion.ToUTF8((*Asker)->GetPlayerName().c_str()), 1);
@@ -309,8 +312,9 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 		++GameRound;
 		if (GameRound >= InGamePlayerManager.GetPlayerCount()) break;
 		Game_Setting_On();
-		TwentyRoundEnd roundendPacket(conversion.ToUTF8((Quiz_Provide_Player)->GetPlayerName().c_str()),conversion.ToUTF8((*Asker)->GetPlayerName().c_str()),GameRound);
+		TwentyRoundEnd roundendPacket(conversion.ToUTF8((Quiz_Provide_Player)->GetPlayerName().c_str()),conversion.ToUTF8((*Asker)->GetPlayerName().c_str()),GameRound+1);
 		InGamePlayerManager.SendToAllPlayers(roundendPacket);
+		
 		//다음 질문자에 대한 정보를 보냄.
 	}
 
@@ -360,6 +364,7 @@ void InGameLibrary::Connect_Check_In_Wait_time(int setTime)
 //게임을 진행하기 위한 역할 셋팅
 void InGameLibrary::Game_Setting_On()
 {
+	AskerGroup.clear();
 	Quiz_Provide_Player = *(InGamePlayer.begin() + GameRound);
 
 	for (auto i = InGamePlayer.begin(); i < InGamePlayer.end(); ++i)
@@ -430,7 +435,8 @@ void InGameLibrary::AllPlayerReadyCheck()
 			if(!PopGamePacketToQueue()) continue;
 			if (RecvPacket.first->GetGPID() != (*i)->GetGPID())
 			{
-				PacketQueue.push(RecvPacket);
+				std::pair<std::shared_ptr<Player>, Buffer>* pPacket = new std::pair<std::shared_ptr<Player>, Buffer>(RecvPacket);
+				PacketQueue.push(pPacket);
 				continue;
 			}
 			packet.Deserialize(RecvPacket.second);
@@ -469,11 +475,11 @@ void InGameLibrary::SaveGamePacketToQueue(Buffer& buffer, std::shared_ptr<Player
 
 	InGamePacketType type = (InGamePacketType)PacketTypeDeserial(buffer);
 
-	if (type != BaseGameTypeSet) return;
+	/*if (type != BaseGameTypeSet) return;*/
 
-	std::pair<std::shared_ptr<Player>, Buffer> temp;
-
-	temp = make_pair(player, buffer);
+	std::pair<std::shared_ptr<Player>, Buffer> * temp = new std::pair<std::shared_ptr<Player>, Buffer>();
+	temp->first = player;
+	temp->second = buffer;
 
 	PacketQueue.push(temp);
 }
@@ -482,7 +488,8 @@ bool InGameLibrary::PopGamePacketToQueue()
 {
 	if (PacketQueue.empty()) return false;
 
-	RecvPacket = make_pair(PacketQueue.front().first, PacketQueue.front().second);
+	RecvPacket = make_pair(PacketQueue.front()->first, PacketQueue.front()->second);
+	delete PacketQueue.front();
 	PacketQueue.pop();
 
 	return true;

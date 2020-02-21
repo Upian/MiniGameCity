@@ -345,6 +345,7 @@ public:
 		
 		buffer.SerializeCharArray(AskerAnswer, 31);
 		buffer.SerializeCharArray(AskerName, 31);
+		buffer << AnswerResult;
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& buf) override {
