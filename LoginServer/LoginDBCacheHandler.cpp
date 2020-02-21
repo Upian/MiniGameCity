@@ -26,7 +26,7 @@ void LoginDBCacheHandler::HandleLoginPacket(Buffer& buffer, std::shared_ptr<Play
 		player->SetName(packetClientRequest.userId);
 		std::unique_lock<std::mutex> lck(mtx);
 		lck.lock();
-		player->SetToken(std::time(nullptr));
+		player->SetSessionID(std::time(nullptr));
 		lck.unlock();
 		if (CheckIDPW(packetClientRequest.userId, packetClientRequest.userPw)) {
 			this->HandlePacketLoginRequest(packetClientRequest, player);

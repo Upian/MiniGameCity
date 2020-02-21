@@ -13,6 +13,7 @@ public:
 	void RegisterToServer();
 	virtual void HandlePacket(Buffer& buffer) override;
 private:
+	void HandlePreLoadPacket(GPID, SessionID);
 
 	GameServer* m_gameServer = nullptr;
 };

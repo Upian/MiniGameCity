@@ -24,6 +24,7 @@
 	Server::GetServer()->InitializeBaseServer();
 	Server::GetServer()->RunServer();
 */
+using SessionID = __int64;
 
 template<typename T_Server>
 class BaseServer {

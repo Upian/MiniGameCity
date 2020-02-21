@@ -3,7 +3,7 @@
 #include "RoomManager.h"
 #include "RoomPacket.h"
 #include "SocialServerPacket.h"
-#include "PreLoadPacket.h"
+#include "ConnectionPacket.h"
 
 GameServer::GameServer() {}
 GameServer::~GameServer() {}
@@ -72,6 +72,10 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 
 
 	switch (type) {
+	case BasePacketType::basePacketTypeConnection: {
+
+		break;
+	}
 	case BasePacketType::basePacketTypeRoom: {
 		this->HandleBasePacketRoom(bufInfo);
 		break;
@@ -100,6 +104,30 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 *	유저가 이 과정을 하지 않고 접근할 경우 차단
 */
 void GameServer::HandlePacketPrepareTransfer() {
+
+}
+
+void GameServer::HandleBasePacketConnection(BufferInfo* bufInfo) {
+	if (nullptr == bufInfo)
+		return;
+	PacketTypeConnection type = (PacketTypeConnection)PacketTypeDeserial(bufInfo->buffer);
+
+	switch (type) {
+	case PacketTypeConnection::connectionRequest: {//When client first connect to the game server
+		ConnectionPacketConnectServerRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		this->AcceptClient(packet.m_sessionId, bufInfo->socket);
+		break;
+	}
+	case PacketTypeConnection::InviteTransferRequest: {
+
+		break;
+	}
+	default: {
+		Util::LoggingInfo("GameServer.log", "Recv wrong connection packet ID: %d", type);
+		break;
+	}
+	}
 
 }
 
@@ -137,16 +165,41 @@ void GameServer::InitializeGameServer() {
 	m_managementServerHandler.Initialize();
 	m_socialServerHandler.Initialize();
 
-
-
 	m_roomManager.Initialize();
+}
+
+void GameServer::AcceptClient(SessionID session, SOCKET sock) {
+	if (false == this->CheckSessionId(session)) {
+		m_playerManager.RemovePlayer(sock);
+		closesocket(sock);
+		return;
+	}
 }
 
 void GameServer::PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer) {
 	if (nullptr == pplayer)
 		return;
 
-	PreLoadPacketLoadPlayerInfo packet;
+	ConnectionPacketLoadPlayerInfo packet;
 	packet.m_playerName = pplayer->GetPlayerName();
 	pplayer->SendPacket(packet);
+}
+
+bool GameServer::CheckSessionId(SessionID session) {
+	auto id = m_loginClientSessionList.begin();
+	for (id; id != m_loginClientSessionList.end(); ++id) {
+		if (*id == session) {
+			id = m_loginClientSessionList.erase(id);
+			return true;
+		}		
+	}
+	return false;
+// 
+// 	for (SessionID id : m_loginClientSessionList) {
+// 		if (session == id) {
+// 			m_loginClientSessionList.remove(id);
+// 			return true;
+// 		}
+// 	}
+// 	return false;
 }

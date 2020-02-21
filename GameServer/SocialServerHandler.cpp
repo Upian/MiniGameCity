@@ -280,6 +280,7 @@ void SocialServerHandler::HandlePacketInviteFriendRequest(SocialGamePacketInvite
 	sendPacket.m_roomName = room->GetRoomName();
 	sendPacket.m_roomNumber = room->GetRoomNumber();
 	sendPacket.m_createdTime = room->GetCreatedTime();
+	sendPacket.m_maxPlayerCount = room->GetMaxPlayerCount();
 	sendPacket.m_gameMode = static_cast<char>(room->GetRoomGameType());
 
 	this->SendPacketToServer(sendPacket);
@@ -353,6 +354,7 @@ void SocialServerHandler::HandlePacketInviteConfirmResponse(SocialPacketServerIn
 	sendPacket.m_name = packet.m_name;
 	sendPacket.m_roomName = packet.m_roomName;
 	sendPacket.m_createdTime = packet.m_createdTime;
+	sendPacket.m_maxPlayerCount = packet.m_maxPlayerCount;
 	sendPacket.m_ipAddress = packet.m_ipAddress;
 	sendPacket.m_port = packet.m_port;
 	sendPacket.m_gameMode = static_cast<RoomGameType>(packet.m_gameMode);

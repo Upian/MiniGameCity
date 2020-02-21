@@ -25,12 +25,15 @@ private:
 	MAKE_SERVER(GameServer)
 
 	void HandlePacketPrepareTransfer(); //PacketPrepareTransfer Management server -> game server (client informantion)
+	void HandleBasePacketConnection(BufferInfo* bufInfo);
 	void HandleBasePacketRoom(BufferInfo* bufInfo);
 	void HandleBasePacketSocial(BufferInfo* bufInfo);
 	void HandleBasePacketGame(BufferInfo* bufInfo);
 
+	void AcceptClient(SessionID session, SOCKET sock);
 	void PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer);
 
+	bool CheckSessionId(SessionID);
 	SOCKET m_managementServerSocket = 0;
 	SOCKET m_socialServerSocket = 0;
 	//manager
@@ -39,6 +42,8 @@ private:
 	//Handler
 	ManagementServerHandler m_managementServerHandler;
 	SocialServerHandler m_socialServerHandler;
+
+	std::list<SessionID> m_loginClientSessionList;
 };
 
 

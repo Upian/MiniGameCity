@@ -195,7 +195,10 @@ void FriendsManager::HandleInviteFriendRequest(std::shared_ptr<SocialPlayer> pla
 	sendPacket.m_roomName = packet.m_roomName;
 	sendPacket.m_roomNumber = packet.m_roomNumber;
 	sendPacket.m_createdTime = packet.m_createdTime;
+	sendPacket.m_maxPlayerCount = packet.m_maxPlayerCount;
 	sendPacket.m_gameMode = packet.m_gameMode;
 	sendPacket.m_ipAddress = player->GetServer()->GetServerIpAddress();
 	sendPacket.m_port = player->GetServer()->GetServerPortNum();
+
+	friendPlayer->GetServer()->SendPacket(sendPacket);
 }

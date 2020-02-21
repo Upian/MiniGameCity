@@ -33,10 +33,11 @@ public:
 	std::shared_ptr<Player> FindPlayerBySocket(SOCKET socket);
 	std::shared_ptr<Player> FindPlayerByName(std::string name);
 
+	std::shared_ptr<Player> PreLoadClient(GPID gpid, SessionID session);
 
 private:
 	std::list<std::shared_ptr<Player> > m_playerList;
-
+	std::list<std::shared_ptr<Player> > m_preLoadClientList;
 };
 
 

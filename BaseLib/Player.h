@@ -19,14 +19,14 @@ enum class PlayerState {
 
 };
 using GPID = unsigned __int32; //Unique ID for each player (Game Player ID)
-
+using SessionID = __int64;
 class BasePacket;
 class Room;
 
 class Player : public ClientBase{
 public:
-	Player(const Player&) {}
 	Player(SOCKET socket) : ClientBase(socket) {}
+	Player(GPID gpid,  SessionID session);
 	~Player() {}
 
 	void Initialize();
@@ -49,11 +49,11 @@ public:
 	std::string GetName() {
 		return m_playerName;
 	}
-	int64 GetToken() {
-		return m_token;
+	__int64 GetSessionID() {
+		return m_sessionID;
 	}
-	long long SetToken(time_t time) {
-		m_token = time;
+	long long SetSessionID(time_t time) {
+		m_sessionID = time;
 	}
 
 #pragma region Game
@@ -97,7 +97,7 @@ private:
 	bool m_isRoomMaster = false;
 	__int32 m_imageIndex = 0;
 	bool m_isReady = false;
-	std::time_t m_token;
+	SessionID m_sessionID;
 
 	int				InGameScore = 0;			//인게임 점수
 	bool			ExitReservation = false;	//게임 나가기 예약

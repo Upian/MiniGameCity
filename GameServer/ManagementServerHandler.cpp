@@ -24,8 +24,22 @@ void ManagementServerHandler::RegisterToServer() {
 
 void ManagementServerHandler::HandlePacket(Buffer& buffer) {
 	BasePacketType type = (BasePacketType)PacketTypeDeserial(buffer);
+
 	if (BasePacketType::basePacketTypeGameToManagementServer != type)
 		return;
 
+	ManagementPacketType managementType = (ManagementPacketType)PacketTypeDeserial(buffer);
+	switch (managementType) {
+	case ManagementPacketType::preLoadClient: {
+		GameToManagementPreLoadRequest packet;
+		packet.Deserialize(buffer);
+		this->HandlePreLoadPacket(packet.m_gpid, packet.m_token);
+		break;
+	}
+	}
+	
+}
 
+void ManagementServerHandler::HandlePreLoadPacket(GPID gpid, SessionID session) {
+	m_gameServer->GetPlayerManager().PreLoadClient(gpid, session);
 }

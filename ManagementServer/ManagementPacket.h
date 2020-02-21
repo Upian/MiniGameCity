@@ -15,7 +15,7 @@ enum ManagementPacketType : char {
 
 	// game server <-> management server
 	registerServerInfo, //Game -> Management // (string)m_ipAddress, (int)port
-	preLoadRequest, //Management -> Game // (uint32)m_gpid, (int64)token
+	preLoadClient, //Management -> Game // (uint32)m_gpid, (int64)token
 	updateServerInfo, //Game -> Management // (int32)m_currentPlayer
 	transferChannelRequest,
 	transferChannelResponse,
@@ -191,7 +191,7 @@ struct GameToManagementRegisterServerInfo : public GameToManagementPacket {
 };
 
 struct GameToManagementPreLoadRequest : public GameToManagementPacket {
-	GameToManagementPreLoadRequest() : GameToManagementPacket(ManagementPacketType::preLoadRequest) {}
+	GameToManagementPreLoadRequest() : GameToManagementPacket(ManagementPacketType::preLoadClient) {}
 
 	unsigned __int32 m_gpid;
 	int64 m_token;

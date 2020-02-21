@@ -41,6 +41,8 @@ void Room::StartGame() {
 
 	if (nullptr == m_game)
 		packet.m_errorCode = ErrorTypeStartGame::errorTypeStartGameNotHaveGame;
+	else if (this->GetPlayerCount() < m_minimumPlayer)
+		packet.m_errorCode = ErrorTypeStartGame::errorTypeStartGameNotEnoughPlayer;
 	else if (RoomState::roomStateWait != m_roomState)
 		packet.m_errorCode = ErrorTypeStartGame::errorTypeStartGameRoomIsNotWaitingGame;
 	else if (nullptr != m_inGameThread)

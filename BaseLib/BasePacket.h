@@ -34,13 +34,13 @@ enum class BasePacketType : char {
 	basePacketTypeNone = 0,
 	// client to server packet
 	basePacketTypeLogin,
-	basePacketTypePreLoad,
+	basePacketTypeConnection,
 	basePacketTypeRoom,
 	basePacketTypeGame,
 	basePacketTypeMarket,
 	basePacketTypeRanking,
 	basePacketTypeSocial,
-
+	basePacketTypeChannelTransfer,
 	//Server packet
 
 	basePacketTypeGameToSocialServer, //Game server <-> Social server

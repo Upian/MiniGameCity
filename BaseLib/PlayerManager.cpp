@@ -23,10 +23,13 @@ std::shared_ptr<Player> PlayerManager::InsertPlayer(SOCKET socket) {
 }
 
 void PlayerManager::RemovePlayer(GPID key) {
-	auto pPlayer = this->FindPlayer(key);
-	if (nullptr == pPlayer)
-		return;
-	m_playerList.remove(pPlayer);
+	auto itPlayer = m_playerList.begin();
+	for (itPlayer; itPlayer != m_playerList.end(); ++itPlayer) {
+		if (key == (*itPlayer)->GetGPID()) {
+			itPlayer = m_playerList.erase(itPlayer);
+			return;
+		}
+	}
 }
 
 void PlayerManager::RemovePlayer(std::shared_ptr<Player> player) {
@@ -122,4 +125,10 @@ std::shared_ptr<Player> PlayerManager::FindPlayerByName(std::string name) {
 			return ptr;
 	}
 	return nullptr;
+}
+
+std::shared_ptr<Player> PlayerManager::PreLoadClient(GPID gpid, SessionID session) {
+	auto preLoad = std::make_shared<Player>(gpid, session);
+	m_preLoadClientList.push_back(preLoad);
+	preLoad->Initialize();
 }

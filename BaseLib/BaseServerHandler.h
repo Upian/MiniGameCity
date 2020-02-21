@@ -4,6 +4,9 @@
 #include <thread>
 #include "ClntServer.h"
 
+using GPID = unsigned __int32;
+using SessionID = __int64;
+
 class BaseServerHandler {
 public:
 	void ConnectToServer(std::string ipAddress, short port);
