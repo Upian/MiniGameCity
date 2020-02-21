@@ -9,10 +9,7 @@ GameServer::GameServer() {}
 GameServer::~GameServer() {}
 
 #pragma region Client connection
-namespace {
-	int testGpid = 0;
-	char testName = 'a';
-}
+
 void GameServer::HandleAcceptClient(SOCKET clientSocket) {
 	if (clientSocket < 1)
 		return;
@@ -20,22 +17,6 @@ void GameServer::HandleAcceptClient(SOCKET clientSocket) {
 	/*
 	*	After accepting client, check if it matches with information received from management server
 	*/
-// 
-// 
-// 
-// 	
-	auto player = m_playerManager.InsertPlayer(clientSocket); //#temp
-	player->SetGPID(++testGpid); //#Test 
-	std::string name;
-	name += testName++;
-	player->SetPlayerName(name); //#Test
-	//Resister Social server
-	m_socialServerHandler.UpdatePlayerInfoAtLogin(player);
-	
-	//Send player data to each player
-	this->PreLoadClientDataToPlayer(player);
-
-	Util::LoggingDebug("GameServer.log", "Connect Client[%d], name[%s], GPID[%d]", clientSocket, player->GetPlayerName().c_str(), player->GetGPID());
 }
 
 void GameServer::HandleDisconnectClient(SOCKET clientSocket) {
@@ -169,11 +150,20 @@ void GameServer::InitializeGameServer() {
 }
 
 void GameServer::AcceptClient(SessionID session, SOCKET sock) {
-	if (false == this->CheckSessionId(session)) {
-		m_playerManager.RemovePlayer(sock);
+	auto pPlayer = m_playerManager.FindPreLoadClient(session);
+	if (nullptr == pPlayer) {
 		closesocket(sock);
 		return;
 	}
+	
+	pPlayer->SetSock(sock); //#Test
+	//Resister Social server
+	m_socialServerHandler.UpdatePlayerInfoAtLogin(pPlayer);
+	//Send player data to each player
+	this->PreLoadClientDataToPlayer(pPlayer);
+
+	m_playerManager.InsertPlayer(pPlayer);
+	Util::LoggingDebug("GameServer.log", "Connect Client[%d], name[%s], GPID[%d]", sock, pPlayer->GetPlayerName().c_str(), pPlayer->GetGPID());
 }
 
 void GameServer::PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer) {
@@ -185,21 +175,3 @@ void GameServer::PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer) {
 	pplayer->SendPacket(packet);
 }
 
-bool GameServer::CheckSessionId(SessionID session) {
-	auto id = m_loginClientSessionList.begin();
-	for (id; id != m_loginClientSessionList.end(); ++id) {
-		if (*id == session) {
-			id = m_loginClientSessionList.erase(id);
-			return true;
-		}		
-	}
-	return false;
-// 
-// 	for (SessionID id : m_loginClientSessionList) {
-// 		if (session == id) {
-// 			m_loginClientSessionList.remove(id);
-// 			return true;
-// 		}
-// 	}
-// 	return false;
-}

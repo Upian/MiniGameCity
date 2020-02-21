@@ -131,4 +131,18 @@ std::shared_ptr<Player> PlayerManager::PreLoadClient(GPID gpid, SessionID sessio
 	auto preLoad = std::make_shared<Player>(gpid, session);
 	m_preLoadClientList.push_back(preLoad);
 	preLoad->Initialize();
+	return preLoad;
+}
+
+std::shared_ptr<Player> PlayerManager::FindPreLoadClient(SessionID session) {
+	auto iterPlayer = m_preLoadClientList.begin();
+	std::shared_ptr<Player> pPlayer = nullptr;
+	for (iterPlayer; iterPlayer != m_preLoadClientList.end(); ++iterPlayer) {
+		if (session == (*iterPlayer)->GetSessionID()) {
+			pPlayer = (*iterPlayer);
+			iterPlayer = m_preLoadClientList.erase(iterPlayer);
+			break;
+		}
+	}
+	return pPlayer;
 }

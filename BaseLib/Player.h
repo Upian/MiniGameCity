@@ -33,7 +33,7 @@ public:
 
 	SOCKET GetSocket() const { return m_socket; }
 	GPID GetGPID() const { return m_gamePlayerId; }
-	void SetGPID(int i) { m_gamePlayerId = i; } //#Test
+	
 
 	void SetPlayerState(PlayerState state) { m_playerState = state; }
 	PlayerState GetPlayerState() { return m_playerState; }
@@ -42,19 +42,23 @@ public:
 	std::string& GetPlayerName() { return m_playerName; }
 
 	/*virtual void HandlePacket(BufferInfo* packet);*/
-
-	void SetName(std::string name) {
+	
+	void SetName(std::string name) {//#test
 		m_playerName = name;
 	}
+	void SetSessionID(time_t time) {//#test
+		m_sessionID = time;
+	}
+	void SetGPID(int i) { m_gamePlayerId = i; } //#Test
+	void SetSock(SOCKET s) { m_socket = s; } //#Test
+
 	std::string GetName() {
 		return m_playerName;
 	}
 	__int64 GetSessionID() {
 		return m_sessionID;
 	}
-	long long SetSessionID(time_t time) {
-		m_sessionID = time;
-	}
+	
 
 #pragma region Game
 	void PlayerInfoClear();

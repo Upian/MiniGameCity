@@ -33,7 +33,6 @@ private:
 	void AcceptClient(SessionID session, SOCKET sock);
 	void PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer);
 
-	bool CheckSessionId(SessionID);
 	SOCKET m_managementServerSocket = 0;
 	SOCKET m_socialServerSocket = 0;
 	//manager
@@ -42,8 +41,6 @@ private:
 	//Handler
 	ManagementServerHandler m_managementServerHandler;
 	SocialServerHandler m_socialServerHandler;
-
-	std::list<SessionID> m_loginClientSessionList;
 };
 
 

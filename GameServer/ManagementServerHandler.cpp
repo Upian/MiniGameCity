@@ -39,7 +39,15 @@ void ManagementServerHandler::HandlePacket(Buffer& buffer) {
 	}
 	
 }
-
+namespace {
+	int testGpid = 0;
+	char testName = 'a';
+}
 void ManagementServerHandler::HandlePreLoadPacket(GPID gpid, SessionID session) {
-	m_gameServer->GetPlayerManager().PreLoadClient(gpid, session);
+	auto preClient = m_gameServer->GetPlayerManager().PreLoadClient(gpid, session);
+	std::string name = "Client ";
+	preClient->SetName(name + testName);
+	preClient->SetGPID(testGpid);
+	//#DatabaseLoad
+	//preClient
 }

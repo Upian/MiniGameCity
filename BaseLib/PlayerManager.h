@@ -34,6 +34,7 @@ public:
 	std::shared_ptr<Player> FindPlayerByName(std::string name);
 
 	std::shared_ptr<Player> PreLoadClient(GPID gpid, SessionID session);
+	std::shared_ptr<Player> FindPreLoadClient(SessionID session);
 
 private:
 	std::list<std::shared_ptr<Player> > m_playerList;
