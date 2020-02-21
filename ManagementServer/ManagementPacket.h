@@ -19,6 +19,7 @@ enum ManagementPacketType : char {
 	updateServerInfo, //Game -> Management // (int32)m_currentPlayer
 	transferChannelRequest,
 	transferChannelResponse,
+	disconnectUserRequest, // management -> game // (uint32) m_gpid;
 
 	managementPacketTypeSize,
 };
@@ -245,4 +246,20 @@ struct GameToManagementTransferChannelResponse : public GameToManagementPacket {
 
 	}
 };
+
+struct GameToManagementDisconnectUserRequest : public GameToManagementPacket {
+	GameToManagementDisconnectUserRequest() : GameToManagementPacket(ManagementPacketType::preLoadRequest) {}
+
+	uint32 m_gpid;
+
+	virtual Buffer& Serialize() override {
+		buffer << m_gpid;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> m_gpid;
+	}
+};
+
 #endif

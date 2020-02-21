@@ -47,8 +47,7 @@ Account DatabaseAPI::LoginAccount(const std::string& userId, const std::string& 
 			gpid = atoi(row[0]);
 			account.flag = true;
 			account.nick = con.ToAnsi(row[3]);
-            // date_login - date_logout > 0 : 로그인 중이다.
-			if (row[6] - row[7] > 0) {
+			if ((atoi(row[6]) - atoi(row[7])) > 0) {
 				account.duplicate = true;
 			}
 			mysql_free_result(res);

@@ -16,8 +16,9 @@ private:
 	MAKE_SERVER(ManagementServer)
 	void HandlePacketLogin(BufferInfo* bufInfo);
 	void HandlePacketGame(BufferInfo* bufInfo);
-	void HandleShowChannel(LoginManagementPacketTypeShowChannelRequest& bufInfo, std::shared_ptr<ClntServer> loginServer);
-	void HandleChannelIn(LoginManagementPacketTypeChannelInRequest& bufInfo, std::shared_ptr<ClntServer> loginServer);
+	void HandleShowChannel(LoginManagementPacketTypeShowChannelRequest& packet, std::shared_ptr<ClntServer> loginServer);
+	void HandleChannelIn(LoginManagementPacketTypeChannelInRequest& packet, std::shared_ptr<ClntServer> loginServer);
+	void HandleDisconnectUser(GameToManagementDisconnectUserRequest& packet);
 
 	//manager
 	GameServerManager m_gameServerManager;
