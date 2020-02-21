@@ -272,7 +272,7 @@ struct GameToManagementTransferChannelResponse : public GameToManagementPacket {
 };
 
 struct GameToManagementDisconnectUserRequest : public GameToManagementPacket {
-	GameToManagementDisconnectUserRequest() : GameToManagementPacket(ManagementPacketType::preLoadRequest) {}
+	GameToManagementDisconnectUserRequest() : GameToManagementPacket(ManagementPacketType::disconnectUserRequest) {}
 
 	uint32 m_gpid;
 

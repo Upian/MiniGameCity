@@ -167,7 +167,6 @@ void BaseServer<T_Server>::InitializeBaseServer() {
 		_exit(0);
 		return;
 	}
-
 	m_serverSocket = WSASocketW(PF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	if (INVALID_SOCKET == m_serverSocket) {
 		Util::LoggingError(m_serverName + ".log", "Make socket error! socket: %d", m_serverSocket);
@@ -175,7 +174,6 @@ void BaseServer<T_Server>::InitializeBaseServer() {
 		return;
 	}
 	Util::LoggingInfo(m_serverName + ".log", "Make socket success! socket: %d, , Port: %d", m_serverSocket, m_portNum);
-
 	SOCKADDR_IN serverAddress;
 	memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
@@ -186,7 +184,6 @@ void BaseServer<T_Server>::InitializeBaseServer() {
 		return;
 	}
 	serverAddress.sin_port = htons(m_portNum);
-
 	if (SOCKET_ERROR == bind(m_serverSocket, (SOCKADDR*)&serverAddress, sizeof(serverAddress))) {
 		Util::LoggingError(m_serverName + ".log", "Bind socket error!");
 		closesocket(m_serverSocket);
