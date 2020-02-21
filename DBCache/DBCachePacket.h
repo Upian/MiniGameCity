@@ -43,9 +43,9 @@ public:
 
 	db::Table table = db::tableNone;
 	std::string requestData;
-//	Args... args;
 };
 
+template<typename... Args>
 class DBCacheLoad : public DBCachePacket {
 public:
 	DBCacheLoad() : DBCachePacket(dbCacheLoad) {}
@@ -63,7 +63,7 @@ public:
 	};
 
 	db::Table table = db::tableNone;
-	std::string responseData;
+    std::string responseData;
 };
 
 #endif

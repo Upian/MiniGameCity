@@ -132,14 +132,15 @@ void LoginDBCacheHandler::HandlePacket(Buffer& buffer) {
 		//Util::LoggingInfo("LoginServer.log", "Type : LoginDBCachePacketTypeLoginResponse || Recv packet : %s || size: %d", buffer, buffer.Length());
 		LoginDBCachePacketTypeLoginResponse packetLoginResponse{};
 		packetLoginResponse.Deserialize(buffer);
-		auto player = m_loginServer->GetPlayerManager().FindPlayerByName(packetLoginResponse.userId);    /////////
+		// 기존 로그인 유저 연결 끊기
+		auto player = m_loginServer->GetPlayerManager().FindPlayerByName(packetLoginResponse.userId);
 		this->HandlePacketLoginResponse(packetLoginResponse, player);
 		break;
 	}
 	case DBCachePacketType::loginDBCachePacketTypeSignupResponse: {
 		LoginDBCachePacketTypeSignupResponse packetLoginResponse{};
 		packetLoginResponse.Deserialize(buffer);
-		auto player = m_loginServer->GetPlayerManager().FindPlayerByName(packetLoginResponse.userId);    /////////
+		auto player = m_loginServer->GetPlayerManager().FindPlayerByName(packetLoginResponse.userId);
 		this->HandlePacketSignupResponse(packetLoginResponse, player);
 		break;
 	}

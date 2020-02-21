@@ -76,7 +76,7 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			else if (packetLoginRequest.userId == "admin2" && packetLoginRequest.userPw == "12341234") {
 				packetLoginResponse.flag = true;
 				packetLoginResponse.userNick = "2ÀÌ2ÀÌ";
-				packetLoginResponse.gpid = 1;
+				packetLoginResponse.gpid = 2;
 				packetLoginResponse.userId = packetLoginRequest.userId;
 				bufInfo->Clear();
 				bufInfo->buffer = packetLoginResponse.Serialize();
@@ -85,7 +85,7 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			else if (packetLoginRequest.userId == "admin3" && packetLoginRequest.userPw == "12341234") {
 				packetLoginResponse.flag = true;
 				packetLoginResponse.userNick = "3»ï3»ï";
-				packetLoginResponse.gpid = 1;
+				packetLoginResponse.gpid = 3;
 				packetLoginResponse.userId = packetLoginRequest.userId;
 				bufInfo->Clear();
 				bufInfo->buffer = packetLoginResponse.Serialize();
@@ -94,7 +94,7 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			else if (packetLoginRequest.userId == "admin4" && packetLoginRequest.userPw == "12341234") {
 				packetLoginResponse.flag = true;
 				packetLoginResponse.userNick = "4»ç4»ç";
-				packetLoginResponse.gpid = 1;
+				packetLoginResponse.gpid = 4;
 				packetLoginResponse.userId = packetLoginRequest.userId;
 				bufInfo->Clear();
 				bufInfo->buffer = packetLoginResponse.Serialize();
@@ -103,7 +103,7 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			else if (packetLoginRequest.userId == "admin5" && packetLoginRequest.userPw == "12341234") {
 				packetLoginResponse.flag = true;
 				packetLoginResponse.userNick = "5¿À5¿À";
-				packetLoginResponse.gpid = 1;
+				packetLoginResponse.gpid = 5;
 				packetLoginResponse.userId = packetLoginRequest.userId;
 				bufInfo->Clear();
 				bufInfo->buffer = packetLoginResponse.Serialize();
@@ -112,7 +112,7 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 			else if (packetLoginRequest.userId == "admin6" && packetLoginRequest.userPw == "12341234") {
 				packetLoginResponse.flag = true;
 				packetLoginResponse.userNick = "6À°6À°";
-				packetLoginResponse.gpid = 1;
+				packetLoginResponse.gpid = 6;
 				packetLoginResponse.userId = packetLoginRequest.userId;
 				bufInfo->Clear();
 				bufInfo->buffer = packetLoginResponse.Serialize();
@@ -132,6 +132,10 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 					packetLoginResponse.userNick = account.nick;
 					packetLoginResponse.gpid = db.GetGpid();
 					packetLoginResponse.userId = packetLoginRequest.userId;
+					// Áßº¹µÇ¾î ÆÐÅ¶º¸³»¾ß ÇÑ´Ù.
+					if (account.duplicate == true) {
+
+					}
 					db.Close();
 				}
 				else {
