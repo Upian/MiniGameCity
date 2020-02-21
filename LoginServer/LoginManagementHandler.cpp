@@ -59,7 +59,7 @@ void LoginManagementHandler::HandlePacketChannelInRequest(ClientLoginPacketTypeC
 	LoginManagementPacketTypeChannelInRequest packetLoginRequest{};
 	packetLoginRequest.channelName = packet.channelName;
 	packetLoginRequest.gpid = player->GetGPID();
-	packetLoginRequest.token = player->GetToekn();
+	packetLoginRequest.token = player->GetToken();
 	this->SendPacketToServer(packetLoginRequest);
 }
 

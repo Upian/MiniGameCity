@@ -25,8 +25,7 @@ void LoginDBCacheHandler::HandleLoginPacket(Buffer& buffer, std::shared_ptr<Play
 		packetClientRequest.Deserialize(buffer);
 		player->SetName(packetClientRequest.userId);
 		std::unique_lock<std::mutex> lck(mtx);
-		lck.lock();
-		player->SetSessionID(std::time(nullptr));
+		player->SetToken(std::time(nullptr));
 		lck.unlock();
 		if (CheckIDPW(packetClientRequest.userId, packetClientRequest.userPw)) {
 			this->HandlePacketLoginRequest(packetClientRequest, player);
@@ -169,7 +168,7 @@ void LoginDBCacheHandler::HandlePacketLoginResponse(LoginDBCachePacketTypeLoginR
 	ClientLoginPacketTypeLoginResponse packetClientResponse{};
 	packetClientResponse.flag = packet.flag;
 	packetClientResponse.userNick = packet.userNick;
-	packetClientResponse.token = player->GetToekn();
+	packetClientResponse.token = player->GetToken();
 	player->SendPacket(packetClientResponse);
 }
 
