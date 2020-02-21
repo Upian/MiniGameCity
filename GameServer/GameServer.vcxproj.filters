@@ -66,16 +66,16 @@
     <ClInclude Include="SocialGamePacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="PreLoadPacket.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
     <ClInclude Include="ManagementServerHandler.h">
       <Filter>Management</Filter>
     </ClInclude>
     <ClInclude Include="InGameLibrary.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="ManagementGamePacket.h">
+    <ClInclude Include="ChannelTransferPacket.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionPacket.h">
       <Filter>Packet</Filter>
     </ClInclude>
   </ItemGroup>

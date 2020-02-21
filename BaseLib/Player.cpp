@@ -3,6 +3,12 @@
 #include "BasePacket.h"
 
 
+Player::Player(GPID gpid, SessionID session) :
+	m_gamePlayerId(gpid),
+	m_sessionID(session)
+{
+}
+
 void Player::Initialize() {
 	//Generate GPID
 	m_playerState = PlayerState::playerStateLobby;

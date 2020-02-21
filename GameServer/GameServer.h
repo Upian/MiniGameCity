@@ -25,10 +25,12 @@ private:
 	MAKE_SERVER(GameServer)
 
 	void HandlePacketPrepareTransfer(); //PacketPrepareTransfer Management server -> game server (client informantion)
+	void HandleBasePacketConnection(BufferInfo* bufInfo);
 	void HandleBasePacketRoom(BufferInfo* bufInfo);
 	void HandleBasePacketSocial(BufferInfo* bufInfo);
 	void HandleBasePacketGame(BufferInfo* bufInfo);
 
+	void AcceptClient(SessionID session, SOCKET sock);
 	void PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer);
 
 	SOCKET m_managementServerSocket = 0;

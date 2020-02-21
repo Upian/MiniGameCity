@@ -88,6 +88,7 @@ private:
 	
 	std::string							m_roomName;
 	int									m_maximumPlayer = 0;
+	int									m_minimumPlayer = 2;//#DesignData
 	int									m_roomNumber = 0;
 	time_t								m_createdTime = 0;
 	bool								m_isUsePassword = false;

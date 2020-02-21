@@ -374,6 +374,7 @@ struct SocialPacketServerInviteFriendRequest : public BaseSocialServerPacket {
 	std::string m_roomName;
 	int m_roomNumber = 0;
 	time_t m_createdTime = 0;
+	int m_maxPlayerCount = 0;
 	char m_gameMode = 0;
 
 	virtual Buffer& Serialize() {
@@ -382,6 +383,7 @@ struct SocialPacketServerInviteFriendRequest : public BaseSocialServerPacket {
 		buffer << m_roomName;
 		buffer << m_roomNumber;
 		buffer << m_createdTime;
+		buffer << m_maxPlayerCount;
 		buffer << m_gameMode;
 
 		return buffer;
@@ -392,6 +394,7 @@ struct SocialPacketServerInviteFriendRequest : public BaseSocialServerPacket {
 		buf >> m_roomName;
 		buf >> m_roomNumber;
 		buf >> m_createdTime;
+		buf >> m_maxPlayerCount;
 		buf >> m_gameMode;
 	}
 };
@@ -405,6 +408,7 @@ struct SocialPacketServerInviteConfirmFriendResponse : public BaseSocialServerPa
 	std::string m_roomName;
 	int m_roomNumber = 0;
 	time_t m_createdTime = 0;
+	int m_maxPlayerCount = 0;
 	char m_gameMode = 0;
 	std::string m_ipAddress;
 	int m_port = 0;
@@ -415,6 +419,7 @@ struct SocialPacketServerInviteConfirmFriendResponse : public BaseSocialServerPa
 		buffer << m_roomName;
 		buffer << m_roomNumber;
 		buffer << m_createdTime;
+		buffer << m_maxPlayerCount;
 		buffer << m_gameMode;
 		buffer << m_ipAddress;
 		buffer << m_port;
@@ -427,6 +432,7 @@ struct SocialPacketServerInviteConfirmFriendResponse : public BaseSocialServerPa
 		buf >> m_roomName;
 		buf >> m_roomNumber;
 		buf >> m_createdTime;
+		buf >> m_maxPlayerCount;
 		buf >> m_gameMode;
 		buf >> m_ipAddress;
 		buf >> m_port;

@@ -342,6 +342,7 @@ struct SocialGamePacketConfirmInviteFriendResponse : public BaseSocialGamePacket
 	std::string m_name;
 	std::string m_roomName;
 	time_t m_createdTime;
+	int m_maxPlayerCount;
 	std::string m_ipAddress;
 	int m_port = 0;
 	RoomGameType m_gameMode = RoomGameType::GameTypeNone;
@@ -351,6 +352,7 @@ struct SocialGamePacketConfirmInviteFriendResponse : public BaseSocialGamePacket
 		buffer << m_name;
 		buffer << m_roomName;
 		buffer << m_createdTime;
+		buffer << m_maxPlayerCount;
 		buffer << m_ipAddress;
 		buffer << m_port;
 		buffer << m_gameMode;
@@ -362,6 +364,7 @@ struct SocialGamePacketConfirmInviteFriendResponse : public BaseSocialGamePacket
 		buf >> m_name;
 		buf >> m_roomName;
 		buf >> m_createdTime;;
+		buf >> m_maxPlayerCount;
 		buf >> m_ipAddress;
 		buf >> m_port;
 		buf >> m_gameMode;

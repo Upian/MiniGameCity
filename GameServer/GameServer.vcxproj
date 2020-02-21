@@ -30,9 +30,9 @@
     <ClInclude Include="GameServer.h" />
     <ClInclude Include="InGameLibrary.h" />
     <ClInclude Include="InGamePacket.h" />
-    <ClInclude Include="ManagementGamePacket.h" />
+    <ClInclude Include="ChannelTransferPacket.h" />
     <ClInclude Include="ManagementServerHandler.h" />
-    <ClInclude Include="PreLoadPacket.h" />
+    <ClInclude Include="ConnectionPacket.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="RoomPacket.h" />

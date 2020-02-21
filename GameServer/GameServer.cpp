@@ -3,16 +3,13 @@
 #include "RoomManager.h"
 #include "RoomPacket.h"
 #include "SocialServerPacket.h"
-#include "PreLoadPacket.h"
+#include "ConnectionPacket.h"
 
 GameServer::GameServer() {}
 GameServer::~GameServer() {}
 
 #pragma region Client connection
-namespace {
-	int testGpid = 0;
-	char testName = 'a';
-}
+
 void GameServer::HandleAcceptClient(SOCKET clientSocket) {
 	if (clientSocket < 1)
 		return;
@@ -20,22 +17,6 @@ void GameServer::HandleAcceptClient(SOCKET clientSocket) {
 	/*
 	*	After accepting client, check if it matches with information received from management server
 	*/
-// 
-// 
-// 
-// 	
-	auto player = m_playerManager.InsertPlayer(clientSocket); //#temp
-	player->SetGPID(++testGpid); //#Test 
-	std::string name;
-	name += testName++;
-	player->SetPlayerName(name); //#Test
-	//Resister Social server
-	m_socialServerHandler.UpdatePlayerInfoAtLogin(player);
-	
-	//Send player data to each player
-	this->PreLoadClientDataToPlayer(player);
-
-	Util::LoggingDebug("GameServer.log", "Connect Client[%d], name[%s], GPID[%d]", clientSocket, player->GetPlayerName().c_str(), player->GetGPID());
 }
 
 void GameServer::HandleDisconnectClient(SOCKET clientSocket) {
@@ -72,6 +53,10 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 
 
 	switch (type) {
+	case BasePacketType::basePacketTypeConnection: {
+
+		break;
+	}
 	case BasePacketType::basePacketTypeRoom: {
 		this->HandleBasePacketRoom(bufInfo);
 		break;
@@ -100,6 +85,30 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 *	유저가 이 과정을 하지 않고 접근할 경우 차단
 */
 void GameServer::HandlePacketPrepareTransfer() {
+
+}
+
+void GameServer::HandleBasePacketConnection(BufferInfo* bufInfo) {
+	if (nullptr == bufInfo)
+		return;
+	PacketTypeConnection type = (PacketTypeConnection)PacketTypeDeserial(bufInfo->buffer);
+
+	switch (type) {
+	case PacketTypeConnection::connectionRequest: {//When client first connect to the game server
+		ConnectionPacketConnectServerRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		this->AcceptClient(packet.m_sessionId, bufInfo->socket);
+		break;
+	}
+	case PacketTypeConnection::InviteTransferRequest: {
+
+		break;
+	}
+	default: {
+		Util::LoggingInfo("GameServer.log", "Recv wrong connection packet ID: %d", type);
+		break;
+	}
+	}
 
 }
 
@@ -137,16 +146,32 @@ void GameServer::InitializeGameServer() {
 	m_managementServerHandler.Initialize();
 	m_socialServerHandler.Initialize();
 
-
-
 	m_roomManager.Initialize();
+}
+
+void GameServer::AcceptClient(SessionID session, SOCKET sock) {
+	auto pPlayer = m_playerManager.FindPreLoadClient(session);
+	if (nullptr == pPlayer) {
+		closesocket(sock);
+		return;
+	}
+	
+	pPlayer->SetSock(sock); //#Test
+	//Resister Social server
+	m_socialServerHandler.UpdatePlayerInfoAtLogin(pPlayer);
+	//Send player data to each player
+	this->PreLoadClientDataToPlayer(pPlayer);
+
+	m_playerManager.InsertPlayer(pPlayer);
+	Util::LoggingDebug("GameServer.log", "Connect Client[%d], name[%s], GPID[%d]", sock, pPlayer->GetPlayerName().c_str(), pPlayer->GetGPID());
 }
 
 void GameServer::PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer) {
 	if (nullptr == pplayer)
 		return;
 
-	PreLoadPacketLoadPlayerInfo packet;
+	ConnectionPacketLoadPlayerInfo packet;
 	packet.m_playerName = pplayer->GetPlayerName();
 	pplayer->SendPacket(packet);
 }
+

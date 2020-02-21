@@ -19,21 +19,21 @@ enum class PlayerState {
 
 };
 using GPID = unsigned __int32; //Unique ID for each player (Game Player ID)
-
+using SessionID = __int64;
 class BasePacket;
 class Room;
 
 class Player : public ClientBase{
 public:
-	Player(const Player&) {}
 	Player(SOCKET socket) : ClientBase(socket) {}
+	Player(GPID gpid,  SessionID session);
 	~Player() {}
 
 	void Initialize();
 
 	SOCKET GetSocket() const { return m_socket; }
 	GPID GetGPID() const { return m_gamePlayerId; }
-	void SetGPID(int i) { m_gamePlayerId = i; } //#Test
+	
 
 	void SetPlayerState(PlayerState state) { m_playerState = state; }
 	PlayerState GetPlayerState() { return m_playerState; }
@@ -42,19 +42,23 @@ public:
 	std::string& GetPlayerName() { return m_playerName; }
 
 	/*virtual void HandlePacket(BufferInfo* packet);*/
-
-	void SetName(std::string name) {
+	
+	void SetName(std::string name) {//#test
 		m_playerName = name;
 	}
+	void SetSessionID(time_t time) {//#test
+		m_sessionID = time;
+	}
+	void SetGPID(int i) { m_gamePlayerId = i; } //#Test
+	void SetSock(SOCKET s) { m_socket = s; } //#Test
+
 	std::string GetName() {
 		return m_playerName;
 	}
-	time_t GetToken() {
-		return m_token;
+	__int64 GetSessionID() {
+		return m_sessionID;
 	}
-	void SetToken(time_t time) {
-		m_token = time;
-	}
+	
 
 #pragma region Game
 	void PlayerInfoClear();
@@ -97,7 +101,7 @@ private:
 	bool m_isRoomMaster = false;
 	__int32 m_imageIndex = 0;
 	bool m_isReady = false;
-	std::time_t m_token;
+	SessionID m_sessionID;
 
 	int				InGameScore = 0;			//인게임 점수
 	bool			ExitReservation = false;	//게임 나가기 예약

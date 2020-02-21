@@ -47,6 +47,7 @@ enum class ErrorTypeStartGame : char {
 	errorTypeStartGameNotHaveGame,
 	errorTypeStartGameAlreadyStartGame,
 	errorTypeStartGameRoomIsNotWaitingGame,
+	errorTypeStartGameNotEnoughPlayer,
 
 	errorTypeStartGameCount,
 };
