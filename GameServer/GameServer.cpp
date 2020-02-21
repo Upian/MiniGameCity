@@ -54,7 +54,7 @@ void GameServer::HandleBasePacket(BufferInfo* bufInfo) {
 
 	switch (type) {
 	case BasePacketType::basePacketTypeConnection: {
-
+		this->HandleBasePacketConnection(bufInfo);
 		break;
 	}
 	case BasePacketType::basePacketTypeRoom: {
@@ -100,8 +100,11 @@ void GameServer::HandleBasePacketConnection(BufferInfo* bufInfo) {
 		this->AcceptClient(packet.m_sessionId, bufInfo->socket);
 		break;
 	}
-	case PacketTypeConnection::InviteTransferRequest: {
-
+	case PacketTypeConnection::TransferForInviteRequest: {
+		ConnectionPacketTransferForInviteRequest packet;
+		packet.Deserialize(bufInfo->buffer);
+		auto pPlayer = m_playerManager.FindPlayerBySocket(bufInfo->socket);
+		m_managementServerHandler.HandleTrasferForInviteRequest(packet.m_ipAddress, packet.m_portNum, pPlayer);
 		break;
 	}
 	default: {

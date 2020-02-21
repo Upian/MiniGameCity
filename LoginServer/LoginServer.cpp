@@ -82,7 +82,7 @@ void LoginServer::InitializeLoginServer() {
 	);
 	m_loginDBCacheHandler.Initialize();
 	m_loginDBCacheHandler.ConnectToServer(
-		Util::GetConfigToString("LoginServer.ini", "Network", "DBCacheIP", "127.0.0.1").c_str(),
-		Util::GetConfigToInt("LoginServer.ini", "Network", "DBCachePort", 30001)
+		Util::GetConfigToString("LoginServer.ini", "Network", "LoginDBCacheIP", "127.0.0.1").c_str(),
+		Util::GetConfigToInt("LoginServer.ini", "Network", "LoginDBCachePort", 30000)
 	);
 }

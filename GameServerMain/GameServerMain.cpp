@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 	if (1 < argc) //set config file
 		pServer->GetConfigManager()->SetDirectory(argv[1]);
 
-	if (2 < argc) {//set config file
+	if (2 < argc) {//set port
 		pServer->SetPortNum(atoi(argv[2]));
 	}
 	else {

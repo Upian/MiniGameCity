@@ -4,6 +4,8 @@
 #include <list>
 #include "BasePacket.h"
 
+using GPID = unsigned __int32;
+using SessionID = __int64;
 enum ManagementPacketType : char {
 	managementPacketTypeNone = 0,
 
@@ -225,24 +227,46 @@ struct GameToManagementUpdateServerInfoRequest : public GameToManagementPacket {
 struct GameToManagementTransferChannelRequest : public GameToManagementPacket {
 	GameToManagementTransferChannelRequest() : GameToManagementPacket(ManagementPacketType::transferChannelRequest) {}
 
+	std::string m_ipAddress;
+	int m_portNum = 0;
+	GPID m_gpid = 0;
+	SessionID m_session = 0;
+	
 	virtual Buffer& Serialize() override {
-		
+		buffer << m_ipAddress;
+		buffer << m_portNum;
+		buffer << m_gpid;
+		buffer << m_session;
+
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-		
+		_buf >> m_ipAddress;
+		_buf >> m_portNum;
+		_buf >> m_gpid;
+		_buf >> m_session;
+
 	}
 };
 
 struct GameToManagementTransferChannelResponse : public GameToManagementPacket {
 	GameToManagementTransferChannelResponse() : GameToManagementPacket(ManagementPacketType::transferChannelResponse) {}
 
+	GPID m_gpid = 0;
+	std::string m_channelName;
+	bool m_isSuccess = true;
+
 	virtual Buffer& Serialize() override {
+		buffer << m_gpid;
+		buffer << m_channelName;
+		buffer << m_isSuccess;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-
+		_buf >> m_gpid;
+		_buf >> m_channelName;
+		_buf >> m_isSuccess;
 	}
 };
 #endif

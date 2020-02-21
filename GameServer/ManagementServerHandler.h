@@ -12,6 +12,12 @@ public:
 
 	void RegisterToServer();
 	virtual void HandlePacket(Buffer& buffer) override;
+
+	void HandleTrasferForInviteRequest(std::string ip, int port, std::shared_ptr<Player> pPlayer);
+	
+	
+	void HandleTransferChannelResponse(bool, std::string, std::shared_ptr<Player>);
+
 private:
 	void HandlePreLoadPacket(GPID, SessionID);
 

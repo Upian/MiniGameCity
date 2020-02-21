@@ -2,6 +2,8 @@
 #ifndef __BASELIB_BASE_SERVER_H__
 #define __BASELIB_BASE_SERVER_H__
 
+#define BACKDOOR_ROGIN -1
+
 #include <thread>
 #include <list>
 

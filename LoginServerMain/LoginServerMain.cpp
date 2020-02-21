@@ -4,9 +4,9 @@ int main(int argc, char* argv[]) {
 	LoginServer* pServer = LoginServer::CreateServer();
 
 	if (1 < argc)
-		pServer->SetPortNum(atoi(argv[1]));
-	else
-		pServer->SetPortNum(Util::GetConfigToInt("LoginServer.ini", "Network", "Port", 10000));
+		pServer->GetConfigManager()->SetDirectory(argv[1]);
+	
+	pServer->SetPortNum(Util::GetConfigToInt("LoginServer.ini", "Network", "Port", 10000));
 	pServer->SetServerName("LoginServer");
 
 	pServer->InitializeBaseServer();

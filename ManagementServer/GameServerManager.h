@@ -18,9 +18,11 @@ public:
 
 	void HandlePacketGameRegister(GameToManagementRegisterServerInfo& packet, SOCKET socket);
 	void HandlePacketGameUpdate(GameToManagementUpdateServerInfoRequest& packet, std::shared_ptr<GameServer> gameServer);
+	void HandlePacketGameTransferChannel(GameToManagementTransferChannelRequest& packet, std::shared_ptr<GameServer> destServer);
 
 	std::shared_ptr<GameServer> FindGameServerBySocket(SOCKET socket);
 	std::shared_ptr<GameServer> FindGameServerByChannelName(std::string name);
+	std::shared_ptr<GameServer> FindGameServerByAddress(std::string ip, int port);
 
 	std::list<std::shared_ptr<GameServer> >& GetGameServerList() {
 		return _gameServer;

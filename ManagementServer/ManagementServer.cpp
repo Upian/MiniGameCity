@@ -86,6 +86,13 @@ void ManagementServer::HandlePacketGame(BufferInfo* bufInfo) {
 		m_gameServerManager.HandlePacketGameUpdate(packetGameRequest, gameServer);
 		break;
 	}
+	case transferChannelRequest: {
+		GameToManagementTransferChannelRequest packetGameRequest;
+		packetGameRequest.Deserialize(bufInfo->buffer);
+		auto gameServer = m_gameServerManager.FindGameServerBySocket(bufInfo->socket);
+		m_gameServerManager.HandlePacketGameTransferChannel(packetGameRequest, gameServer);
+		break;
+	}
 	default: {
 		Util::LoggingInfo("ManagementServer.log", "Recv wrong login packet ID : %d", type);
 	}

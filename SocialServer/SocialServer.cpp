@@ -65,7 +65,6 @@ void SocialServer::HandleBaseSocialPacket(BufferInfo* bufInfo) {
 		SocialPacketServerAddFriendRequest packet;
 		packet.Deserialize(bufInfo->buffer);
 		auto srcPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_srcGpid);
-//		auto destPlayer = m_socialPlayerManager.FindSocialPlayer(packet.m_destName);
 		m_friendManager.HandleAddFriendRequest(srcPlayer, packet.m_destName);
 		break;
 	}

@@ -12,8 +12,8 @@ enum class PacketTypeConnection : char {
 	connectionRequest,
 	connectionResponse,
 
-	InviteTransferRequest,
-	InviteTransferResponse,
+	TransferForInviteRequest,
+	TransferForInviteResponse,
 
 	packetTypeCount,
 };
@@ -61,8 +61,8 @@ struct ConnectionPacketConnectServerRequest : public BaseConnectionPacket {
 
 
 //Game server transfer when Invite friend
-struct ConnectionPacketInviteTransferRequest : public BaseConnectionPacket {
-	ConnectionPacketInviteTransferRequest() : BaseConnectionPacket(PacketTypeConnection::InviteTransferRequest) {}
+struct ConnectionPacketTransferForInviteRequest : public BaseConnectionPacket {
+	ConnectionPacketTransferForInviteRequest() : BaseConnectionPacket(PacketTypeConnection::TransferForInviteRequest) {}
 
 	std::string m_ipAddress;
 	int m_portNum;
@@ -81,16 +81,21 @@ struct ConnectionPacketInviteTransferRequest : public BaseConnectionPacket {
 		_buf >> m_sessionID;
 	}
 };
-struct ConnectionPacketInviteTransferResponse : public BaseConnectionPacket {
-	ConnectionPacketInviteTransferResponse() : BaseConnectionPacket(PacketTypeConnection::InviteTransferResponse) {}
+struct ConnectionPacketTransferForInviteResponse : public BaseConnectionPacket {
+	ConnectionPacketTransferForInviteResponse() : BaseConnectionPacket(PacketTypeConnection::TransferForInviteResponse) {}
 
+	bool m_isSuccess;
+	std::string m_channelName;
 
 	virtual Buffer& Serialize() override {
+		buffer << m_isSuccess;
+		buffer << m_channelName;
 
 		return buffer;
 	}
 	virtual void Deserialize(Buffer& _buf) override {
-
+		_buf >> m_isSuccess;
+		_buf >> m_channelName;
 	}
 };
 

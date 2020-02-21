@@ -31,6 +31,7 @@ private:
 	void HandleBasePacketGame(BufferInfo* bufInfo);
 
 	void AcceptClient(SessionID session, SOCKET sock);
+	
 	void PreLoadClientDataToPlayer(std::shared_ptr<Player> pplayer);
 
 	SOCKET m_managementServerSocket = 0;
