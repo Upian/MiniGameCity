@@ -181,8 +181,14 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 						(Quiz_Provide_Player)->UpdateGameScore(QuestionCount * 2);
 						(*Asker)->UpdateGameScore(QuestionCount * 5);
 
+						//**지울것
+						Sleep(50);
+
 						TwentyUpdateScore providerScorePacket(conversion.ToUTF8((Quiz_Provide_Player)->GetPlayerName().c_str()), (Quiz_Provide_Player)->GetGameScore());
 						TwentyUpdateScore askerScorerPacker(conversion.ToUTF8((*Asker)->GetPlayerName().c_str()), (*Asker)->GetGameScore());
+						
+						//**지울것
+						Sleep(50);
 
 						InGamePlayerManager.SendToAllPlayers(providerScorePacket);
 						InGamePlayerManager.SendToAllPlayers(askerScorerPacker);
@@ -245,7 +251,7 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				if (AskerTurn)
 				{
 					InGameTimerPacket.Remaintime = AskerTimer;
-					//InGamePlayerManager.SendToAllPlayers(InGameTimerPacket);
+					InGamePlayerManager.SendToAllPlayers(InGameTimerPacket);
 					if (AskerTimer <= 0)
 					{
 						AskerTimer = 31;
@@ -253,9 +259,15 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 						TwentyRemainQuestion RemainCountPacket(QuestionCount);
 						InGamePlayerManager.SendToAllPlayers(RemainCountPacket);
 
+						//**지울것
+						Sleep(50);
+
 						(*Asker)->UpdateGameScore(-5);
 						TwentyUpdateScore AskerScorePacketr(conversion.ToUTF8((*Asker)->GetPlayerName().c_str()),(*Asker)->GetGameScore());
 						InGamePlayerManager.SendToAllPlayers(AskerScorePacketr);
+
+						//**지울것
+						Sleep(50);
 
 						if (QuestionCount != 0)
 						{
@@ -276,7 +288,7 @@ void InGameLibrary::TwentyQuestionGame(PlayerManager& _InGamePlayerManager) {
 				else 
 				{
 					InGameTimerPacket.Remaintime = ProviderTimer;
-					//InGamePlayerManager.SendToAllPlayers(InGameTimerPacket);
+					InGamePlayerManager.SendToAllPlayers(InGameTimerPacket);
 
 					if (ProviderTimer <= 0)
 					{
