@@ -52,8 +52,6 @@ void ManagementServer::HandlePacketLogin(BufferInfo* bufInfo) {
 		LoginManagementPacketTypeShowChannelRequest packetLoginRequest{};
 		packetLoginRequest.Deserialize(bufInfo->buffer);
 		this->HandleShowChannel(packetLoginRequest, m_loginServerManager.FindServerBySocket(bufInfo->socket));
-
-		// this->HandleShowChannel(packetLoginRequest, m_loginServerManager.FindServerBySocket(bufInfo->socket));
 		break;
 	}
 
@@ -84,6 +82,12 @@ void ManagementServer::HandlePacketGame(BufferInfo* bufInfo) {
 		packetGameRequest.Deserialize(bufInfo->buffer);
 		auto gameServer = m_gameServerManager.FindGameServerBySocket(bufInfo->socket);
 		m_gameServerManager.HandlePacketGameUpdate(packetGameRequest, gameServer);
+		break;
+	}
+	case disconnectUserRequest: {
+		GameToManagementDisconnectUserRequest packetGameRequest;
+		packetGameRequest.Deserialize(bufInfo->buffer);
+		this->HandleDisconnectUser(packetGameRequest);
 		break;
 	}
 	case transferChannelRequest: {
@@ -137,4 +141,10 @@ void ManagementServer::HandleChannelIn(LoginManagementPacketTypeChannelInRequest
 	packetLoginResponse.port = gameServer->GetServerPortNum();
 	packetLoginResponse.gpid = packet.gpid;
 	loginServer->SendPacket(packetLoginResponse);
+}
+
+void ManagementServer::HandleDisconnectUser(GameToManagementDisconnectUserRequest& packet) {
+	for (auto g : m_gameServerManager.GetGameServerList()) {
+		g->SendPacket(packet);
+	}
 }

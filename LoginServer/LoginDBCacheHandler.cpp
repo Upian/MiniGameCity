@@ -131,7 +131,6 @@ void LoginDBCacheHandler::HandlePacket(Buffer& buffer) {
 		//Util::LoggingInfo("LoginServer.log", "Type : LoginDBCachePacketTypeLoginResponse || Recv packet : %s || size: %d", buffer, buffer.Length());
 		LoginDBCachePacketTypeLoginResponse packetLoginResponse{};
 		packetLoginResponse.Deserialize(buffer);
-		// 기존 로그인 유저 연결 끊기
 		auto player = m_loginServer->GetPlayerManager().FindPlayerByName(packetLoginResponse.userId);
 		this->HandlePacketLoginResponse(packetLoginResponse, player);
 		break;
@@ -150,6 +149,28 @@ void LoginDBCacheHandler::HandlePacket(Buffer& buffer) {
 		this->HandlePacketDeleteResponse(packetLoginResponse, player);
 		break;
 	}
+	case DBCachePacketType::loginDBCachePacketTypeDisconnectUserRequest: {
+		LoginDBCachePacketTypeDisconnectUserRequest packetLoginRequest;
+		packetLoginRequest.Deserialize(buffer);
+
+		bool eliminated = false;
+		for (auto p : m_loginServer->GetPlayerManager().GetPlayerList()) {
+			if (packetLoginRequest.gpid == p->GetGPID()) {
+				eliminated = true;
+				m_loginServer->GetPlayerManager().PlayerDisconnect(p);
+				closesocket(p->GetSocket());
+				break;
+			}
+		}
+		// login <-> management
+		if (eliminated == false) {
+			GameToManagementDisconnectUserRequest packetManagementRequest;
+			packetManagementRequest.m_gpid = packetLoginRequest.gpid;
+			char* buf = packetLoginRequest.Serialize();
+			send(m_loginServer->GetManagementServer(), buf, strlen(buf), 0);
+		}
+		break;
+	}
 	default:
 		break;
 	}
@@ -164,6 +185,7 @@ void LoginDBCacheHandler::HandlePacket(Buffer& buffer) {
 void LoginDBCacheHandler::HandlePacketLoginResponse(LoginDBCachePacketTypeLoginResponse& packet, std::shared_ptr<Player> player) {
 	if (player == nullptr)
 		return;
+
 	player->SetGPID(packet.gpid);
 	ClientLoginPacketTypeLoginResponse packetClientResponse{};
 	packetClientResponse.flag = packet.flag;
@@ -189,6 +211,12 @@ void LoginDBCacheHandler::HandlePacketDeleteResponse(LoginDBCachePacketTypeDelet
 	packetClientResponse.flag = packet.flag;
 	player->SendPacket(packetClientResponse);
 }
+
+/*
+
+		  Check
+
+*/
 
 bool LoginDBCacheHandler::CheckIDPW(std::string userId, std::string userPw) {
 	bool flag = true;
@@ -216,11 +244,6 @@ bool LoginDBCacheHandler::CheckIDPW(std::string userId, std::string userPw) {
 	return flag;
 }
 
-/*
-
-		  Check
-
-*/
 bool LoginDBCacheHandler::CheckNick(std::string userNick) {
 	bool flag = true;
 	if ((flag == true) && (userNick.size() > Util::GetConfigToInt("LoginServer.ini", "Definition", "UserNickMaxSize", 24))) {

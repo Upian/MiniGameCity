@@ -14,6 +14,7 @@ enum DBCachePacketType : char {
 	loginDBCachePacketTypeSignupRequest, //(string)userId(4~8), (string)userPw(8~16), (string)nick(4~8),
 	loginDBCachePacketTypeDeleteResponse, //(bool)flag, (unsigned int)gpid
 	loginDBCachePacketTypeDeleteRequest, //(unsigned int)gpid
+	loginDBCachePacketTypeDisconnectUserRequest, // (uint)gpid
 
 	dbCachePacketTypeSize,
 };
@@ -166,6 +167,23 @@ class LoginDBCachePacketTypeDeleteRequest : public DBCachePacket {
 public:
 	LoginDBCachePacketTypeDeleteRequest() : DBCachePacket(loginDBCachePacketTypeDeleteRequest) {}
 	~LoginDBCachePacketTypeDeleteRequest() {}
+
+	virtual Buffer& Serialize() override {
+		buffer << gpid;
+
+		return buffer;
+	}
+	virtual void Deserialize(Buffer& _buf) override {
+		_buf >> gpid;
+	}
+
+	uint32 gpid = 0;
+};
+
+class LoginDBCachePacketTypeDisconnectUserRequest : public DBCachePacket {
+public:
+	LoginDBCachePacketTypeDisconnectUserRequest() : DBCachePacket(loginDBCachePacketTypeDisconnectUserRequest) {}
+	~LoginDBCachePacketTypeDisconnectUserRequest() {}
 
 	virtual Buffer& Serialize() override {
 		buffer << gpid;

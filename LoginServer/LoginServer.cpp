@@ -4,8 +4,6 @@
 LoginServer::LoginServer() {}
 LoginServer::~LoginServer() {}
 
-// 로그인할때 하는 것이 아니라 SetGPID를 0으로 일단 초기화
-
 void LoginServer::HandleAcceptClient(SOCKET clientSocket) {
 	if (clientSocket < 1)
 		return;
@@ -21,6 +19,7 @@ void LoginServer::HandleDisconnectClient(SOCKET clientSocket) {
 	auto player = m_playerManager.FindPlayerBySocket(clientSocket);
 	if (player == nullptr)
 		return;
+
 	m_playerManager.PlayerDisconnect(clientSocket);
 	printf("Disconnect client[%d] Total players[%d]\n", clientSocket, m_playerManager.GetPlayerList().size());
 }

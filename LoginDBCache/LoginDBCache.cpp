@@ -134,7 +134,11 @@ void LoginDBCache::HandlePacketLogin(BufferInfo* bufInfo) {
 					packetLoginResponse.userId = packetLoginRequest.userId;
 					// 중복되어 패킷보내야 한다.
 					if (account.duplicate == true) {
-
+						LoginDBCachePacketTypeDisconnectUserRequest packet;
+						packet.gpid = db.GetGpid();
+						bufInfo->Clear();
+						bufInfo->buffer = packet.Serialize();
+						send(bufInfo->socket, bufInfo->buffer, BUFFER_SIZE, 0);
 					}
 					db.Close();
 				}
